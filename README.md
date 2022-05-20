@@ -5,6 +5,7 @@ The app makes API calls via **horizon.stellar.org** and **api.stellar.expert**
 ## What can it do?
 ### TODOs
  - identify upstream creator accounts given a Stellar account
+ - display terminal outputs of current session
  - display visually the network of creator accounts
 
 ## Usage
