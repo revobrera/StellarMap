@@ -1,4 +1,8 @@
-
+tasks:
+  - name: set alias for git graph
+    command: |
+      git config --global alias.graph "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'"
+      git graph
 vscode:
   extensions:
     - mhutchie.git-graph
