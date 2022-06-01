@@ -760,7 +760,7 @@ color: rgb(113, 72, 150);""")
         self.lineEdit = QLineEdit(self.frame_2)
         self.lineEdit.setObjectName(u"lineEdit")
         self.lineEdit.setMinimumSize(QSize(0, 30))
-        self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Your password", None))
+        self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search by Stellar Address", None))
         self.lineEdit.setStyleSheet(u"QLineEdit {\n"
 "	background-color: rgb(27, 29, 35);\n"
 "	border-radius: 5px;\n"
