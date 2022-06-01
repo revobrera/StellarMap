@@ -1,8 +1,8 @@
 
 ## ==> GUI FILE
-from PySide2.QtCore import QPropertyAnimation
-from PySide2.QtGui import QFont, QColor
-from PySide2.QtWidgets import QPushButton, QSizePolicy, QGraphicsDropShadowEffect, QSizeGrip
+from PyQt6.QtCore import QPropertyAnimation
+from PyQt6.QtGui import QFont, QColor
+from PyQt6.QtWidgets import QPushButton, QSizePolicy, QGraphicsDropShadowEffect, QSizeGrip
 
 from main import *
 
