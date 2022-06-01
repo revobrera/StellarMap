@@ -1,3 +1,6 @@
+image:
+  file: .gitpod.dockerfile
+
 tasks:
   - name: set alias for git graph
     command: |
@@ -6,3 +9,4 @@ tasks:
 vscode:
   extensions:
     - mhutchie.git-graph
+    - eamodio.gitlens
