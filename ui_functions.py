@@ -1,8 +1,9 @@
 
 ## ==> GUI FILE
 from PySide2.QtCore import QPropertyAnimation
-from PySide2.QtGui import QFont, QColor
-from PySide2.QtWidgets import QPushButton, QSizePolicy, QGraphicsDropShadowEffect, QSizeGrip
+from PySide2.QtGui import QColor, QFont
+from PySide2.QtWidgets import (QGraphicsDropShadowEffect, QPushButton,
+                               QSizeGrip, QSizePolicy)
 
 from main import *
 

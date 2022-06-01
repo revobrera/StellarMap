@@ -1,13 +1,13 @@
 import platform
+import re
 import sys
+from threading import Thread
+
 import pandas as pd
 from PIL.ImageQt import rgb
 from PySide2 import QtCore, QtGui, QtWidgets
-from PySide2.QtCore import QAbstractTableModel
-from PySide2.QtCore import (QSize, Qt)
-from PySide2.QtWidgets import QMainWindow, QApplication
-from threading import Thread
-import re
+from PySide2.QtCore import QAbstractTableModel, QSize, Qt
+from PySide2.QtWidgets import QApplication, QMainWindow
 
 # GUI FILE
 from app_modules import *
