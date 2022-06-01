@@ -1,10 +1,10 @@
 
-from PyQt6.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PyQt6.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
-from PyQt6.QtWidgets import *
+from PySide2.QtWidgets import *
 
 import files_rc
 
