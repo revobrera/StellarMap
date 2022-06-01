@@ -749,10 +749,10 @@ color: rgb(113, 72, 150);""")
 "	background-color: rgb(35, 40, 49);\n"
 "	border: 2px solid rgb(43, 50, 61);\n"
 "}")
-        icon = QIcon()
-        icon.addFile(u":/16x16/icons/16x16/cil-magnifying-glass.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.pushButton.setIcon(icon)
-        self.pushButton.setText('    Search')
+        # icon = QIcon()
+        # icon.addFile(u":/16x16/icons/16x16/cil-magnifying-glass.png", QSize(), QIcon.Normal, QIcon.Off)
+        # self.pushButton.setIcon(icon)
+        self.pushButton.setText('Search')
 
 
         self.gridLayout_5.addWidget(self.pushButton, 0, 1, 1, 1)
