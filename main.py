@@ -99,7 +99,7 @@ class MainWindow(QMainWindow):
         ## SET ==> WINDOW TITLE
         self.setWindowTitle('StellarMap [Prototype] - v0.1.0')
         UIFunctions.labelTitle(self, 'StellarMap [Prototype] - v0.1.0')
-        UIFunctions.labelDescription(self, 'Set text')
+        UIFunctions.labelDescription(self, 'Network: TESTNET')
         ## ==> END ##
 
         ## WINDOW SIZE ==> DEFAULT SIZE
@@ -282,7 +282,7 @@ class MainWindow(QMainWindow):
     def load_df(self):
         link = 'https://horizon-testnet.stellar.org/'
 
-        self.customize_text('Started Loading Data From ')
+        self.customize_text('Initiated data loading from ')
         self.customize_text(link)
 
 
@@ -319,7 +319,7 @@ class MainWindow(QMainWindow):
         if btnWidget.objectName() == "btn_widgets":
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_widgets)
             UIFunctions.resetStyle(self, "btn_widgets")
-            UIFunctions.labelPage(self, "Custom Widgets")
+            UIFunctions.labelPage(self, "Settings")
             btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
 
     ## ==> END ##

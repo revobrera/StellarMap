@@ -1550,7 +1550,7 @@ color: rgb(255,255,255);""")
 #endif // QT_CONFIG(tooltip)
         self.btn_close.setText("")
         self.label_top_info_1.setText(QCoreApplication.translate("MainWindow", u"C:\\Program Files\\Blender Foundation\\Blender 2.82", None))
-        self.label_top_info_2.setText(QCoreApplication.translate("MainWindow", u"| HOME", None))
+        self.label_top_info_2.setText(QCoreApplication.translate("MainWindow", u"| HOME", None)) # init label
         self.label_user_icon.setText(QCoreApplication.translate("MainWindow", u"RO", None))
         # self.label_6.setText(QCoreApplication.translate("MainWindow", u"HOME", None))
         # self.label.setText(QCoreApplication.translate("MainWindow", u"Empyt Page - By: Wanderson M. Pimenta", None))
