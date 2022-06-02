@@ -25,12 +25,12 @@ class Style():
         padding-left: 45px;
     }
     QPushButton:hover {
-        background-color: rgb(33, 37, 43);
-        border-left: 28px solid rgb(33, 37, 43);
+        background-color: #3f2c70;
+        border-left: 28px solid #3f2c70;
     }
     QPushButton:pressed {
-        background-color: rgb(78,201,176);
-        border-left: 28px solid rgb(85, 170, 255);
+        background-color: #00FF9C;
+        border-left: 28px solid #00FF9C;
     }
     """
     )

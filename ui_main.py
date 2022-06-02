@@ -382,10 +382,10 @@ class Ui_MainWindow(object):
 "	background-color: #261D45;\n"
 "}\n"
 "QPushButton:hover {\n"
-"	background-color: #261D45;\n"
+"	background-color: #3f2c70;\n"
 "}\n"
 "QPushButton:pressed {	\n"
-"	background-color: #261D45;\n"
+"	background-color: #00FF9C;\n"
 "}")
 
         self.verticalLayout_3.addWidget(self.btn_toggle_menu)
@@ -488,10 +488,10 @@ class Ui_MainWindow(object):
 "	background-color: transparent;\n"
 "}\n"
 "QPushButton:hover {\n"
-"	background-color: rgb(52, 59, 72);\n"
+"	background-color: #3f2c70;\n"
 "}\n"
 "QPushButton:pressed {	\n"
-"	background-color: #4EC9B0;\n"
+"	background-color: #00FF9C;\n"
 "}")
         icon = QIcon()
         icon.addFile(u":/16x16/icons/16x16/cil-window-minimize.png", QSize(), QIcon.Normal, QIcon.Off)
@@ -510,10 +510,10 @@ class Ui_MainWindow(object):
 "	background-color: transparent;\n"
 "}\n"
 "QPushButton:hover {\n"
-"	background-color: rgb(52, 59, 72);\n"
+"	background-color: #3f2c70;\n"
 "}\n"
 "QPushButton:pressed {	\n"
-"	background-color: #4EC9B0;\n"
+"	background-color: #00FF9C;\n"
 "}")
         icon1 = QIcon()
         icon1.addFile(u":/16x16/icons/16x16/cil-window-maximize.png", QSize(), QIcon.Normal, QIcon.Off)
@@ -532,10 +532,10 @@ class Ui_MainWindow(object):
 "	background-color: transparent;\n"
 "}\n"
 "QPushButton:hover {\n"
-"	background-color: rgb(52, 59, 72);\n"
+"	background-color: #3f2c70;\n"
 "}\n"
 "QPushButton:pressed {	\n"
-"	background-color: #4EC9B0;\n"
+"	background-color: #00FF9C;\n"
 "}")
         icon2 = QIcon()
         icon2.addFile(u":/16x16/icons/16x16/cil-x.png", QSize(), QIcon.Normal, QIcon.Off)
@@ -757,12 +757,12 @@ color: rgb(113, 72, 150);""")
 "	background-color: rgb(52, 59, 72);\n"
 "}\n"
 "QPushButton:hover {\n"
-"	background-color: rgb(57, 65, 80);\n"
-"	border: 2px solid rgb(61, 70, 86);\n"
+"	background-color: #3f2c70;\n"
+"	border: 2px solid #3f2c70;\n"
 "}\n"
 "QPushButton:pressed {	\n"
-"	background-color: rgb(35, 40, 49);\n"
-"	border: 2px solid rgb(43, 50, 61);\n"
+"	background-color: #3f2c70;\n"
+"	border: 2px solid #3f2c70;\n"
 "}")
         # icon = QIcon()
         # icon.addFile(u":/16x16/icons/16x16/cil-magnifying-glass.png", QSize(), QIcon.Normal, QIcon.Off)
@@ -1050,12 +1050,12 @@ color: rgb(255,255,255);""")
 "	background-color: rgb(52, 59, 72);\n"
 "}\n"
 "QPushButton:hover {\n"
-"	background-color: rgb(57, 65, 80);\n"
-"	border: 2px solid rgb(61, 70, 86);\n"
+"	background-color: #3f2c70;\n"
+"	border: 2px solid #3f2c70;\n"
 "}\n"
 "QPushButton:pressed {	\n"
-"	background-color: rgb(35, 40, 49);\n"
-"	border: 2px solid rgb(43, 50, 61);\n"
+"	background-color: #00FF9C;\n"
+"	border: 2px solid #00FF9C;\n"
 "}")
         icon3 = QIcon()
         icon3.addFile(u":/16x16/icons/16x16/cil-folder-open.png", QSize(), QIcon.Normal, QIcon.Off)

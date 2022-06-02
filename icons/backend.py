@@ -1,3 +1,7 @@
 import pandas as pd
 
-pd.read_json('https://horizon.stellar.org/')
+# live
+# pd.read_json('https://horizon.stellar.org/')
+
+# testnet
+pd.read_json('https://horizon-testnet.stellar.org/')
