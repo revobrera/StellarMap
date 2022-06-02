@@ -97,8 +97,8 @@ class MainWindow(QMainWindow):
         ## ==> END ##
 
         ## SET ==> WINDOW TITLE
-        self.setWindowTitle('Main Window - Python Base')
-        UIFunctions.labelTitle(self, 'Main Window - Python Base')
+        self.setWindowTitle('StellarMap [Prototype] - v0.1.0')
+        UIFunctions.labelTitle(self, 'StellarMap [Prototype] - v0.1.0')
         UIFunctions.labelDescription(self, 'Set text')
         ## ==> END ##
 
@@ -280,7 +280,7 @@ class MainWindow(QMainWindow):
                 self.customize_text(str(item))
 
     def load_df(self):
-        link = 'https://horizon.stellar.org/'
+        link = 'https://horizon-testnet.stellar.org/'
 
         self.customize_text('Started Loading Data From ')
         self.customize_text(link)
@@ -369,7 +369,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    QtGui.QFontDatabase.addApplicationFont('fonts/segoeui.ttf')
-    QtGui.QFontDatabase.addApplicationFont('fonts/segoeuib.ttf')
+    QtGui.QFontDatabase.addApplicationFont('fonts/Cascadia.ttf')
     window = MainWindow()
     sys.exit(app.exec_())
