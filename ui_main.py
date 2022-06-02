@@ -1629,9 +1629,9 @@ color: rgb(255,255,255);""")
         self.label.setStyleSheet("background-color: #261D45")
 
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_1),
-                                  QCoreApplication.translate("MainWindow", u"DataFrame Table", None))
+                                  QCoreApplication.translate("MainWindow", u"DATA", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3),
-                                  QCoreApplication.translate("MainWindow", u"Terminal Output", None))
+                                  QCoreApplication.translate("MainWindow", u"TERMINAL", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Open Blender", None))
         self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search Stellar Address", None))
 

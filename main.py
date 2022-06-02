@@ -142,7 +142,7 @@ class MainWindow(QMainWindow):
         ## ==> END ##
 
         ## USER ICON ==> SHOW HIDE
-        UIFunctions.userIcon(self, "RO", "", True)
+        UIFunctions.userIcon(self, "RO", "", False)
         ## ==> END ##
 
 
