@@ -48,7 +48,7 @@ class UIFunctions(MainWindow):
             self.ui.frame_size_grip.show()
 
     ## ==> RETURN STATUS
-    def returStatus(self):
+    def returnStatus(self):
         return GLOBAL_STATE
 
     ## ==> SET STATUS
@@ -133,12 +133,12 @@ class UIFunctions(MainWindow):
     ########################################################################
     ## ==> SELECT
     def selectMenu(getStyle):
-        select = getStyle + ("QPushButton { border-right: 7px solid rgb(44, 49, 60); }")
+        select = getStyle + ("QPushButton { border-right: 7px solid #00FF9C; }")
         return select
 
     ## ==> DESELECT
     def deselectMenu(getStyle):
-        deselect = getStyle.replace("QPushButton { border-right: 7px solid rgb(44, 49, 60); }", "")
+        deselect = getStyle.replace("QPushButton { border-right: 7px solid #00FF9C; }", "")
         return deselect
 
     ## ==> START SELECTION
