@@ -150,7 +150,7 @@ class MainWindow(QMainWindow):
         ########################################################################
         def moveWindow(event):
             # IF MAXIMIZED CHANGE TO NORMAL
-            if UIFunctions.returnStatus() == 1:
+            if UIFunctions.returnStatus(self) == 1:
                 UIFunctions.maximize_restore(self)
 
             # MOVE WINDOW
