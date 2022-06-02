@@ -379,13 +379,13 @@ class Ui_MainWindow(object):
 "	background-position: center;\n"
 "	background-repeat: no-reperat;\n"
 "	border: none;\n"
-"	background-color: rgb(27, 29, 35);\n"
+"	background-color: #261D45;\n"
 "}\n"
 "QPushButton:hover {\n"
-"	background-color: #4EC9B0;\n"
+"	background-color: #261D45;\n"
 "}\n"
 "QPushButton:pressed {	\n"
-"	background-color: #4EC9B0;\n"
+"	background-color: #261D45;\n"
 "}")
 
         self.verticalLayout_3.addWidget(self.btn_toggle_menu)
@@ -421,6 +421,10 @@ class Ui_MainWindow(object):
         self.frame_label_top_btns.setSizePolicy(sizePolicy1)
         self.frame_label_top_btns.setFrameShape(QFrame.NoFrame)
         self.frame_label_top_btns.setFrameShadow(QFrame.Raised)
+
+        # top bar
+        self.frame_label_top_btns.setStyleSheet("background-color: #261D45")
+
         self.horizontalLayout_10 = QHBoxLayout(self.frame_label_top_btns)
         self.horizontalLayout_10.setSpacing(0)
         self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
@@ -449,6 +453,8 @@ class Ui_MainWindow(object):
         self.label_title_bar_top.setStyleSheet(u"background: transparent;\n"
 "")
 
+        self.label_title_bar_top.setStyleSheet("color: #00FF9C")
+
         self.horizontalLayout_10.addWidget(self.label_title_bar_top)
 
 
@@ -461,6 +467,9 @@ class Ui_MainWindow(object):
         self.frame_btns_right.setMaximumSize(QSize(120, 16777215))
         self.frame_btns_right.setFrameShape(QFrame.NoFrame)
         self.frame_btns_right.setFrameShadow(QFrame.Raised)
+
+        self.frame_btns_right.setStyleSheet("background-color: #261D45")
+
         self.horizontalLayout_5 = QHBoxLayout(self.frame_btns_right)
         self.horizontalLayout_5.setSpacing(0)
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
@@ -543,7 +552,7 @@ class Ui_MainWindow(object):
         self.frame_top_info = QFrame(self.frame_top_right)
         self.frame_top_info.setObjectName(u"frame_top_info")
         self.frame_top_info.setMaximumSize(QSize(16777215, 65))
-        self.frame_top_info.setStyleSheet(u"background-color: rgb(39, 44, 54);")
+        self.frame_top_info.setStyleSheet(u"background-color: #3f2c70;")
         self.frame_top_info.setFrameShape(QFrame.NoFrame)
         self.frame_top_info.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_8 = QHBoxLayout(self.frame_top_info)
@@ -607,6 +616,9 @@ class Ui_MainWindow(object):
         self.frame_left_menu.setStyleSheet(u"background-color: rgb(27, 29, 35);")
         self.frame_left_menu.setFrameShape(QFrame.NoFrame)
         self.frame_left_menu.setFrameShadow(QFrame.Raised)
+
+        self.frame_left_menu.setStyleSheet("background-color: #261D45")
+
         self.verticalLayout_5 = QVBoxLayout(self.frame_left_menu)
         self.verticalLayout_5.setSpacing(1)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
@@ -647,7 +659,7 @@ class Ui_MainWindow(object):
         self.label_user_icon.setFont(font4)
         self.label_user_icon.setStyleSheet(u"QLabel {\n"
 "	border-radius: 30px;\n"
-"	background-color: rgb(44, 49, 60);\n"
+"	background-color: #261D45;\n"
 "	border: 5px solid rgb(39, 44, 54);\n"
 "	background-position: center;\n"
 "	background-repeat: no-repeat;\n"
@@ -675,6 +687,9 @@ class Ui_MainWindow(object):
         self.frame_content.setObjectName(u"frame_content")
         self.frame_content.setFrameShape(QFrame.NoFrame)
         self.frame_content.setFrameShadow(QFrame.Raised)
+
+        self.frame_content.setStyleSheet(u"background-color: #372963;")
+
         self.verticalLayout_9 = QVBoxLayout(self.frame_content)
         self.verticalLayout_9.setSpacing(0)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
@@ -1437,7 +1452,7 @@ color: rgb(255,255,255);""")
         self.frame_grip.setObjectName(u"frame_grip")
         self.frame_grip.setMinimumSize(QSize(0, 25))
         self.frame_grip.setMaximumSize(QSize(16777215, 25))
-        self.frame_grip.setStyleSheet(u"background-color: #4EC9B0;")
+        self.frame_grip.setStyleSheet(u"background-color: #261D45;")
         self.frame_grip.setFrameShape(QFrame.NoFrame)
         self.frame_grip.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_6 = QHBoxLayout(self.frame_grip)
@@ -1536,7 +1551,7 @@ color: rgb(255,255,255);""")
         self.btn_close.setText("")
         self.label_top_info_1.setText(QCoreApplication.translate("MainWindow", u"C:\\Program Files\\Blender Foundation\\Blender 2.82", None))
         self.label_top_info_2.setText(QCoreApplication.translate("MainWindow", u"| HOME", None))
-        self.label_user_icon.setText(QCoreApplication.translate("MainWindow", u"SM", None))
+        self.label_user_icon.setText(QCoreApplication.translate("MainWindow", u"RO", None))
         # self.label_6.setText(QCoreApplication.translate("MainWindow", u"HOME", None))
         # self.label.setText(QCoreApplication.translate("MainWindow", u"Empyt Page - By: Wanderson M. Pimenta", None))
         # self.label_7.setText(QCoreApplication.translate("MainWindow", u"Page Index 0", None))
@@ -1605,11 +1620,14 @@ color: rgb(255,255,255);""")
         ___qtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"Line", None));
         self.tableWidget.setSortingEnabled(__sortingEnabled)
 
-        self.label_credits.setText(QCoreApplication.translate("MainWindow", u"StellarMap", None))
-        self.label_version.setText(QCoreApplication.translate("MainWindow", u"v1.0.0", None))
+        self.label_credits.setText(QCoreApplication.translate("MainWindow", u"https://github.com/revobrera/StellarMap", None))
+        self.label_version.setText(QCoreApplication.translate("MainWindow", u"v0.1.0", None))
 
 
         self.label.setText(QCoreApplication.translate("MainWindow", u"Charts Area", None))
+
+        self.label.setStyleSheet("background-color: #261D45")
+
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_1),
                                   QCoreApplication.translate("MainWindow", u"DataFrame Table", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3),

@@ -8,8 +8,8 @@ class Style():
         background-position: left center;
         background-repeat: no-repeat;
         border: none;
-        border-left: 28px solid rgb(27, 29, 35);
-        background-color: rgb(27, 29, 35);
+        border-left: 28px solid #261D45;
+        background-color: #261D45;
         text-align: left;
         padding-left: 45px;
     }
@@ -18,9 +18,9 @@ class Style():
         background-position: left center;
         background-repeat: no-repeat;
         border: none;
-        border-left: 28px solid rgb(27, 29, 35);
+        border-left: 28px solid #261D45;
         border-right: 5px solid rgb(44, 49, 60);
-        background-color: rgb(27, 29, 35);
+        background-color: #261D45;
         text-align: left;
         padding-left: 45px;
     }
