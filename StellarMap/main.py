@@ -369,6 +369,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    QtGui.QFontDatabase.addApplicationFont('fonts/Cascadia.ttf')
+    QtGui.QFontDatabase.addApplicationFont('/StellarMap/fonts/Cascadia.ttf')
     window = MainWindow()
     sys.exit(app.exec_())
