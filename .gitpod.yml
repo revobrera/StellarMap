@@ -1,4 +1,18 @@
+image:
+  file: .gitpod.Dockerfile
+ports:
+  - port: 6080
+    onOpen: open-preview
+  - port: 5900
+    onOpen: ignore
+  - port: 35900
+    onOpen: ignore
 tasks:
+  - init: pip3 install -r requirements.txt
+    command: clear && python3 main.py
+    name: Split terminal
+  - openMode: split-right
+    command: echo SplitTerminal && clear
   - name: set alias for git graph
     command: |
       git config --global alias.graph "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'"
@@ -6,3 +20,4 @@ tasks:
 vscode:
   extensions:
     - mhutchie.git-graph
+    - eamodio.gitlens
