@@ -744,6 +744,14 @@ color: rgb(113, 72, 150);""")
         self.gridLayout_5 = QGridLayout()
         self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.gridLayout_5.setContentsMargins(-1, -1, -1, 0)
+
+        # network combobox
+        self.networkComboBox = QComboBox()
+        self.networkComboBox.addItem('testnet')
+        self.networkComboBox.addItem('public')
+        self.gridLayout_5.addWidget(self.networkComboBox, 0, 1, 1, 1)
+
+        # search button
         self.pushButton = QPushButton(self.frame_2)
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setMinimumSize(QSize(96, 30))
@@ -770,7 +778,7 @@ color: rgb(113, 72, 150);""")
         self.pushButton.setText('Search')
 
 
-        self.gridLayout_5.addWidget(self.pushButton, 0, 1, 1, 1)
+        self.gridLayout_5.addWidget(self.pushButton, 0, 2, 1, 1)
 
         self.lineEdit = QLineEdit(self.frame_2)
         self.lineEdit.setObjectName(u"lineEdit")
