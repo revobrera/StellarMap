@@ -124,7 +124,7 @@ class MainWindow(QMainWindow):
         ## ==> END ##
 
         t=Thread(target=self.load_df)
-        t.setDaemon(True)
+        t.daemon = True
         t.start()
 
 
