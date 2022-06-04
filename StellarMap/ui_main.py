@@ -1,12 +1,8 @@
 
-from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
-                            QRect, QSize, Qt, QUrl)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
-                           QFontDatabase, QIcon, QLinearGradient, QPainter,
-                           QPalette, QPixmap, QRadialGradient)
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QRect, QSize, Qt, )
+from PySide2.QtGui import (QBrush, QColor, QFont,
+                           QIcon, QPalette, )
 from PySide2.QtWidgets import *
-
-import files_rc
 
 
 class Ui_MainWindow(object):
