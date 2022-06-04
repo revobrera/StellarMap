@@ -97,8 +97,8 @@ class MainWindow(QMainWindow):
         ## ==> END ##
 
         ## SET ==> WINDOW TITLE
-        self.setWindowTitle('StellarMap [Prototype] - v0.1.0')
-        UIFunctions.labelTitle(self, 'StellarMap [Prototype] - v0.1.0')
+        self.setWindowTitle('StellarMap [Prototype] - v0.1.1')
+        UIFunctions.labelTitle(self, 'StellarMap [Prototype] - v0.1.1')
         UIFunctions.labelDescription(self, 'Network: TESTNET')
         ## ==> END ##
 
