@@ -12,6 +12,8 @@ from PySide2.QtWidgets import QApplication, QMainWindow
 # GUI FILE
 from app_modules import *
 
+import datetime
+
 
 class PandasModel(QAbstractTableModel):
 
@@ -99,7 +101,16 @@ class MainWindow(QMainWindow):
         ## SET ==> WINDOW TITLE
         self.setWindowTitle('StellarMap [Prototype] - v0.1.1')
         UIFunctions.labelTitle(self, 'StellarMap [Prototype] - v0.1.1')
-        UIFunctions.labelDescription(self, 'Network: TESTNET')
+
+        # set default message when user opens the app
+        UIFunctions.labelDescription(self, 'Network (default): TESTNET')
+
+        # user sets the network when selected from dropdown
+        self.ui.networkComboBox.activated[str].connect(lambda: UIFunctions.set_stellar_network(self))
+
+        # user clicks on the search button and calls search_creator_by_accounts()
+        self.ui.btn_search.clicked.connect(lambda: UIFunctions.search_creator_by_accounts(self))
+
         ## ==> END ##
 
         ## WINDOW SIZE ==> DEFAULT SIZE
@@ -258,7 +269,18 @@ class MainWindow(QMainWindow):
         else:
             return False
 
+    def is_valid_stellar_address(self, stellar_address):
+        check_stellar_address = re.compile("[A-Z,0-9]{56}")
+        if check_stellar_address.match(stellar_address):
+            return True
+        else:
+            return False
+
     def customize_text(self,item):
+        # get current date time
+        datetime_object = datetime.datetime.now()
+        self.ui.textEdit.insertPlainText('\n[' + str(datetime_object) + '] ')
+
         if self.is_valid_url(item):
             color = rgb(78, 201, 176)
         elif self.is_valid_path(item):
@@ -266,12 +288,13 @@ class MainWindow(QMainWindow):
         else:
             color = rgb(255, 255, 255)
 
+
         color = QtGui.QColor(color)
 
         color_format = self.ui.textEdit.currentCharFormat()
         color_format.setForeground(color)
         self.ui.textEdit.setCurrentCharFormat(color_format)
-        self.ui.textEdit.insertPlainText(item + ' ')
+        self.ui.textEdit.insertPlainText(item)
 
     def print_Response(self,data):
         for pair in self.nested_dict_pairs_iterator(data):

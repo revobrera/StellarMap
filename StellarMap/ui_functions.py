@@ -1,5 +1,6 @@
 
 ## ==> GUI FILE
+from tabnanny import check
 from PySide2.QtCore import QPropertyAnimation
 from PySide2.QtGui import QColor, QFont
 from PySide2.QtWidgets import (QGraphicsDropShadowEffect, QPushButton,
@@ -108,7 +109,7 @@ class UIFunctions(MainWindow):
     ########################################################################
     def addNewMenu(self, name, objName, icon, isTopMenu):
         font = QFont()
-        font.setFamily(u"Segoe UI")
+        font.setFamily(u"Cascadia")
         button = QPushButton(str(count),self)
         button.setObjectName(objName)
         sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
@@ -174,6 +175,35 @@ class UIFunctions(MainWindow):
                 self.ui.label_user_icon.setToolTip(initialsTooltip)
         else:
             self.ui.label_user_icon.hide()
+
+
+    def set_stellar_network(self):
+        # get current selected text from combo box
+        network_name = self.ui.networkComboBox.currentText()
+
+        # set the label description to display network
+        UIFunctions.labelDescription(self, 'Network: ' + network_name.upper())
+
+        self.customize_text('The network name was switched to: ' + network_name)
+
+    def search_creator_by_accounts(self):
+        # get input text from search bar
+        search_input = self.ui.line_edit_search_input.text()
+
+        # check if stellar address is valid
+        if self.is_valid_stellar_address(search_input):
+            search_str = 'Searched input is valid: ' + str(search_input)
+            UIFunctions.labelDescription(self, search_str)
+            self.customize_text(search_str)
+
+            # call the function to walk up creator accounts
+        else:
+            # print on ui and terminal then clear the search bar
+            search_str = 'Searched input is NOT valid: ' + str(search_input)
+            UIFunctions.labelDescription(self, search_str)
+            self.customize_text(search_str)
+            self.ui.line_edit_search_input.clear
+
 
     ########################################################################
     ## END - GUI FUNCTIONS
