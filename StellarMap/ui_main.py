@@ -111,7 +111,7 @@ class Ui_MainWindow(object):
 #endif
         MainWindow.setPalette(palette)
         font = QFont()
-        font.setFamily(u"Segoe UI")
+        font.setFamily(u"Cascadia")
         font.setPointSize(10)
         MainWindow.setFont(font)
         MainWindow.setStyleSheet(u"QMainWindow {background: transparent; }\n"
@@ -445,7 +445,7 @@ class Ui_MainWindow(object):
         self.label_title_bar_top = QLabel(self.frame_label_top_btns)
         self.label_title_bar_top.setObjectName(u"label_title_bar_top")
         font1 = QFont()
-        font1.setFamily(u"Segoe UI")
+        font1.setFamily(u"Cascadia")
         font1.setPointSize(10)
         font1.setBold(True)
         font1.setWeight(75)
@@ -563,7 +563,7 @@ class Ui_MainWindow(object):
         self.label_top_info_1.setObjectName(u"label_top_info_1")
         self.label_top_info_1.setMaximumSize(QSize(16777215, 15))
         font2 = QFont()
-        font2.setFamily(u"Segoe UI")
+        font2.setFamily(u"Cascadia")
         self.label_top_info_1.setFont(font2)
         self.label_top_info_1.setStyleSheet(u"color: #714896 ")
 
@@ -574,7 +574,7 @@ class Ui_MainWindow(object):
         self.label_top_info_2.setMinimumSize(QSize(0, 0))
         self.label_top_info_2.setMaximumSize(QSize(250, 20))
         font3 = QFont()
-        font3.setFamily(u"Segoe UI")
+        font3.setFamily(u"Cascadia")
         font3.setBold(True)
         font3.setWeight(75)
         self.label_top_info_2.setFont(font3)
@@ -654,7 +654,7 @@ class Ui_MainWindow(object):
         self.label_user_icon.setMinimumSize(QSize(60, 60))
         self.label_user_icon.setMaximumSize(QSize(60, 60))
         font4 = QFont()
-        font4.setFamily(u"Segoe UI")
+        font4.setFamily(u"Cascadia")
         font4.setPointSize(12)
         self.label_user_icon.setFont(font4)
         self.label_user_icon.setStyleSheet(u"QLabel {\n"
@@ -744,14 +744,24 @@ color: rgb(113, 72, 150);""")
         self.gridLayout_5 = QGridLayout()
         self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.gridLayout_5.setContentsMargins(-1, -1, -1, 0)
-        self.pushButton = QPushButton(self.frame_2)
-        self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.setMinimumSize(QSize(96, 30))
+
+        # network combobox
+        self.networkComboBox = QComboBox()
+        self.networkComboBox.addItem('testnet')
+        self.networkComboBox.addItem('public')
+        self.gridLayout_5.addWidget(self.networkComboBox, 0, 1, 1, 1)
+        # call the custom method when an item is selected
+        # self.networkComboBox.activated[str].connect()
+
+        # search button
+        self.btn_search = QPushButton(self.frame_2)
+        self.btn_search.setObjectName(u"btn_search")
+        self.btn_search.setMinimumSize(QSize(96, 30))
         font1 = QFont()
-        font1.setFamily(u"Segoe UI")
+        font1.setFamily(u"Cascadia")
         font1.setPointSize(9)
-        self.pushButton.setFont(font1)
-        self.pushButton.setStyleSheet(u"QPushButton {\n"
+        self.btn_search.setFont(font1)
+        self.btn_search.setStyleSheet(u"QPushButton {\n"
 "	border: 2px solid rgb(52, 59, 72);\n"
 "	border-radius: 5px;	\n"
 "	background-color: rgb(52, 59, 72);\n"
@@ -767,16 +777,16 @@ color: rgb(113, 72, 150);""")
         # icon = QIcon()
         # icon.addFile(u":/16x16/icons/16x16/cil-magnifying-glass.png", QSize(), QIcon.Normal, QIcon.Off)
         # self.pushButton.setIcon(icon)
-        self.pushButton.setText('Search')
+        self.btn_search.setText('Search')
 
 
-        self.gridLayout_5.addWidget(self.pushButton, 0, 1, 1, 1)
+        self.gridLayout_5.addWidget(self.btn_search, 0, 2, 1, 1)
 
-        self.lineEdit = QLineEdit(self.frame_2)
-        self.lineEdit.setObjectName(u"lineEdit")
-        self.lineEdit.setMinimumSize(QSize(0, 30))
-        self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search by Stellar Address", None))
-        self.lineEdit.setStyleSheet(u"QLineEdit {\n"
+        self.line_edit_search_input = QLineEdit(self.frame_2)
+        self.line_edit_search_input.setObjectName(u"line_edit_search_input")
+        self.line_edit_search_input.setMinimumSize(QSize(0, 30))
+        self.line_edit_search_input.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search by Stellar Address", None))
+        self.line_edit_search_input.setStyleSheet(u"QLineEdit {\n"
 "	background-color: rgb(27, 29, 35);\n"
 "	border-radius: 5px;\n"
 "	border: 2px solid rgb(27, 29, 35);\n"
@@ -789,7 +799,7 @@ color: rgb(113, 72, 150);""")
 "	border: 2px solid rgb(91, 101, 124);\n"
 "}")
 
-        self.gridLayout_5.addWidget(self.lineEdit, 0, 0, 1, 1)
+        self.gridLayout_5.addWidget(self.line_edit_search_input, 0, 0, 1, 1)
 
 
         self.gridLayout_2.addLayout(self.gridLayout_5, 0, 0, 1, 1)
@@ -902,7 +912,7 @@ color: rgb(255,255,255);""")
         # self.label_6 = QLabel(self.page_home)
         # self.label_6.setObjectName(u"label_6")
         # font5 = QFont()
-        # font5.setFamily(u"Segoe UI")
+        # font5.setFamily(u"Cascadia")
         # font5.setPointSize(40)
         # self.label_6.setFont(font5)
         # self.label_6.setStyleSheet(u"")
@@ -913,7 +923,7 @@ color: rgb(255,255,255);""")
         # self.label = QLabel(self.page_home)
         # self.label.setObjectName(u"label")
         # font6 = QFont()
-        # font6.setFamily(u"Segoe UI")
+        # font6.setFamily(u"Cascadia")
         # font6.setPointSize(14)
         # self.label.setFont(font6)
         # self.label.setAlignment(Qt.AlignCenter)
@@ -923,7 +933,7 @@ color: rgb(255,255,255);""")
         # self.label_7 = QLabel(self.page_home)
         # self.label_7.setObjectName(u"label_7")
         # font7 = QFont()
-        # font7.setFamily(u"Segoe UI")
+        # font7.setFamily(u"Cascadia")
         # font7.setPointSize(15)
         # self.label_7.setFont(font7)
         # self.label_7.setAlignment(Qt.AlignCenter)
@@ -1041,7 +1051,7 @@ color: rgb(255,255,255);""")
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setMinimumSize(QSize(150, 30))
         font8 = QFont()
-        font8.setFamily(u"Segoe UI")
+        font8.setFamily(u"Cascadia")
         font8.setPointSize(9)
         self.pushButton.setFont(font8)
         self.pushButton.setStyleSheet(u"QPushButton {\n"
@@ -1621,7 +1631,7 @@ color: rgb(255,255,255);""")
         self.tableWidget.setSortingEnabled(__sortingEnabled)
 
         self.label_credits.setText(QCoreApplication.translate("MainWindow", u"https://github.com/revobrera/StellarMap", None))
-        self.label_version.setText(QCoreApplication.translate("MainWindow", u"v0.1.0", None))
+        self.label_version.setText(QCoreApplication.translate("MainWindow", u"v0.1.1", None))
 
 
         self.label.setText(QCoreApplication.translate("MainWindow", u"Charts Area", None))
