@@ -1,3 +1,4 @@
+import datetime
 import platform
 import re
 import sys
@@ -11,8 +12,7 @@ from PySide2.QtWidgets import QApplication, QMainWindow
 
 # GUI FILE
 from app_modules import *
-
-import datetime
+from settings.env import envHelpers
 
 
 class PandasModel(QAbstractTableModel):
@@ -97,6 +97,9 @@ class MainWindow(QMainWindow):
         ## REMOVE ==> STANDARD TITLE BAR
         UIFunctions.removeTitleBar(True)
         ## ==> END ##
+
+        # init env variables
+        app_env = envHelpers()
 
         ## SET ==> WINDOW TITLE
         self.setWindowTitle('StellarMap [Prototype] - v0.1.1')

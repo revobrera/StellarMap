@@ -1,12 +1,15 @@
 
 ## ==> GUI FILE
+import os
 from tabnanny import check
+
 from PySide2.QtCore import QPropertyAnimation
 from PySide2.QtGui import QColor, QFont
 from PySide2.QtWidgets import (QGraphicsDropShadowEffect, QPushButton,
                                QSizeGrip, QSizePolicy)
 
 from main import *
+from settings.env import envHelpers
 
 ## ==> GLOBALS
 GLOBAL_STATE = 0
@@ -184,7 +187,15 @@ class UIFunctions(MainWindow):
         # set the label description to display network
         UIFunctions.labelDescription(self, 'Network: ' + network_name.upper())
 
-        self.customize_text('The network name was switched to: ' + network_name)
+        # import settings file
+        app_env = envHelpers()
+        if network_name.upper() == 'PUBLIC':
+            app_env.set_public_network()
+            
+        else:
+            app_env.set_testnet_network()
+
+        self.customize_text('The network name was switched to: ' + os.getenv('NETWORK'))
 
     def search_creator_by_accounts(self):
         # get input text from search bar
@@ -197,6 +208,7 @@ class UIFunctions(MainWindow):
             self.customize_text(search_str)
 
             # call the function to walk up creator accounts
+            self.customize_text('Searching on network: ' + os.getenv('BASE_SE_NETWORK_ACCOUNT'))
         else:
             # print on ui and terminal then clear the search bar
             search_str = 'Searched input is NOT valid: ' + str(search_input)
