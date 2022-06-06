@@ -866,6 +866,13 @@ color: rgb(255, 255, 255);""")#color: rgb(113, 72, 150)
         self.grid_layout_json.setContentsMargins(0, 0, 0, 0)
         self.text_edit_json = QTextEdit(self.tab_json)
         self.text_edit_json.setObjectName(u"text_edit_json")
+        font1 = QFont()
+        font1.setFamily(u"Cascadia Code")
+        font1.setPointSize(12)
+        font1.setBold(False)
+        font1.setItalic(False)
+        font1.setWeight(50)
+        self.text_edit_json.setFont(font1)
         self.text_edit_json.setStyleSheet(u"QTextEdit {\n"
 "	background-color: rgb(27, 29, 35);\n"
 "	border-radius: 5px;\n"
@@ -895,12 +902,6 @@ color: rgb(255,255,255);""")
         self.gridLayout_4.setContentsMargins(0, 0, 0, 0)
         self.textEdit = QTextEdit(self.tab_terminal)
         self.textEdit.setObjectName(u"textEdit")
-        font1 = QFont()
-        font1.setFamily(u"Cascadia Code")
-        font1.setPointSize(12)
-        font1.setBold(False)
-        font1.setItalic(False)
-        font1.setWeight(50)
         self.textEdit.setFont(font1)
         self.textEdit.setStyleSheet(u"QTextEdit {\n"
 "	background-color: rgb(27, 29, 35);\n"
