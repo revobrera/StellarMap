@@ -828,14 +828,16 @@ color: rgb(255, 255, 255);""")#color: rgb(113, 72, 150)
         self.tabWidget.setTabsClosable(False)
         self.tabWidget.setMovable(False)
         self.tabWidget.setTabBarAutoHide(False)
-        self.tab_1 = QWidget()
-        self.tab_1.setObjectName(u"tab_1")
-        self.tab_1.setFocusPolicy(Qt.TabFocus)
-        self.gridLayout_3 = QGridLayout(self.tab_1)
+
+        # data tab
+        self.tab_data = QWidget()
+        self.tab_data.setObjectName(u"tab_data")
+        self.tab_data.setFocusPolicy(Qt.TabFocus)
+        self.gridLayout_3 = QGridLayout(self.tab_data)
         self.gridLayout_3.setSpacing(0)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
         self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.tableView = QTableView(self.tab_1)
+        self.tableView = QTableView(self.tab_data)
         self.tableView.setObjectName(u"tableView")
         self.tableView.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.tableView.setAlternatingRowColors(True)
@@ -853,18 +855,45 @@ color: rgb(255, 255, 255);""")#color: rgb(113, 72, 150)
         # icon = QIcon()
         # icon.addFile(u"icons/20x20/cil-list.png", QSize(),
         #              QIcon.Normal, QIcon.Off)
-        self.tabWidget.addTab(self.tab_1, "")
-        self.tab_3 = QWidget()
-        self.tab_3.setObjectName(u"tab_3")
-        self.tab_3.setStyleSheet(u"""gridline-color: rgb(78, 201, 176);
+        self.tabWidget.addTab(self.tab_data, "")
+
+        # json tab
+        self.tab_json = QWidget()
+        self.tab_json.setObjectName(u"tab_json")
+        self.grid_layout_json = QGridLayout(self.tab_json)
+        self.grid_layout_json.setSpacing(0)
+        self.grid_layout_json.setObjectName(u"grid_layout_json")
+        self.grid_layout_json.setContentsMargins(0, 0, 0, 0)
+        self.text_edit_json = QTextEdit(self.tab_json)
+        self.text_edit_json.setObjectName(u"text_edit_json")
+        self.text_edit_json.setStyleSheet(u"QTextEdit {\n"
+"	background-color: rgb(27, 29, 35);\n"
+"	border-radius: 5px;\n"
+"	padding: 10px;\n"
+"}\n"
+"QPlainTextEdit:hover {\n"
+"	border: 2px solid rgb(64, 71, 88);\n"
+"}\n"
+"QPlainTextEdit:focus {\n"
+"	border: 2px solid rgb(91, 101, 124);\n"
+"}")
+        self.text_edit_json.setReadOnly(True)
+        self.grid_layout_json.addWidget(self.text_edit_json, 0, 0, 1, 1)
+        self.tabWidget.addTab(self.tab_json, "")
+        self.verticalLayout_6.addWidget(self.tabWidget)
+
+        # terminal tab
+        self.tab_terminal = QWidget()
+        self.tab_terminal.setObjectName(u"tab_terminal")
+        self.tab_terminal.setStyleSheet(u"""gridline-color: rgb(78, 201, 176);
 background-color: rgb(39, 44, 54);
 color: rgb(255,255,255);""")
 
-        self.gridLayout_4 = QGridLayout(self.tab_3)
+        self.gridLayout_4 = QGridLayout(self.tab_terminal)
         self.gridLayout_4.setSpacing(0)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.gridLayout_4.setContentsMargins(0, 0, 0, 0)
-        self.textEdit = QTextEdit(self.tab_3)
+        self.textEdit = QTextEdit(self.tab_terminal)
         self.textEdit.setObjectName(u"textEdit")
         font1 = QFont()
         font1.setFamily(u"Cascadia Code")
@@ -891,20 +920,15 @@ color: rgb(255,255,255);""")
         # icon1.addFile(u"icons/20x20/cil-terminal.png", QSize(),
         #               QIcon.Normal, QIcon.Off)
 
-        self.tabWidget.addTab(self.tab_3, "")
-
+        self.tabWidget.addTab(self.tab_terminal, "")
         self.verticalLayout_6.addWidget(self.tabWidget)
 
+        # splitter
         self.splitter.addWidget(self.frame)
-
         self.gridLayout.addWidget(self.splitter, 0, 0, 1, 1)
 
-
+        # make the first tab default as active
         self.tabWidget.setCurrentIndex(0)
-
-        #tabbed_up
-
-
 
 
         # self.verticalLayout_10 = QVBoxLayout(self.page_home)
@@ -1631,16 +1655,18 @@ color: rgb(255,255,255);""")
         self.tableWidget.setSortingEnabled(__sortingEnabled)
 
         self.label_credits.setText(QCoreApplication.translate("MainWindow", u"https://github.com/revobrera/StellarMap", None))
-        self.label_version.setText(QCoreApplication.translate("MainWindow", u"v0.1.1", None))
+        self.label_version.setText(QCoreApplication.translate("MainWindow", u"v0.1.2", None))
 
 
         self.label.setText(QCoreApplication.translate("MainWindow", u"Charts Area", None))
 
         self.label.setStyleSheet("background-color: #261D45")
 
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_1),
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_data),
                                   QCoreApplication.translate("MainWindow", u"DATA", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3),
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_json),
+                                  QCoreApplication.translate("MainWindow", u"JSON", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_terminal),
                                   QCoreApplication.translate("MainWindow", u"TERMINAL", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Open Blender", None))
         self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search Stellar Address", None))
