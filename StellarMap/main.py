@@ -88,7 +88,7 @@ class MainWindow(QMainWindow):
 
         ## PRINT ==> SYSTEM
         print('System: ' + platform.system())
-        print('Version: ' +platform.release())
+        print('Version: ' + platform.release())
 
         ########################################################################
         ## START - WINDOW ATTRIBUTES
