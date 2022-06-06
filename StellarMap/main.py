@@ -102,8 +102,8 @@ class MainWindow(QMainWindow):
         app_env = envHelpers()
 
         ## SET ==> WINDOW TITLE
-        self.setWindowTitle('StellarMap [Prototype] - v0.1.1')
-        UIFunctions.labelTitle(self, 'StellarMap [Prototype] - v0.1.1')
+        self.setWindowTitle('StellarMap [Prototype] - v0.1.2')
+        UIFunctions.labelTitle(self, 'StellarMap [Prototype] - v0.1.2')
 
         # set default message when user opens the app
         UIFunctions.labelDescription(self, 'Network (default): TESTNET')

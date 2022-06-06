@@ -1655,7 +1655,7 @@ color: rgb(255,255,255);""")
         self.tableWidget.setSortingEnabled(__sortingEnabled)
 
         self.label_credits.setText(QCoreApplication.translate("MainWindow", u"https://github.com/revobrera/StellarMap", None))
-        self.label_version.setText(QCoreApplication.translate("MainWindow", u"v0.1.1", None))
+        self.label_version.setText(QCoreApplication.translate("MainWindow", u"v0.1.2", None))
 
 
         self.label.setText(QCoreApplication.translate("MainWindow", u"Charts Area", None))
