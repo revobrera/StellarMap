@@ -889,6 +889,38 @@ color: rgb(255, 255, 255);""")#color: rgb(113, 72, 150)
         self.tabWidget.addTab(self.tab_json, "")
         self.verticalLayout_6.addWidget(self.tabWidget)
 
+        # toml tab
+        self.tab_toml = QWidget()
+        self.tab_toml.setObjectName(u"tab_toml")
+        self.grid_layout_toml = QGridLayout(self.tab_toml)
+        self.grid_layout_toml.setSpacing(0)
+        self.grid_layout_toml.setObjectName(u"grid_layout_toml")
+        self.grid_layout_toml.setContentsMargins(0, 0, 0, 0)
+        self.text_edit_toml = QTextEdit(self.tab_toml)
+        self.text_edit_toml.setObjectName(u"text_edit_toml")
+        font1 = QFont()
+        font1.setFamily(u"Cascadia Code")
+        font1.setPointSize(12)
+        font1.setBold(False)
+        font1.setItalic(False)
+        font1.setWeight(50)
+        self.text_edit_toml.setFont(font1)
+        self.text_edit_toml.setStyleSheet(u"QTextEdit {\n"
+"	background-color: rgb(27, 29, 35);\n"
+"	border-radius: 5px;\n"
+"	padding: 10px;\n"
+"}\n"
+"QPlainTextEdit:hover {\n"
+"	border: 2px solid rgb(64, 71, 88);\n"
+"}\n"
+"QPlainTextEdit:focus {\n"
+"	border: 2px solid rgb(91, 101, 124);\n"
+"}")
+        self.text_edit_toml.setReadOnly(True)
+        self.grid_layout_toml.addWidget(self.text_edit_toml, 0, 0, 1, 1)
+        self.tabWidget.addTab(self.tab_toml, "")
+        self.verticalLayout_6.addWidget(self.tabWidget)
+
         # terminal tab
         self.tab_terminal = QWidget()
         self.tab_terminal.setObjectName(u"tab_terminal")
@@ -1667,6 +1699,8 @@ color: rgb(255,255,255);""")
                                   QCoreApplication.translate("MainWindow", u"DATA", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_json),
                                   QCoreApplication.translate("MainWindow", u"JSON", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_toml),
+                                  QCoreApplication.translate("MainWindow", u"TOML", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_terminal),
                                   QCoreApplication.translate("MainWindow", u"TERMINAL", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Open Blender", None))

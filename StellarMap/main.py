@@ -329,9 +329,6 @@ class MainWindow(QMainWindow):
         # self.ui.text_edit_json.clear()
         self.ui.text_edit_json.append(stellar_account_url_link)
         self.ui.text_edit_json.acceptRichText()
-
-        # example data
-        # data = {"activity":"Plan a trip to another country","type":"recreational","participants":1,"price":0,"link":"","key":"5554727","accessibility":0}
         my_json_obj = json.loads(df_to_json)
         my_json_str_formatted = json.dumps(my_json_obj, indent=4)
         self.ui.text_edit_json.append(my_json_str_formatted)
