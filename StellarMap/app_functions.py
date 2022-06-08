@@ -1,6 +1,6 @@
 
 from main import *
-from main import MainWindow
+# from main import MainWindow
 
 
 class Functions(MainWindow):

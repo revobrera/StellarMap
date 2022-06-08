@@ -3,9 +3,9 @@
 import os
 from tabnanny import check
 
-from PyQt6.QtCore import QPropertyAnimation
-from PyQt6.QtGui import QColor, QFont
-from PyQt6.QtWidgets import (QGraphicsDropShadowEffect, QPushButton,
+from PySide2.QtCore import QPropertyAnimation
+from PySide2.QtGui import QColor, QFont
+from PySide2.QtWidgets import (QGraphicsDropShadowEffect, QPushButton,
                                QSizeGrip, QSizePolicy)
 
 from main import *
@@ -209,10 +209,6 @@ class UIFunctions(MainWindow):
 
             # call the function to walk up creator accounts
             self.customize_text('Searching on network: ' + os.getenv('BASE_SE_NETWORK_ACCOUNT'))
-
-            stellar_account_url_link = os.getenv('BASE_SE_NETWORK_ACCOUNT') + search_input
-
-            self.loading_dataset_to_ui(stellar_account_url_link)
         else:
             # print on ui and terminal then clear the search bar
             search_str = 'Searched input is NOT valid: ' + str(search_input)
