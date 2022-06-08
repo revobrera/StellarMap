@@ -7,9 +7,9 @@ from threading import Thread
 
 import pandas as pd
 from PIL.ImageQt import rgb
-from PySide2 import QtCore, QtGui, QtWidgets
-from PySide2.QtCore import QAbstractTableModel, QSize, Qt
-from PySide2.QtWidgets import QApplication, QMainWindow
+from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6.QtCore import QAbstractTableModel, QSize, Qt
+from PyQt6.QtWidgets import QApplication, QMainWindow
 
 # GUI FILE
 from app_modules import *
@@ -28,23 +28,23 @@ class PandasModel(QAbstractTableModel):
     def columnCount(self, parnet=None):
         return self._data.shape[1]
 
-    def data(self, index, role=Qt.DisplayRole):
+    def data(self, index, role=Qt.ItemDataRole.DisplayRole):
         if index.isValid():
 
-            if role == Qt.DisplayRole:
+            if role == Qt.ItemDataRole.DisplayRole:
                 return str(self._data.iloc[index.row(), index.column()])
 
             column_count = self.columnCount()
 
             for column in range(0, column_count):
 
-                if (index.column() == column and role == Qt.TextAlignmentRole):
-                    return Qt.AlignHCenter | Qt.AlignVCenter
+                if (index.column() == column and role == Qt.ItemDataRole.TextAlignmentRole):
+                    return Qt.AlignmentFlag.AlignHCente | Qt.AlignmentFlag.AlignVCenter
 
         return None
 
     def headerData(self, col, orientation, role):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+        if orientation == Qt.Orientation.Horizontal and role == Qt.ItemDataRole.DisplayRole:
             return self._data.columns[col]
         return None
 
@@ -52,7 +52,7 @@ class PandasModel(QAbstractTableModel):
         if not index.isValid():
             return False
 
-        if role != Qt.EditRole:
+        if role != Qt.ItemDataRole.EditRole:
             return False
 
         row = index.row()
@@ -72,11 +72,11 @@ class PandasModel(QAbstractTableModel):
 
     def flags(self, index):
         flags = super(self.__class__, self).flags(index)
-        flags |= Qt.ItemIsEditable
-        flags |= Qt.ItemIsSelectable
-        flags |= Qt.ItemIsEnabled
-        flags |= Qt.ItemIsDragEnabled
-        flags |= Qt.ItemIsDropEnabled
+        flags |= Qt.ItemFlag.ItemIsEditable
+        flags |= Qt.ItemFlag.ItemIsSelectable
+        flags |= Qt.ItemFlag.ItemIsEnabled
+        flags |= Qt.ItemFlag.ItemIsDragEnabled
+        flags |= Qt.ItemFlag.ItemIsDropEnabled
 
         return flags
 
