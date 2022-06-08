@@ -4,10 +4,11 @@ import os
 from tabnanny import check
 
 import requests
-from PySide2.QtCore import QPropertyAnimation
-from PySide2.QtGui import QColor, QFont
-from PySide2.QtWidgets import (QGraphicsDropShadowEffect, QPushButton,
-                               QSizeGrip, QSizePolicy)
+
+from PyQt6.QtCore import QPropertyAnimation
+from PyQt6.QtGui import QColor, QFont
+from PyQt6.QtWidgets import (QGraphicsDropShadowEffect, QPushButton,
+                             QSizeGrip, QSizePolicy)
 
 from main import *
 from settings.env import envHelpers
