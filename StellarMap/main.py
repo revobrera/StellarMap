@@ -1,4 +1,5 @@
 import datetime
+import json
 import platform
 import re
 import sys
@@ -6,9 +7,9 @@ from threading import Thread
 
 import pandas as pd
 from PIL.ImageQt import rgb
-from PySide2 import QtCore, QtGui, QtWidgets
-from PySide2.QtCore import QAbstractTableModel, QSize, Qt
-from PySide2.QtWidgets import QApplication, QMainWindow
+from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6.QtCore import QAbstractTableModel, QSize, Qt
+from PyQt6.QtWidgets import QApplication, QMainWindow
 
 # GUI FILE
 from app_modules import *
@@ -27,23 +28,23 @@ class PandasModel(QAbstractTableModel):
     def columnCount(self, parnet=None):
         return self._data.shape[1]
 
-    def data(self, index, role=Qt.DisplayRole):
+    def data(self, index, role=Qt.ItemDataRole.DisplayRole):
         if index.isValid():
 
-            if role == Qt.DisplayRole:
+            if role == Qt.ItemDataRole.DisplayRole:
                 return str(self._data.iloc[index.row(), index.column()])
 
             column_count = self.columnCount()
 
             for column in range(0, column_count):
 
-                if (index.column() == column and role == Qt.TextAlignmentRole):
-                    return Qt.AlignHCenter | Qt.AlignVCenter
+                if (index.column() == column and role == Qt.ItemDataRole.TextAlignmentRole):
+                    return Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter
 
         return None
 
     def headerData(self, col, orientation, role):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+        if orientation == Qt.Orientation.Horizontal and role == Qt.ItemDataRole.DisplayRole:
             return self._data.columns[col]
         return None
 
@@ -51,7 +52,7 @@ class PandasModel(QAbstractTableModel):
         if not index.isValid():
             return False
 
-        if role != Qt.EditRole:
+        if role != Qt.ItemDataRole.EditRole:
             return False
 
         row = index.row()
@@ -71,11 +72,11 @@ class PandasModel(QAbstractTableModel):
 
     def flags(self, index):
         flags = super(self.__class__, self).flags(index)
-        flags |= Qt.ItemIsEditable
-        flags |= Qt.ItemIsSelectable
-        flags |= Qt.ItemIsEnabled
-        flags |= Qt.ItemIsDragEnabled
-        flags |= Qt.ItemIsDropEnabled
+        flags |= Qt.ItemFlag.ItemIsEditable
+        flags |= Qt.ItemFlag.ItemIsSelectable
+        flags |= Qt.ItemFlag.ItemIsEnabled
+        flags |= Qt.ItemFlag.ItemIsDragEnabled
+        flags |= Qt.ItemFlag.ItemIsDropEnabled
 
         return flags
 
@@ -109,7 +110,7 @@ class MainWindow(QMainWindow):
         UIFunctions.labelDescription(self, 'Network (default): TESTNET')
 
         # user sets the network when selected from dropdown
-        self.ui.networkComboBox.activated[str].connect(lambda: UIFunctions.set_stellar_network(self))
+        #self.ui.networkComboBox.activated[str].connect(lambda: UIFunctions.set_stellar_network(self))
 
         # user clicks on the search button and calls search_creator_by_accounts()
         self.ui.btn_search.clicked.connect(lambda: UIFunctions.search_creator_by_accounts(self))
@@ -137,9 +138,9 @@ class MainWindow(QMainWindow):
         UIFunctions.addNewMenu(self, "Settings", "btn_widgets", "url(:/16x16/icons/16x16/cil-equalizer.png)", False)
         ## ==> END ##
 
-        t=Thread(target=self.load_df)
-        t.daemon = True
-        t.start()
+        # t1 = Thread(target=self.loading_df)
+        # t1.daemon = True
+        # t1.start()
 
 
         # for i in range(df.rowCount()):
@@ -305,20 +306,32 @@ class MainWindow(QMainWindow):
             for item in pair:
                 self.customize_text(str(item))
 
-    def load_df(self):
-        link = 'https://horizon-testnet.stellar.org/'
-
+    def loading_dataset_to_ui(self, stellar_account_url_link):
         self.customize_text('Initiated data loading from ')
-        self.customize_text(link)
+        self.customize_text(stellar_account_url_link)
 
-
-        df = pd.read_json(link)
-        del df['_links']
+        # GET data
+        df = pd.read_json(stellar_account_url_link)
+        # del df['_links']
         model = PandasModel(df)
         self.ui.tableView.setModel(model)
 
+        # dataframe output
         thread1=Thread(target=self.print_Response,args=(df.to_dict(),))
         thread1.start()
+
+        # json output
+        self.loading_json(stellar_account_url_link, df.to_json())
+
+
+    # json definitions
+    def loading_json(self, stellar_account_url_link, df_to_json):
+        # self.ui.text_edit_json.clear()
+        self.ui.text_edit_json.append(stellar_account_url_link)
+        self.ui.text_edit_json.acceptRichText()
+        my_json_obj = json.loads(df_to_json)
+        my_json_str_formatted = json.dumps(my_json_obj, indent=4)
+        self.ui.text_edit_json.append(my_json_str_formatted)
 
     ########################################################################
     ## MENUS ==> DYNAMIC MENUS FUNCTIONS

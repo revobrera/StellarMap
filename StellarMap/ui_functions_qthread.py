@@ -3,6 +3,7 @@
 import os
 from tabnanny import check
 
+import requests
 from PyQt6.QtCore import QPropertyAnimation
 from PyQt6.QtGui import QColor, QFont
 from PyQt6.QtWidgets import (QGraphicsDropShadowEffect, QPushButton,
@@ -10,6 +11,10 @@ from PyQt6.QtWidgets import (QGraphicsDropShadowEffect, QPushButton,
 
 from main import *
 from settings.env import envHelpers
+
+import threading
+from PyQt6.QtCore import (QCoreApplication, QObject, QRunnable, QThread,
+                          QThreadPool, pyqtSignal, pyqtSlot)
 
 ## ==> GLOBALS
 GLOBAL_STATE = 0
@@ -197,6 +202,24 @@ class UIFunctions(MainWindow):
 
         self.customize_text('The network name was switched to: ' + os.getenv('NETWORK'))
 
+    # STELLAR.EXPERT API
+    def set_account_from_stellar_expert(self, stellar_account):
+        self.stellar_account_url = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(stellar_account)
+        self.customize_text('Running QThread: ' + str(self.stellar_account_url))
+        # res = requests.get(self.stellar_account_url)
+        self.q_thread = GenericRequestsWorkerThread(self.stellar_account_url)
+        self.q_thread.start()
+        self.q_thread.requests_response.connect(self.get_account_from_stellar_expert)
+
+    def get_account_from_stellar_expert(self, requests_account):
+        # print info into terminal tab
+        self.customize_text("headers: %s | text: %s | json: %s" % (requests_account.headers,
+                                                                  requests_account.text,
+                                                                  requests_account.json))
+
+        # print into json tab
+        self.loading_json(self.stellar_account_url, requests_account.json)
+
     def search_creator_by_accounts(self):
         # get input text from search bar
         search_input = self.ui.line_edit_search_input.text()
@@ -210,16 +233,18 @@ class UIFunctions(MainWindow):
             # call the function to walk up creator accounts
             self.customize_text('Searching on network: ' + os.getenv('BASE_SE_NETWORK_ACCOUNT'))
 
-            stellar_account_url_link = os.getenv('BASE_SE_NETWORK_ACCOUNT') + search_input
+            # get https api endpoint for stellar account
+            stellar_account_url_link = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(search_input)
 
-            self.loading_dataset_to_ui(stellar_account_url_link)
+            # self.loading_dataset_to_ui(stellar_account_url_link)
+            self.set_account_from_stellar_expert(stellar_account_url_link)
+            # self.get_upstream_creator_accounts(stellar_account_url_link)
         else:
             # print on ui and terminal then clear the search bar
             search_str = 'Searched input is NOT valid: ' + str(search_input)
             UIFunctions.labelDescription(self, search_str)
             self.customize_text(search_str)
             self.ui.line_edit_search_input.clear
-
 
     ########################################################################
     ## END - GUI FUNCTIONS
@@ -277,3 +302,30 @@ class UIFunctions(MainWindow):
     ########################################################################
     ## END - GUI DEFINITIONS
     ########################################################################
+
+class GenericRequestsWorkerThread(QThread):
+    """
+    Generic HTTPS Requests Worker Thread
+    """
+    # the requests_response variable is the variable used to
+    # emit the requests response to send out a signal out of the thread
+    requests_response = pyqtSignal(requests.Response)
+
+    def __init__(self, initial_https_url_link):
+        super().__init__()
+        self.url_link = initial_https_url_link
+
+    @pyqtSlot()
+    def run(self):
+        # use requests
+        res = requests.get(self.url_link)
+
+        # emit the response of the requests from the thread
+        self.requests_response.emit(res)
+
+        # exit thread
+        return
+
+
+    def send_url_link(self, https_url_link):
+        self.url_link = https_url_link
