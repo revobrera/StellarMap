@@ -1,4 +1,5 @@
 import datetime
+import json
 import platform
 import re
 import sys
@@ -137,9 +138,9 @@ class MainWindow(QMainWindow):
         UIFunctions.addNewMenu(self, "Settings", "btn_widgets", "url(:/16x16/icons/16x16/cil-equalizer.png)", False)
         ## ==> END ##
 
-        t=Thread(target=self.load_df)
-        t.daemon = True
-        t.start()
+        # t1 = Thread(target=self.loading_df)
+        # t1.daemon = True
+        # t1.start()
 
 
         # for i in range(df.rowCount()):
@@ -305,20 +306,32 @@ class MainWindow(QMainWindow):
             for item in pair:
                 self.customize_text(str(item))
 
-    def load_df(self):
-        link = 'https://horizon-testnet.stellar.org/'
-
+    def loading_dataset_to_ui(self, stellar_account_url_link):
         self.customize_text('Initiated data loading from ')
-        self.customize_text(link)
+        self.customize_text(stellar_account_url_link)
 
-
-        df = pd.read_json(link)
-        del df['_links']
+        # GET data
+        df = pd.read_json(stellar_account_url_link)
+        # del df['_links']
         model = PandasModel(df)
         self.ui.tableView.setModel(model)
 
+        # dataframe output
         thread1=Thread(target=self.print_Response,args=(df.to_dict(),))
         thread1.start()
+
+        # json output
+        self.loading_json(stellar_account_url_link, df.to_json())
+
+
+    # json definitions
+    def loading_json(self, stellar_account_url_link, df_to_json):
+        # self.ui.text_edit_json.clear()
+        self.ui.text_edit_json.append(stellar_account_url_link)
+        self.ui.text_edit_json.acceptRichText()
+        my_json_obj = json.loads(df_to_json)
+        my_json_str_formatted = json.dumps(my_json_obj, indent=4)
+        self.ui.text_edit_json.append(my_json_str_formatted)
 
     ########################################################################
     ## MENUS ==> DYNAMIC MENUS FUNCTIONS
