@@ -28,7 +28,10 @@ class CustomClass():
         
         # run q_thread
         # self.set_account_from_stellar_expert(stellar_account)
-        self.get_creator_from_account(stellar_account)
+
+        # creator accounts upstream crawl
+        self.call_upstream_crawl_on_stellar_account(stellar_account)
+
     
 
     def set_account_from_stellar_expert(self, stellar_account, callback_fn):
@@ -52,48 +55,45 @@ class CustomClass():
                                                                                     requests_account.text,
                                                                                     requests_account.json()))
 
-    def thread_has_finished(self):
-        print("Thread has finished.")
-        print(
-            self.q_thread,
-            self.q_thread.isRunning(),
-            self.q_thread.isFinished(),
-        )
 
-    def get_creator_from_account(self, stellar_account):
-        self.set_account_from_stellar_expert(stellar_account, self.thread_has_finished)
+    def call_upstream_crawl_on_stellar_account(self, stellar_account):
+        print("QThread is on step 0: init call to crawl upstream")
+        self.call_step_1_make_https_request(stellar_account)
+
+    def call_step_1_make_https_request(self, stellar_account):
+        print("QThread is on step 1: making the HTTPS request")
+        self.set_account_from_stellar_expert(stellar_account, self.call_step_2_get_creator_from_account)
 
         # res = get_account_from_stellar_expert(stellar_account)
         # res = self.q_thread_response
-        
+
+    def call_step_2_get_creator_from_account(self):
+        print("QThread is on step 2: retreiving and parsing the creator account from HTTPS response")
 
         # json string
-        # res_string = json.dumps(self.q_thread_json)
-        print('printing q thread text')
-        # res_string = json.dumps(self.q_thread_json)
+        res_string = json.dumps(self.q_thread_json)
 
         # reading json into pdf
-        # df = pd.read_json(res_string)
+        df = pd.read_json(res_string)
 
-        # # return a new dataframe by dropping a
-        # # row 'yearly' from dataframe
-        # df_monthly = df.drop('yearly')
+        # return a new dataframe by dropping a
+        # row 'yearly' from dataframe
+        df_monthly = df.drop('yearly')
 
-        # # adding abbrev columns
-        # df_monthly['account_abbrev'] = str(df_monthly['account'])[-6:]
-        # df_monthly['creator_abbrev'] = str(df_monthly['creator'])[-6:]
+        # adding abbrev columns
+        df_monthly['account_abbrev'] = str(df_monthly['account'])[-6:]
+        df_monthly['creator_abbrev'] = str(df_monthly['creator'])[-6:]
 
-        # # adding stellar.expert url
-        # df_monthly['account_url'] = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(df_monthly['account'])
-        # df_monthly['creator_url'] = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(df_monthly['creator'])
+        # adding stellar.expert url
+        df_monthly['account_url'] = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(df_monthly['account'])
+        df_monthly['creator_url'] = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(df_monthly['creator'])
 
-        # # display(df_monthly)
+        # display(df_monthly)
         
-        # # return creator
-        # for index, row in df_monthly.iterrows():
-        #     print('Creator found: ' + str(row['creator']))
-        #     return row['creator']
-
+        # return creator
+        for index, row in df_monthly.iterrows():
+            print('Creator found: ' + str(row['creator']))
+            return row['creator']
 
 def main():
 
