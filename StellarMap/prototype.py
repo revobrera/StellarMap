@@ -22,6 +22,12 @@ class CustomClass():
         self.q_thread_home_domain = None
         self.q_thread_creator_account = None
         self.q_thread_xlm_balance = 0
+        self.q_thread_df_row = {
+            'Creator Account': [],
+            'Home Domain': [],
+            'XLM Balance': []
+        }
+        self.creator_df = pd.DataFrame(self.q_thread_df_row)
         
         self.initCall()
 
@@ -68,7 +74,7 @@ class CustomClass():
 
 
     def call_upstream_crawl_on_stellar_account(self, stellar_account):
-        # chaining algorithm to crawl upstream and identify creator accounts
+        # chaining method algorithm to crawl upstream and identify creator accounts
         print("QThread is on step 0: init call to crawl upstream")
         self.call_step_1_make_https_request(stellar_account)
 
@@ -96,8 +102,6 @@ class CustomClass():
         # adding stellar.expert url
         df_monthly['account_url'] = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(df_monthly['account'])
         df_monthly['creator_url'] = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(df_monthly['creator'])
-
-        # display(df_monthly)
         
         # return creator
         for index, row in df_monthly.iterrows():
@@ -169,6 +173,29 @@ class CustomClass():
             res_string = json.dumps(self.q_thread_json['balances'])
 
         self.q_thread_xlm_balance = res_string
+        self.call_step_7_append_creator_to_df(self.q_thread_creator_account, self.q_thread_home_domain, self.q_thread_xlm_balance)
+
+
+    def call_step_7_append_creator_to_df(self, creator_account, home_domain, xlm_balance):
+        print("QThread is on step 7: appending row dictionary row to pandas dataframe")
+        
+        print("creator: %s, home_domain: %s, XLM: %s" % (creator_account, home_domain, xlm_balance))
+
+        # the list to append as row
+        row_ls = [creator_account, home_domain, xlm_balance]
+
+        # create a pandas seris from the list
+        row_s = pd.Series(row_ls, index=self.creator_df.columns)
+
+        # append the row to the dataframe. [wARNING] .append would be deprecated soon, use .concat instead
+        self.creator_df.append(row_s, ignore_index=True)
+
+        print(self.creator_df)
+
+
+
+
+    
 
 def main():
 
