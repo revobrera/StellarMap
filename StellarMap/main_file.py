@@ -24,7 +24,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 
 #----------------------------------Importing UI files------------------------------------------
 
-from app_modules import *
+from .app_modules import *
 
 #----------------------------------------------------------------------------------------------
 
@@ -242,8 +242,6 @@ class MainWindow(QMainWindow):
         #-------------------------------------Load basic window structure----------------------------------
         UIFunctions.uiDefinitions(self)
         #--------------------------------------------------------------------------------------------------
-
-
 
 
         #-------------------------------Set table parameters like size-------------------------------------
@@ -485,7 +483,7 @@ class MainWindow(QMainWindow):
 
     #--------------------------------------------------------------------------------------------------
 
-def main():
+def runall():
     app = QApplication(sys.argv)
     QtGui.QFontDatabase.addApplicationFont('/StellarMap/fonts/Cascadia.ttf')
     window = MainWindow()

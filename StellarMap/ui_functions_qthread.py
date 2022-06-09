@@ -9,12 +9,11 @@ from PyQt5.QtGui import QColor, QFont
 from PyQt5.QtWidgets import (QGraphicsDropShadowEffect, QPushButton,
                                QSizeGrip, QSizePolicy)
 
-from main import *
-from settings.env import envHelpers
+from .main_file import *
+from .env import envHelpers
 
-import threading
-from PyQt5.QtCore import (QCoreApplication, QObject, QRunnable, QThread,
-                          QThreadPool, pyqtSignal, pyqtSlot)
+from PyQt5.QtCore import (QThread,
+                          pyqtSignal, pyqtSlot)
 
 ## ==> GLOBALS
 GLOBAL_STATE = 0

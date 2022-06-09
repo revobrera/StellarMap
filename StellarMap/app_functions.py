@@ -1,7 +1,7 @@
 
-from main import *
-from main import MainWindow
+# from .main_file import *
+# from .main_file import MainWindow
 
 
-class Functions(MainWindow):
-    pass
+# class Functions(MainWindow):
+#     pass

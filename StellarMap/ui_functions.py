@@ -2,15 +2,16 @@
 
 
 import os                                       #Performing operating system operations
-from PyQt5.QtCore import QPropertyAnimation     #PyQt5 libraries and sub-libaries
-from PyQt5.QtGui import QColor, QFont
+from PyQt5.QtCore import QPropertyAnimation,QSize,Qt     #PyQt5 libraries and sub-libaries
+from PyQt5.QtGui import QColor, QFont,QIcon
 from PyQt5.QtWidgets import (QGraphicsDropShadowEffect, QPushButton,
                                QSizeGrip, QSizePolicy)
+from PyQt5.QtWidgets import QMainWindow
+from PyQt5 import QtGui,QtCore
 
 
-from main import *                              #Main GUI file
-from settings.env import envHelpers             #Settings file
-
+from .env import envHelpers             #Settings file
+from .ui_styles import *
 #-------------------------------------Global variables-------------------------------------------
 GLOBAL_STATE = 0
 GLOBAL_TITLE_BAR = True
@@ -19,7 +20,7 @@ GLOBAL_TITLE_BAR = True
 ## ==> COUT INITIAL MENU
 count = 1
 
-class UIFunctions(MainWindow):
+class UIFunctions(QMainWindow):
 
     #---------------------------------Getting global variables---------------------------------------
     GLOBAL_STATE = 0
@@ -46,7 +47,6 @@ class UIFunctions(MainWindow):
             self.ui.btn_maximize_restore.setIcon(QtGui.QIcon(u"16x16/cil-window-restore.png"))
             self.ui.frame_top_btns.setStyleSheet("background-color: rgb(27, 29, 35)")
             self.ui.frame_size_grip.hide()
-
 
         #if window is in maximize state turn it back to normale
         else:
