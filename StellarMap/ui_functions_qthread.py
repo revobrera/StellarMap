@@ -4,17 +4,16 @@ import os
 from tabnanny import check
 
 import requests
-
-from PyQt6.QtCore import QPropertyAnimation
-from PyQt6.QtGui import QColor, QFont
-from PyQt6.QtWidgets import (QGraphicsDropShadowEffect, QPushButton,
-                             QSizeGrip, QSizePolicy)
+from PyQt5.QtCore import QPropertyAnimation
+from PyQt5.QtGui import QColor, QFont
+from PyQt5.QtWidgets import (QGraphicsDropShadowEffect, QPushButton,
+                               QSizeGrip, QSizePolicy)
 
 from main import *
 from settings.env import envHelpers
 
 import threading
-from PyQt6.QtCore import (QCoreApplication, QObject, QRunnable, QThread,
+from PyQt5.QtCore import (QCoreApplication, QObject, QRunnable, QThread,
                           QThreadPool, pyqtSignal, pyqtSlot)
 
 ## ==> GLOBALS
@@ -44,7 +43,7 @@ class UIFunctions(MainWindow):
             GLOBAL_STATE = 1
             self.ui.horizontalLayout.setContentsMargins(0, 0, 0, 0)
             self.ui.btn_maximize_restore.setToolTip("Restore")
-            self.ui.btn_maximize_restore.setIcon(QtGui.QIcon(u":/16x16/icons/16x16/cil-window-restore.png"))
+            self.ui.btn_maximize_restore.setIcon(QtGui.QIcon(u"16x16/cil-window-restore.png"))
             self.ui.frame_top_btns.setStyleSheet("background-color: rgb(27, 29, 35)")
             self.ui.frame_size_grip.hide()
         else:
@@ -53,7 +52,7 @@ class UIFunctions(MainWindow):
             self.resize(self.width()+1, self.height()+1)
             self.ui.horizontalLayout.setContentsMargins(10, 10, 10, 10)
             self.ui.btn_maximize_restore.setToolTip("Maximize")
-            self.ui.btn_maximize_restore.setIcon(QtGui.QIcon(u":/16x16/icons/16x16/cil-window-maximize.png"))
+            self.ui.btn_maximize_restore.setIcon(QtGui.QIcon(u"16x16/cil-window-maximize.png"))
             self.ui.frame_top_btns.setStyleSheet("background-color: rgba(27, 29, 35, 200)")
             self.ui.frame_size_grip.show()
 
