@@ -6,7 +6,6 @@ import pandas as pd
 from PyQt6.QtWidgets import QApplication, QWidget
 
 from helpers import GenericRequestsWorkerThread
-
 from settings.env import envHelpers
 
 
@@ -41,8 +40,6 @@ class CustomClass():
         # creator accounts upstream crawl
         self.call_upstream_crawl_on_stellar_account(stellar_account)
 
-    
-
     def set_account_from_api(self, stellar_account, callback_fn, api_name):
         print(api_name)
         if api_name == 'stellar_expert':
@@ -67,10 +64,10 @@ class CustomClass():
         self.q_thread_json = requests_account.json()
 
         # debug print
-        print("\n status_code: %d \n| headers: %s \n| text: %s \n| json: %s \n" % (requests_account.status_code,
-                                                                                    requests_account.headers,
-                                                                                    requests_account.text,
-                                                                                    requests_account.json()))
+        # print("\n status_code: %d \n| headers: %s \n| text: %s \n| json: %s \n" % (requests_account.status_code,
+        #                                                                             requests_account.headers,
+        #                                                                             requests_account.text,
+        #                                                                             requests_account.json()))
 
 
     def call_upstream_crawl_on_stellar_account(self, stellar_account):
@@ -109,7 +106,10 @@ class CustomClass():
             # return row['creator']
             # use the creator account to check the home_domain element exists from the horizon api
             self.q_thread_creator_account = row['creator']
-            self.set_account_from_api(row['creator'], self.call_step_3_check_home_domain_element_exists, 'horizon')
+            if pd.isna(row['creator']):
+                self.call_step_8_concluding_upstream_crawl()
+            else:
+                self.set_account_from_api(row['creator'], self.call_step_3_check_home_domain_element_exists, 'horizon')
 
 
     def call_step_3_check_home_domain_element_exists(self):
@@ -184,18 +184,23 @@ class CustomClass():
         # the list to append as row
         row_ls = [creator_account, home_domain, xlm_balance]
 
-        # create a pandas seris from the list
+        # create a pandas series from the list
         row_s = pd.Series(row_ls, index=self.creator_df.columns)
 
         # append the row to the dataframe. [wARNING] .append would be deprecated soon, use .concat instead
-        self.creator_df.append(row_s, ignore_index=True)
+        self.creator_df = self.creator_df.append(row_s, ignore_index=True)
 
         print(self.creator_df)
 
-
-
-
+        # recursive call
+        if pd.isna(creator_account) or self.q_thread_status_code == 'status_code: 200':
+            self.call_step_8_concluding_upstream_crawl()
+        else:
+            self.call_upstream_crawl_on_stellar_account(creator_account)
     
+    def call_step_8_concluding_upstream_crawl(self):
+        print("QThread is on step 8: completed chaining algorithm to crawl upstream successfully")
+
 
 def main():
 
