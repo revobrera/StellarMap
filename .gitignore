@@ -127,7 +127,6 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-.pyqt6_env
 
 # Spyder project settings
 .spyderproject
