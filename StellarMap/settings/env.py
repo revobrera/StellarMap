@@ -9,7 +9,7 @@ class envHelpers:
     def set_testnet_network(self):
         os.environ['DEBUG'] = 'True'
         os.environ['NETWORK'] = 'testnet'
-        os.environ['BASE_HORIZON'] = 'horizon-testnet.stellar.org'
+        os.environ['BASE_HORIZON'] = 'https://horizon-testnet.stellar.org'
         self.set_base_network()
 
     def set_public_network(self):

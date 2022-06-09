@@ -19,37 +19,48 @@ class CustomClass():
         self.q_thread_text = None
         self.q_thread_status_code = None
         self.q_thread_json = None
+        self.q_thread_home_domain = None
+        self.q_thread_creator_account = None
+        self.q_thread_xlm_balance = 0
         
         self.initCall()
 
     def initCall(self):
         # stellar_account
-        stellar_account = 'GAECL2FYQAMR2YFVCMOBBAIOOZGEAER6HART2MW7JWGNRDN53Q3S2WOB'
+        stellar_account = 'GAIH3ULLFQ4DGSECF2AR555KZ4KNDGEKN4AFI4SU2M7B43MGK3QJZNSR'
         
         # run q_thread
-        # self.set_account_from_stellar_expert(stellar_account)
+        # self.set_account_from_api(stellar_account)
 
         # creator accounts upstream crawl
         self.call_upstream_crawl_on_stellar_account(stellar_account)
 
     
 
-    def set_account_from_stellar_expert(self, stellar_account, callback_fn):
+    def set_account_from_api(self, stellar_account, callback_fn, api_name):
+        print(api_name)
+        if api_name == 'stellar_expert':
+            # stellar.expert
             self.stellar_account_url = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(stellar_account)
-            print('Running QThread: ' + str(self.stellar_account_url))
-            # res = requests.get(self.stellar_account_url)
-            self.q_thread = GenericRequestsWorkerThread(self.stellar_account_url, callback_fn)
-            self.q_thread.start()
-            self.q_thread.requests_response.connect(self.get_account_from_stellar_expert)
+        else:
+            # horizon
+            self.stellar_account_url = os.getenv('BASE_HORIZON_ACCOUNT') + str(stellar_account)
+
+        print('Running QThread: ' + str(self.stellar_account_url))
+        # res = requests.get(self.stellar_account_url)
+        self.q_thread = GenericRequestsWorkerThread(self.stellar_account_url, callback_fn)
+        self.q_thread.start()
+        self.q_thread.requests_response.connect(self.get_account_from_api)
             
 
-    def get_account_from_stellar_expert(self, requests_account):
+    def get_account_from_api(self, requests_account):
         # print info into terminal tab
         self.q_thread_headers = requests_account.headers
         self.q_thread_text = requests_account.text
         self.q_thread_status_code = requests_account.status_code
         self.q_thread_json = requests_account.json()
 
+        # debug print
         print("\n status_code: %d \n| headers: %s \n| text: %s \n| json: %s \n" % (requests_account.status_code,
                                                                                     requests_account.headers,
                                                                                     requests_account.text,
@@ -57,15 +68,13 @@ class CustomClass():
 
 
     def call_upstream_crawl_on_stellar_account(self, stellar_account):
+        # chaining algorithm to crawl upstream and identify creator accounts
         print("QThread is on step 0: init call to crawl upstream")
         self.call_step_1_make_https_request(stellar_account)
 
     def call_step_1_make_https_request(self, stellar_account):
         print("QThread is on step 1: making the HTTPS request")
-        self.set_account_from_stellar_expert(stellar_account, self.call_step_2_get_creator_from_account)
-
-        # res = get_account_from_stellar_expert(stellar_account)
-        # res = self.q_thread_response
+        self.set_account_from_api(stellar_account, self.call_step_2_get_creator_from_account, 'stellar_expert')
 
     def call_step_2_get_creator_from_account(self):
         print("QThread is on step 2: retreiving and parsing the creator account from HTTPS response")
@@ -93,7 +102,73 @@ class CustomClass():
         # return creator
         for index, row in df_monthly.iterrows():
             print('Creator found: ' + str(row['creator']))
-            return row['creator']
+            # return row['creator']
+            # use the creator account to check the home_domain element exists from the horizon api
+            self.q_thread_creator_account = row['creator']
+            self.set_account_from_api(row['creator'], self.call_step_3_check_home_domain_element_exists, 'horizon')
+
+
+    def call_step_3_check_home_domain_element_exists(self):
+        print("QThread is on step 3: checking if home_domain element of creator account exists from horizon api")
+        self.q_thread_home_domain = ''
+        # print(get_pretty_json_string(response_horizon.json()))
+        if 'home_domain' in self.q_thread_json:
+            # json string
+            self.q_thread_home_domain = json.dumps(self.q_thread_json['home_domain'])
+        else:
+            self.q_thread_home_domain = 'No home_domain element found.'
+            
+        print('home_domain: ' + self.q_thread_home_domain)
+        self.set_account_from_api(self.q_thread_creator_account, self.call_step_4_get_home_domain_from_api, 'horizon')
+
+    def call_step_4_get_home_domain_from_api(self):
+        print("QThread is on step 4: retrieving home_domain element from creator account from horizon api")
+        self.set_account_from_api(self.q_thread_creator_account, self.call_step_5_check_xlm_balance_element_exists, 'horizon')
+
+    def call_step_5_check_xlm_balance_element_exists(self):
+        print("QThread is on step 5: checking if xlm_balance element of creator account exists from horizon api")
+        self.q_thread_xlm_balance = 0
+
+        if 'balances' not in self.q_thread_json:
+            self.q_thread_xlm_balance = 0
+        else:
+            self.set_account_from_api(self.q_thread_creator_account, self.call_step_6_get_xlm_balance_from_api, 'horizon')
+        
+    def call_step_6_get_xlm_balance_from_api(self):
+        # print(get_pretty_json_string(res))
+        # print(res['home_domain'])
+        # print(res['last_modified_time'])
+        # print(res['_links']['data']['href'])
+        print("QThread is on step 6: retrieving balances element from creator account from horizon api")
+
+        # check if balances is a list or a string
+        res_string = ''
+        if isinstance(self.q_thread_json['balances'], list):
+            # iterate through list of assets
+            for item in self.q_thread_json['balances']:
+                # print(item)
+                # check if balance element exists
+                if 'asset_code' in item:
+                    # print('inside an item with asset_code')
+                    if item['asset_code'] == 'XLM':
+                        res_string = item['balance']
+                        # print('found XLM')
+                        # print(item['balance'])
+                elif 'asset_type':
+                    # print('inside an item with asset_type')
+                    if item['asset_type'] == 'native':
+                        res_string = item['balance']
+                        # print('found XLM')
+                        # print(item['balance'])
+                else:
+                    # print('Element not found')
+                    res_string = '0'
+        
+        else:
+            # json string
+            res_string = json.dumps(self.q_thread_json['balances'])
+
+        self.q_thread_xlm_balance = res_string
 
 def main():
 
