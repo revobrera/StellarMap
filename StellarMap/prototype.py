@@ -39,7 +39,7 @@ class CustomClass():
         stellar_account = 'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5'
 
         # public
-        # stellar_account = 'GCQTGZQQ5G4PTM2GL7CDIFKUBIPEC52BROAQIAPW53XBRJVN6ZJVTG6V'
+        # stellar_account = 'GCQTGZQQ5G4PTM2GL7CDIFKUBIPEC52BROAQIAPW53XBRJVN6ZJVTG6V' # contains a creator account that was deleted
         
         # run q_thread
         # self.set_account_from_api(stellar_account)
@@ -61,6 +61,9 @@ class CustomClass():
         self.q_thread = GenericRequestsWorkerThread(self.stellar_account_url, callback_fn)
         self.q_thread.start()
         self.q_thread.requests_response.connect(self.get_account_from_api)
+
+        # adding time delay to avoid rate limiting from stellar api service
+        time.sleep(1)
             
 
     def get_account_from_api(self, requests_account):
@@ -143,6 +146,7 @@ class CustomClass():
 
         if 'balances' not in self.q_thread_json:
             self.q_thread_xlm_balance = 0
+            self.call_step_6_get_xlm_balance_from_api()
         else:
             self.set_account_from_api(self.q_thread_creator_account, self.call_step_6_get_xlm_balance_from_api, 'horizon')
         
@@ -153,37 +157,44 @@ class CustomClass():
         # print(res['_links']['data']['href'])
         print("QThread is on step 6: retrieving balances element from creator account from horizon api")
 
-        # check if balances is a list or a string
-        res_string = ''
-        if isinstance(self.q_thread_json['balances'], list):
-            # iterate through list of assets
-            for item in self.q_thread_json['balances']:
-                # print(item)
-                # check if balance element exists
-                if 'asset_code' in item:
-                    # print('inside an item with asset_code')
-                    if item['asset_code'] == 'XLM':
-                        res_string = item['balance']
-                        # print('found XLM')
-                        # print(item['balance'])
-                elif 'asset_type':
-                    # print('inside an item with asset_type')
-                    if item['asset_type'] == 'native':
-                        res_string = item['balance']
-                        # print('found XLM')
-                        # print(item['balance'])
-                else:
-                    # print('Element not found')
-                    res_string = '0'
-        
-        else:
-            # json string
-            res_string = json.dumps(self.q_thread_json['balances'])
+        try:
+            # check if balances is a list or a string
+            res_string = ''
+            if isinstance(self.q_thread_json['balances'], list):
+                # iterate through list of assets
+                for item in self.q_thread_json['balances']:
+                    # print(item)
+                    # check if balance element exists
+                    if 'asset_code' in item:
+                        # print('inside an item with asset_code')
+                        if item['asset_code'] == 'XLM':
+                            res_string = item['balance']
+                            # print('found XLM')
+                            # print(item['balance'])
+                    elif 'asset_type':
+                        # print('inside an item with asset_type')
+                        if item['asset_type'] == 'native':
+                            res_string = item['balance']
+                            # print('found XLM')
+                            # print(item['balance'])
+                    else:
+                        # print('Element not found')
+                        res_string = '0'
+            
+            else:
+                # json string
+                res_string = json.dumps(self.q_thread_json['balances'])
 
-        self.q_thread_xlm_balance = res_string
+            self.q_thread_xlm_balance = res_string
+            
+        except:
+            # if resource is not available - most likely an account (deleted)
+            self.q_thread_xlm_balance = 'Account (deleted)'
+
         self.call_step_7_append_creator_to_df(self.q_thread_creator_account,
-                                              self.q_thread_home_domain,
-                                              self.q_thread_xlm_balance)
+                                                self.q_thread_home_domain,
+                                                self.q_thread_xlm_balance)
+
 
 
     def call_step_7_append_creator_to_df(self, creator_account, home_domain, xlm_balance):
@@ -204,8 +215,8 @@ class CustomClass():
         # append the row to the dataframe. [wARNING] .append would be deprecated soon, use .concat instead
         self.creator_df = self.creator_df.append(row_s, ignore_index=True)
 
-        # delay/sleep for 3 seconds
-        time.sleep(3)
+        # real time outupt df to data tab
+        print(self.creator_df)
 
         # recursive call
         if pd.isna(creator_account) or self.q_thread_status_code == 'status_code: 200':
