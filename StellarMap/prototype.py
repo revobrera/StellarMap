@@ -215,6 +215,12 @@ class CustomClass():
     
     def call_step_8_concluding_upstream_crawl(self):
         print("QThread is on step 8: completed chaining algorithm to crawl upstream successfully")
+
+        # display max rows
+        pd.set_option('display.max_rows', None)
+        
+        # adjust max column widths
+        pd.set_option('display.max_colwidth', 0)
         print(self.creator_df)
 
 
