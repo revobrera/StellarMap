@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import time
 
 import pandas as pd
 from PyQt6.QtWidgets import QApplication, QWidget
@@ -24,15 +25,21 @@ class CustomClass():
         self.q_thread_df_row = {
             'Creator Account': [],
             'Home Domain': [],
-            'XLM Balance': []
+            'XLM Balance': [],
+            'Stellar.Expert': []
         }
         self.creator_df = pd.DataFrame(self.q_thread_df_row)
         
         self.initCall()
 
     def initCall(self):
-        # stellar_account
-        stellar_account = 'GAIH3ULLFQ4DGSECF2AR555KZ4KNDGEKN4AFI4SU2M7B43MGK3QJZNSR'
+        
+        # tesnet
+        # stellar_account = 'GAIH3ULLFQ4DGSECF2AR555KZ4KNDGEKN4AFI4SU2M7B43MGK3QJZNSR'
+        stellar_account = 'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5'
+
+        # public
+        # stellar_account = 'GCQTGZQQ5G4PTM2GL7CDIFKUBIPEC52BROAQIAPW53XBRJVN6ZJVTG6V'
         
         # run q_thread
         # self.set_account_from_api(stellar_account)
@@ -41,7 +48,7 @@ class CustomClass():
         self.call_upstream_crawl_on_stellar_account(stellar_account)
 
     def set_account_from_api(self, stellar_account, callback_fn, api_name):
-        print(api_name)
+        # print(api_name)
         if api_name == 'stellar_expert':
             # stellar.expert
             self.stellar_account_url = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(stellar_account)
@@ -72,6 +79,7 @@ class CustomClass():
 
     def call_upstream_crawl_on_stellar_account(self, stellar_account):
         # chaining method algorithm to crawl upstream and identify creator accounts
+        print("#################################################")
         print("QThread is on step 0: init call to crawl upstream")
         self.call_step_1_make_https_request(stellar_account)
 
@@ -173,16 +181,22 @@ class CustomClass():
             res_string = json.dumps(self.q_thread_json['balances'])
 
         self.q_thread_xlm_balance = res_string
-        self.call_step_7_append_creator_to_df(self.q_thread_creator_account, self.q_thread_home_domain, self.q_thread_xlm_balance)
+        self.call_step_7_append_creator_to_df(self.q_thread_creator_account,
+                                              self.q_thread_home_domain,
+                                              self.q_thread_xlm_balance)
 
 
     def call_step_7_append_creator_to_df(self, creator_account, home_domain, xlm_balance):
         print("QThread is on step 7: appending row dictionary row to pandas dataframe")
         
-        print("creator: %s, home_domain: %s, XLM: %s" % (creator_account, home_domain, xlm_balance))
+        # print("creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (creator_account, home_domain,
+        #                                                                      xlm_balance, stellar_expert_url))
+
+        # stellar.expert site
+        stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(creator_account)
 
         # the list to append as row
-        row_ls = [creator_account, home_domain, xlm_balance]
+        row_ls = [creator_account, home_domain, xlm_balance, stellar_expert_site_url]
 
         # create a pandas series from the list
         row_s = pd.Series(row_ls, index=self.creator_df.columns)
@@ -190,7 +204,8 @@ class CustomClass():
         # append the row to the dataframe. [wARNING] .append would be deprecated soon, use .concat instead
         self.creator_df = self.creator_df.append(row_s, ignore_index=True)
 
-        print(self.creator_df)
+        # delay/sleep for 3 seconds
+        time.sleep(3)
 
         # recursive call
         if pd.isna(creator_account) or self.q_thread_status_code == 'status_code: 200':
@@ -200,6 +215,7 @@ class CustomClass():
     
     def call_step_8_concluding_upstream_crawl(self):
         print("QThread is on step 8: completed chaining algorithm to crawl upstream successfully")
+        print(self.creator_df)
 
 
 def main():
