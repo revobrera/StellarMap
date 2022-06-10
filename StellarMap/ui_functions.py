@@ -9,10 +9,15 @@ from PyQt5.QtWidgets import (QGraphicsDropShadowEffect, QPushButton,
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import QtGui,QtCore
 
+try:
+    from .env import envHelpers             #Settings file
+    from .ui_styles import *
+    from .icons_rc import *
 
-from .env import envHelpers             #Settings file
-from .ui_styles import *
-from .icons_rc import *
+except:
+    from env import envHelpers             #Settings file
+    from ui_styles import *
+    from icons_rc import *
 
 #-------------------------------------Global variables-------------------------------------------
 GLOBAL_STATE = 0
