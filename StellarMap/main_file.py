@@ -23,8 +23,13 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 
 #----------------------------------Importing UI files------------------------------------------
 
-from .app_modules import *
-from .icons_rc import *
+try:
+    from .app_modules import *
+    from .icons_rc import *
+
+except:
+    from app_modules import *
+    from icons_rc import *
 #----------------------------------------------------------------------------------------------
 
 
