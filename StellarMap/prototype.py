@@ -4,7 +4,7 @@ import sys
 import time
 
 import pandas as pd
-from PyQt6.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication, QWidget
 
 from helpers import GenericRequestsWorkerThread
 from settings.env import envHelpers
