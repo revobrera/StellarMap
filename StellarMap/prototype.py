@@ -4,7 +4,7 @@ import sys
 import time
 
 import pandas as pd
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication, QWidget # PyQt5 will not work with this QThread algorithm
 
 from helpers import GenericRequestsWorkerThread
 from settings.env import envHelpers

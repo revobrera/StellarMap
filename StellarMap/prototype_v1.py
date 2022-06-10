@@ -36,10 +36,10 @@ class CustomClass():
         
         # tesnet
         # stellar_account = 'GAIH3ULLFQ4DGSECF2AR555KZ4KNDGEKN4AFI4SU2M7B43MGK3QJZNSR'
-        stellar_account = 'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5'
+        # stellar_account = 'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5'
 
         # public
-        # stellar_account = 'GCQTGZQQ5G4PTM2GL7CDIFKUBIPEC52BROAQIAPW53XBRJVN6ZJVTG6V' # contains a creator account that was deleted
+        stellar_account = 'GCQTGZQQ5G4PTM2GL7CDIFKUBIPEC52BROAQIAPW53XBRJVN6ZJVTG6V' # contains a creator account that was deleted
         
         # run q_thread
         # self.set_account_from_api(stellar_account)
@@ -63,7 +63,7 @@ class CustomClass():
         self.q_thread.requests_response.connect(self.get_account_from_api)
 
         # adding time delay to avoid rate limiting from stellar api service
-        time.sleep(1)
+        # time.sleep(1)
             
 
     def get_account_from_api(self, requests_account):
@@ -118,7 +118,7 @@ class CustomClass():
             # use the creator account to check the home_domain element exists from the horizon api
             self.q_thread_creator_account = row['creator']
             if pd.isna(row['creator']):
-                self.call_step_8_concluding_upstream_crawl()
+                self.call_step_7_concluding_upstream_crawl()
             else:
                 self.set_account_from_api(row['creator'], self.call_step_3_check_home_domain_element_exists, 'horizon')
 
@@ -134,28 +134,24 @@ class CustomClass():
             self.q_thread_home_domain = 'No home_domain element found.'
             
         print('home_domain: ' + self.q_thread_home_domain)
-        self.set_account_from_api(self.q_thread_creator_account, self.call_step_4_get_home_domain_from_api, 'horizon')
+        self.call_step_4_check_xlm_balance_element_exists()
 
-    def call_step_4_get_home_domain_from_api(self):
-        print("QThread is on step 4: retrieving home_domain element from creator account from horizon api")
-        self.set_account_from_api(self.q_thread_creator_account, self.call_step_5_check_xlm_balance_element_exists, 'horizon')
-
-    def call_step_5_check_xlm_balance_element_exists(self):
-        print("QThread is on step 5: checking if xlm_balance element of creator account exists from horizon api")
+    def call_step_4_check_xlm_balance_element_exists(self):
+        print("QThread is on step 4: checking if xlm_balance element of creator account exists from horizon api")
         self.q_thread_xlm_balance = 0
 
         if 'balances' not in self.q_thread_json:
             self.q_thread_xlm_balance = 0
-            self.call_step_6_get_xlm_balance_from_api()
+            self.call_step_5_get_xlm_balance_from_api()
         else:
-            self.set_account_from_api(self.q_thread_creator_account, self.call_step_6_get_xlm_balance_from_api, 'horizon')
+            self.call_step_5_get_xlm_balance_from_api()
         
-    def call_step_6_get_xlm_balance_from_api(self):
+    def call_step_5_get_xlm_balance_from_api(self):
         # print(get_pretty_json_string(res))
         # print(res['home_domain'])
         # print(res['last_modified_time'])
         # print(res['_links']['data']['href'])
-        print("QThread is on step 6: retrieving balances element from creator account from horizon api")
+        print("QThread is on step 5: retrieving balances element from creator account from horizon api")
 
         try:
             # check if balances is a list or a string
@@ -191,13 +187,13 @@ class CustomClass():
             # if resource is not available - most likely an account (deleted)
             self.q_thread_xlm_balance = 'Account (deleted)'
 
-        self.call_step_7_append_creator_to_df(self.q_thread_creator_account,
+        self.call_step_6_append_creator_to_df(self.q_thread_creator_account,
                                                 self.q_thread_home_domain,
                                                 self.q_thread_xlm_balance)
 
 
-    def call_step_7_append_creator_to_df(self, creator_account, home_domain, xlm_balance):
-        print("QThread is on step 7: appending row dictionary row to pandas dataframe")
+    def call_step_6_append_creator_to_df(self, creator_account, home_domain, xlm_balance):
+        print("QThread is on step 6: appending row dictionary row to pandas dataframe")
         
         # print("creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (creator_account, home_domain,
         #                                                                      xlm_balance, stellar_expert_url))
@@ -219,12 +215,12 @@ class CustomClass():
 
         # recursive call
         if pd.isna(creator_account) or self.q_thread_status_code == 'status_code: 200':
-            self.call_step_8_concluding_upstream_crawl()
+            self.call_step_7_concluding_upstream_crawl()
         else:
             self.call_upstream_crawl_on_stellar_account(creator_account)
     
-    def call_step_8_concluding_upstream_crawl(self):
-        print("QThread is on step 8: completed chaining algorithm to crawl upstream successfully")
+    def call_step_7_concluding_upstream_crawl(self):
+        print("QThread is on step 7: completed chaining algorithm to crawl upstream successfully")
 
         # display max rows
         pd.set_option('display.max_rows', None)
@@ -232,6 +228,9 @@ class CustomClass():
         # adjust max column widths
         pd.set_option('display.max_colwidth', 0)
         print(self.creator_df)
+
+        print("done!")
+        print("#################################################")
 
 
 def main():
@@ -248,8 +247,8 @@ def main():
     # set env
     # import settings file
     app_env = envHelpers()
-    # app_env.set_public_network()
-    app_env.set_testnet_network()
+    app_env.set_public_network()
+    # app_env.set_testnet_network()
 
     
     cm = CustomClass()
