@@ -54,11 +54,21 @@ class GenericRequestsWorkerThread(QThread):
 
     @pyqtSlot()
     def run(self):
-        # use requests
-        res = requests.get(self.url_link)
+        try:
+            # use requests
+            res = requests.get(self.url_link, timeout=3)
 
-        # emit the response of the requests from the thread
-        self.requests_response.emit(res)
+            # emit the response of the requests from the thread
+            self.requests_response.emit(res)
+            res.raise_for_status()
+        except requests.exceptions.HTTPError as errh:
+            print ("HTTP(S) Error:",errh)
+        except requests.exceptions.ConnectionError as errc:
+            print ("Error Connecting:",errc)
+        except requests.exceptions.Timeout as errt:
+            print ("Timeout Error:",errt)
+        except requests.exceptions.RequestException as err:
+            print ("Uh Oh: Something broke... ",err)
 
         # exit thread
         return
