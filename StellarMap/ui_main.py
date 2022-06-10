@@ -5,7 +5,7 @@ from PyQt5.QtGui import (QBrush, QColor,QFont,
                         QIcon,
                            QPalette)
 from PyQt5.QtWidgets import *
-
+from .icons_rc import *
 
 
 class Ui_MainWindow(object):
@@ -237,7 +237,7 @@ class Ui_MainWindow(object):
 "QCheckBox::indicator:checked {\n"
 "    background: 3px solid rgb(52, 59, 72);\n"
 "	border: 3px solid rgb(52, 59, 72);	\n"
-"	background-image: url(16x16/cil-check-alt.png);\n"
+"	background-image: url(:/16x16/16x16/cil-check-alt.png);\n"
 "}\n"
 "\n"
 "/* RADIO BUTTON */\n"
@@ -277,7 +277,7 @@ class Ui_MainWindow(object):
 "	border-left-style: solid;\n"
 "	border-top-right-radius: 3px;\n"
 "	border-bottom-right-radius: 3px;	\n"
-"	background-image: url(16x16/cil-arrow-bottom.png);\n"
+"	background-image: url(:/16x16/16x16/cil-arrow-bottom.png);\n"
 "	background-position: center;\n"
 "	background-repeat: no-reperat;\n"
 " }\n"
@@ -374,7 +374,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.btn_toggle_menu.sizePolicy().hasHeightForWidth())
         self.btn_toggle_menu.setSizePolicy(sizePolicy)
         self.btn_toggle_menu.setStyleSheet(u"QPushButton {\n"
-"	background-image: url(24x24/cil-menu.png);\n"
+"	background-image: url(:/24x24/24x24/cil-menu.png);\n"
 "	background-position: center;\n"
 "	background-repeat: no-reperat;\n"
 "	border: none;\n"
@@ -432,7 +432,7 @@ class Ui_MainWindow(object):
         self.frame_icon_top_bar.setObjectName(u"frame_icon_top_bar")
         self.frame_icon_top_bar.setMaximumSize(QSize(30, 30))
         self.frame_icon_top_bar.setStyleSheet(u"background: transparent;\n"
-"background-image: url(16x16/cil-terminal.png);\n"
+"background-image: url(:/16x16/16x16/cil-terminal.png);\n"
 "background-position: center;\n"
 "background-repeat: no-repeat;\n"
 "")
@@ -493,7 +493,7 @@ class Ui_MainWindow(object):
 "	background-color: #00FF9C;\n"
 "}")
         icon = QIcon()
-        icon.addFile(u"16x16/cil-window-minimize.png", QSize(),QIcon.Mode.Normal,QIcon.State.Off)
+        icon.addFile(u":/16x16/16x16/cil-window-minimize.png", QSize(),QIcon.Mode.Normal,QIcon.State.Off)
         self.btn_minimize.setIcon(icon)
 
         self.horizontalLayout_5.addWidget(self.btn_minimize)
@@ -515,7 +515,7 @@ class Ui_MainWindow(object):
 "	background-color: #00FF9C;\n"
 "}")
         icon1 = QIcon()
-        icon1.addFile(u"16x16/cil-window-maximize.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon1.addFile(u":/16x16/16x16/cil-window-maximize.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.btn_maximize_restore.setIcon(icon1)
 
         self.horizontalLayout_5.addWidget(self.btn_maximize_restore)
@@ -537,7 +537,7 @@ class Ui_MainWindow(object):
 "	background-color: #00FF9C;\n"
 "}")
         icon2 = QIcon()
-        icon2.addFile(u"16x16/cil-x.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon2.addFile(u":/16x16/16x16/cil-x.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.btn_close.setIcon(icon2)
 
         self.horizontalLayout_5.addWidget(self.btn_close)
@@ -774,7 +774,7 @@ color: rgb(113, 72, 150);""")
 "	border: 2px solid #3f2c70;\n"
 "}")
         # icon = QIcon()
-        # icon.addFile(u"16x16/cil-magnifying-glass.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        # icon.addFile(u":/16x16/16x16/cil-magnifying-glass.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         # self.pushButton.setIcon(icon)
         self.btn_search.setText('Search')
 
@@ -852,7 +852,7 @@ color: rgb(255, 255, 255);""")#color: rgb(113, 72, 150)
         self.gridLayout_3.addWidget(self.tableView, 0, 0, 1, 1)
 
         # icon = QIcon()
-        # icon.addFile(u"icons/20x20/cil-list.png", QSize(),
+        # icon.addFile(u":/20x20/20x20/cil-list.png", QSize(),
         #              QIcon.Mode.Normal, QIcon.State.Off)
         self.tabWidget.addTab(self.tab_data, "")
 
@@ -949,7 +949,7 @@ color: rgb(255,255,255);""")
         self.gridLayout_4.addWidget(self.textEdit, 0, 0, 1, 1)
 
         # icon1 = QIcon()
-        # icon1.addFile(u"icons/20x20/cil-terminal.png", QSize(),
+        # icon1.addFile(u":/20x20/20x20/cil-terminal.png", QSize(),
         #               QIcon.Mode.Normal, QIcon.State.Off)
 
         self.tabWidget.addTab(self.tab_terminal, "")
@@ -1124,7 +1124,7 @@ color: rgb(255,255,255);""")
 "	border: 2px solid #00FF9C;\n"
 "}")
         icon3 = QIcon()
-        icon3.addFile(u"16x16/cil-folder-open.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon3.addFile(u":/16x16/16x16/cil-folder-open.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.pushButton.setIcon(icon3)
 
         self.gridLayout.addWidget(self.pushButton, 0, 1, 1, 1)
@@ -1307,7 +1307,7 @@ color: rgb(255,255,255);""")
 "	background-color: rgb(52, 58, 71);\n"
 "}")
         icon4 = QIcon()
-        icon4.addFile(u"16x16/cil-link.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon4.addFile(u":/16x16/16x16/cil-link.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.commandLinkButton.setIcon(icon4)
 
         self.gridLayout_2.addWidget(self.commandLinkButton, 1, 6, 1, 1)
@@ -1556,7 +1556,7 @@ color: rgb(255,255,255);""")
         self.frame_size_grip.setObjectName(u"frame_size_grip")
         self.frame_size_grip.setMaximumSize(QSize(20, 20))
         self.frame_size_grip.setStyleSheet(u"QSizeGrip {\n"
-"	background-image: url(16x16/cil-size-grip.png);\n"
+"	background-image: url(:/16x16/16x16/cil-size-grip.png);\n"
 "	background-position: center;\n"
 "	background-repeat: no-reperat;\n"
 "}")

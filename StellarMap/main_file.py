@@ -12,7 +12,6 @@ import pandas as pd             #   For managing and handling text data
 from PIL.ImageQt import rgb     #   For managing and handling image data
 
 
-
 #-----------------------------PyQt5 libraries and extensions----------------------------------
 
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -25,7 +24,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 #----------------------------------Importing UI files------------------------------------------
 
 from .app_modules import *
-
+from .icons_rc import *
 #----------------------------------------------------------------------------------------------
 
 
@@ -200,10 +199,10 @@ class MainWindow(QMainWindow):
         self.ui.stackedWidget.setMinimumWidth(20)
         
         #Adding home menu
-        UIFunctions.addNewMenu(self, "HOME", "btn_home", "url(16x16/cil-home.png)", True)
+        UIFunctions.addNewMenu(self, "HOME", "btn_home", "url(:/16x16/16x16/cil-home.png)", True)
         
         #Adding settings menu
-        UIFunctions.addNewMenu(self, "Settings", "btn_widgets", "url(16x16/cil-equalizer.png)", False)
+        UIFunctions.addNewMenu(self, "Settings", "btn_widgets", "url(:/16x16/16x16/cil-equalizer.png)", False)
         #--------------------------------------------------------------------------------------------------
 
 
