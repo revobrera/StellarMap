@@ -75,3 +75,26 @@ class GenericRequestsWorkerThread(QThread):
 
     def send_url_link(self, https_url_link):
         self.url_link = https_url_link
+
+
+class GenericWorkerThread(QThread):
+    """
+    Generic Worker Thread To Call Functions
+    """
+    return_result = pyqtSignal(str)
+
+    def __init__(self, run_fn, slotOnFinished=None):
+        super().__init__()
+        # run the function
+        self.started.connect(run_fn)
+
+        # callback
+        if slotOnFinished:
+            self.finished.connect(slotOnFinished)
+
+    @pyqtSlot()
+    def run(self):
+        print("GenericWorkerThread")
+
+        # exit thread
+
