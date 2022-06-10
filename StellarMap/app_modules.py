@@ -9,9 +9,6 @@ try:
     # IMPORT FUNCTIONS
     from .ui_functions import *
 
-    ## ==> APP FUNCTIONS
-    from .app_functions import *
-
 except:
     # GUI FILE
     from ui_main import Ui_MainWindow
@@ -21,6 +18,3 @@ except:
 
     # IMPORT FUNCTIONS
     from ui_functions import *
-
-    ## ==> APP FUNCTIONS
-    from app_functions import *
