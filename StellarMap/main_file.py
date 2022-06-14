@@ -1,6 +1,5 @@
 #Importing libraries for 
 
-
 import datetime                 #   Managing date and time
 import json                     #   Handling json format files
 import platform                 #   Getting system information
@@ -10,6 +9,7 @@ from threading import Thread    #   To handle multiple threads (processes) at on
 
 import pandas as pd             #   For managing and handling text data
 from PIL.ImageQt import rgb     #   For managing and handling image data
+
 
 
 #-----------------------------PyQt5 libraries and extensions----------------------------------
@@ -26,10 +26,13 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 try:
     from .app_modules import *
     from .icons_rc import *
+    from .settings.env import EnvHelpers
 
 except:
     from app_modules import *
     from icons_rc import *
+    from settings.env import EnvHelpers
+
 #----------------------------------------------------------------------------------------------
 
 
@@ -323,7 +326,7 @@ class MainWindow(QMainWindow):
             return False                                            #Otherwise return false
 
     
-    def customize_text(self,item):
+    def customize_text(self, item):
         """
         This function sets style properties of search bar
         """
@@ -350,7 +353,7 @@ class MainWindow(QMainWindow):
         color_format = self.ui.textEdit.currentCharFormat()
         color_format.setForeground(color)
         self.ui.textEdit.setCurrentCharFormat(color_format)
-        self.ui.textEdit.insertPlainText(item)
+        self.ui.textEdit.append(item)
         #-------------------------------------------------------------------------------------------------
         pass
 
@@ -393,20 +396,37 @@ class MainWindow(QMainWindow):
 
 
         # json output
-        self.loading_json(stellar_account_url_link, df.to_json())
+        self.loading_json_old(stellar_account_url_link, df.to_json())
 
 
-    def loading_json(self, stellar_account_url_link, df_to_json):
+    def loading_json_old(self, stellar_account_url_link, df_to_json):
         """
         This function loads data that was stored in json file
         """
 
-        self.ui.text_edit_json.append(stellar_account_url_link)
+        # self.ui.text_edit_json.append(stellar_account_url_link)
         self.ui.text_edit_json.acceptRichText()
         my_json_obj = json.loads(df_to_json)
         my_json_str_formatted = json.dumps(my_json_obj, indent=4)
         self.ui.text_edit_json.append(my_json_str_formatted)
 
+    def loading_df(self, q_thread_output_df):
+        # put fetched data in a model
+        q_model = PandasModel(q_thread_output_df)
+        self.ui.tableView.setModel(q_model)
+
+    def loading_json(self, q_thread_output_json):
+        self.ui.text_edit_json.acceptRichText()
+        my_json_obj = json.loads(q_thread_output_json)
+        my_json_str_formatted = json.dumps(my_json_obj, indent=4)
+        self.ui.text_edit_json.append(my_json_str_formatted)
+
+    def loading_toml(self, out_toml):
+        pass
+
+    def loading_terminal(self, q_thread_output_terminal):
+        # display q thread text into terminal
+        self.customize_text(q_thread_output_terminal)
 
     def Button(self):
         """
@@ -491,4 +511,8 @@ def runall():
     app = QApplication(sys.argv)
     QtGui.QFontDatabase.addApplicationFont('/StellarMap/fonts/Cascadia.ttf')
     window = MainWindow()
-    sys.exit(app.exec_())   
+
+    e = EnvHelpers()
+    e.set_testnet_network()
+
+    sys.exit(app.exec_())

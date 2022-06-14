@@ -7,7 +7,7 @@ import pandas as pd
 from PyQt5.QtWidgets import QApplication, QWidget # PyQt5 will not work with this QThread algorithm
 
 from helpers import GenericRequestsWorkerThread
-from settings.env import envHelpers
+from settings.env import EnvHelpers
 
 
 class CustomClass():
@@ -247,7 +247,7 @@ def main():
 
     # set env
     # import settings file
-    app_env = envHelpers()
+    app_env = EnvHelpers()
     # app_env.set_public_network()
     app_env.set_testnet_network()
 
