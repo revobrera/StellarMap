@@ -122,18 +122,26 @@ class CreatedByAccounts():
         self.q_terminal.wait()
 
     def call_description_fn(self, q_thread_output_description):
+        # d_description = DisplayOutput()
+        # d_description
         # UIFunctions.labelDescription(self, q_thread_output_description)
         print(q_thread_output_description)
 
     def call_df_fn(self, q_thread_output_df):
+        # do_df = DisplayOutput()
+        # do_df.loading_df(q_thread_output_df)
         # MainWindow.loading_df(self, q_thread_output_df)
         print(q_thread_output_df)
 
     def call_json_fn(self, q_thread_output_json):
+        # do_json = DisplayOutput()
+        # do_json.loading_json(q_thread_output_json)
         # MainWindow.loading_json(self, q_thread_output_json)
         print(q_thread_output_json)
     
     def call_terminal_fn(self, q_thread_output_terminal):
+        # do_terminal = DisplayOutput()
+        # do_terminal.loading_terminal(q_thread_output_terminal)
         # MainWindow.customize_text(self, q_thread_output_terminal)
         print(q_thread_output_terminal)
 

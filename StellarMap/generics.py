@@ -61,7 +61,7 @@ class GenericDescriptionOutputWorkerThread(QThread):
 
     @pyqtSlot()
     def run(self):
-        # emit the response of the requests from the thread
+        # emit the description from the thread
         self.q_thread_output_description.emit(self.label_description)
 
         # exit thread
