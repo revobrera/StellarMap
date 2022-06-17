@@ -185,8 +185,6 @@ class GenericGetHomeDomainWorkerThread(QThread):
     @pyqtSlot()
     def run(self):
 
-        print("INPUT JSON IS")
-        print(self.input_json)
         home_domain_str = ""
         if 'home_domain' in self.input_json:
             # json string

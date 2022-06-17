@@ -558,10 +558,13 @@ class MainWindow(QMainWindow):
 
         self.q_thread_creator_account = q_thread_creator_account
 
-        if pd.isna(self.q_thread_creator_account):
-            self.call_step_7_concluding_upstream_crawl()
-        else:
+    
+        # check if valid stellar address
+        if self.is_valid_stellar_address(self.q_thread_creator_account):
             self.set_account_from_api(self.q_thread_creator_account, self.call_step_3_check_home_domain_element_exists, 'horizon')
+        else:
+            # captures nan value
+            self.call_step_7_concluding_upstream_crawl()
 
 
     def call_step_3_check_home_domain_element_exists(self):
