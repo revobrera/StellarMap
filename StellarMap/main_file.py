@@ -551,6 +551,7 @@ class MainWindow(QMainWindow):
                                                                                      requests_account.text,
                                                                                      requests_account.json())
 
+        self.output_json(json.dumps(requests_account.json()))
         self.output_terminal(d_str)
 
 
