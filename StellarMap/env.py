@@ -1,7 +1,7 @@
 import os
 
 
-class envHelpers:
+class EnvHelpers:
     def __init__(self):
         # set init environment variables
         self.set_testnet_network()
