@@ -21,7 +21,8 @@ try:
                            GenericJSONOutputWorkerThread,
                            GenericRequestsWorkerThread,
                            GenericTerminalOutputWorkerThread,
-                           GenericGetCreatorWorkerThread)
+                           GenericGetCreatorWorkerThread,
+                           GenericGetHomeDomainWorkerThread)
     from .icons_rc import *
     from .ui_styles import *
 
@@ -32,7 +33,8 @@ except:
                           GenericJSONOutputWorkerThread,
                           GenericRequestsWorkerThread,
                           GenericTerminalOutputWorkerThread,
-                          GenericGetCreatorWorkerThread)
+                          GenericGetCreatorWorkerThread,
+                          GenericGetHomeDomainWorkerThread)
     from icons_rc import *
     from ui_styles import *
 

@@ -416,7 +416,7 @@ class MainWindow(QMainWindow):
         self.q_description = GenericDescriptionOutputWorkerThread(input_txt)
         self.q_description.q_thread_output_description.connect(self.call_description_fn)
         self.q_description.start()
-        time.sleep(1)
+        time.sleep(0.17)
         # self.q_description.finished(self.stop_description_thread)
 
     def output_df(self, input_df):
@@ -424,7 +424,7 @@ class MainWindow(QMainWindow):
         self.q_df = GenericDataframeOutputWorkerThread(input_df)
         self.q_df.q_thread_output_df.connect(self.call_df_fn)
         self.q_df.start()
-        time.sleep(1)
+        time.sleep(0.17)
         # self.q_df.finished(self.stop_df_thread)
 
     def output_json(self, input_json_txt):
@@ -432,7 +432,7 @@ class MainWindow(QMainWindow):
         self.q_json = GenericJSONOutputWorkerThread(input_json_txt)
         self.q_json.q_thread_output_json.connect(self.call_json_fn)
         self.q_json.start()
-        time.sleep(1)
+        time.sleep(0.17)
         # self.q_json.finished(self.stop_json_thread)
 
     def output_terminal(self, input_txt):
@@ -440,7 +440,7 @@ class MainWindow(QMainWindow):
         self.q_terminal = GenericTerminalOutputWorkerThread(input_txt)
         self.q_terminal.q_thread_output_terminal.connect(self.call_terminal_fn)
         self.q_terminal.start()
-        time.sleep(1)
+        time.sleep(0.17)
         # self.q_terminal.finished(self.stop_terminal_thread)
 
     def stop_description_thread(self):
@@ -555,27 +555,25 @@ class MainWindow(QMainWindow):
     def call_step_2_2_check_creator_account(self, q_thread_creator_account):
         d_str = "QThread is on step 2.2: checking creator account"
         self.output_terminal(d_str)
-        if pd.isna(q_thread_creator_account):
+
+        self.q_thread_creator_account = q_thread_creator_account
+
+        if pd.isna(self.q_thread_creator_account):
             self.call_step_7_concluding_upstream_crawl()
         else:
-            self.set_account_from_api(q_thread_creator_account, self.call_step_3_check_home_domain_element_exists, 'horizon')
+            self.set_account_from_api(self.q_thread_creator_account, self.call_step_3_check_home_domain_element_exists, 'horizon')
 
 
     def call_step_3_check_home_domain_element_exists(self):
         d_str = "QThread is on step 3: checking if home_domain element of creator account exists from horizon api"
         self.output_terminal(d_str)
         
-        self.q_thread_home_domain = ''
-        # print(get_pretty_json_string(response_horizon.json()))
-        if 'home_domain' in self.q_thread_json:
-            # json string
-            self.q_thread_home_domain = json.dumps(self.q_thread_json['home_domain'])
+        self.q_thread_hd = GenericGetHomeDomainWorkerThread(self.q_thread_json)
+        self.q_thread_hd.start()
+        self.q_thread_hd.q_thread_home_domain.connect(self.call_step_3_1_print_hd)
 
-            # full json
-            print(json.dumps(self.q_thread_json))
-        else:
-            self.q_thread_home_domain = 'No home_domain element found.'
-            
+    def call_step_3_1_print_hd(self, q_thread_home_domain):
+        self.q_thread_home_domain = q_thread_home_domain
         d_str = "home_domain: " + str(self.q_thread_home_domain)
         self.output_terminal(d_str)
 

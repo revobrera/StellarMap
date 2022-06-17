@@ -164,8 +164,38 @@ class GenericGetCreatorWorkerThread(QThread):
             print('Creator found: ' + str(row['creator']))
             # return row['creator']
             # use the creator account to check the home_domain element exists from the horizon api
-            self.q_thread_creator_account.emit(row['creator'])
+            self.q_thread_creator_account.emit(str(row['creator']))
             
+
+        # exit thread
+        return
+
+
+class GenericGetHomeDomainWorkerThread(QThread):
+    """
+    Generic Worker QThread To Retrieve Home Domain
+    """
+    q_thread_home_domain = pyqtSignal(str)
+
+    def __init__(self, input_json):
+        super().__init__()
+
+        self.input_json = input_json
+
+    @pyqtSlot()
+    def run(self):
+
+        print("INPUT JSON IS")
+        print(self.input_json)
+        home_domain_str = ""
+        if 'home_domain' in self.input_json:
+            # json string
+            home_domain_str = json.dumps(self.input_json['home_domain'])
+
+        else:
+            home_domain_str = 'No home_domain element found.'
+
+        self.q_thread_home_domain.emit(home_domain_str)
 
         # exit thread
         return
