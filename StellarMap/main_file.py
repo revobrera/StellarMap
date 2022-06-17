@@ -491,7 +491,7 @@ class MainWindow(QMainWindow):
             self.stellar_account_url = os.getenv('BASE_HORIZON_ACCOUNT') + str(stellar_account)
 
         progress_str = 'Running QThread: ' + str(self.stellar_account_url)
-        print(progress_str)
+        self.output_terminal(progress_str)
 
         # res = requests.get(self.stellar_account_url)
         self.q_thread = GenericRequestsWorkerThread(self.stellar_account_url, callback_fn)
@@ -542,35 +542,23 @@ class MainWindow(QMainWindow):
         d_str = "QThread is on step 2: retreiving and parsing the creator account from HTTPS response"
         self.output_terminal(d_str)
 
-        # json string
-        res_string = json.dumps(self.q_thread_json)
-        print(res_string)
+        self.q_thread_creator = GenericGetCreatorWorkerThread(self.q_thread_json)
+        self.q_thread_creator.start()
+        self.q_thread_creator.q_thread_output_json.connect(self.call_step_2_1_print_output_json)
+        self.q_thread_creator.q_thread_creator_account.connect(self.call_step_2_2_check_creator_account)
 
-        # reading json into df
-        df = pd.read_json(res_string)
+    def call_step_2_1_print_output_json(self, q_thread_output_json):
+        d_str = "QThread is on step 2.1: printing out json"
+        self.output_terminal(d_str)
+        self.output_json(q_thread_output_json)
 
-        # return a new dataframe by dropping a
-        # row 'yearly' from dataframe
-        df_monthly = df.drop('yearly')
-
-        # adding abbrev columns
-        df_monthly['account_abbrev'] = str(df_monthly['account'])[-6:]
-        df_monthly['creator_abbrev'] = str(df_monthly['creator'])[-6:]
-
-        # adding stellar.expert url
-        df_monthly['account_url'] = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(df_monthly['account'])
-        df_monthly['creator_url'] = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(df_monthly['creator'])
-        
-        # return creator
-        for index, row in df_monthly.iterrows():
-            print('Creator found: ' + str(row['creator']))
-            # return row['creator']
-            # use the creator account to check the home_domain element exists from the horizon api
-            self.q_thread_creator_account = row['creator']
-            if pd.isna(row['creator']):
-                self.call_step_7_concluding_upstream_crawl()
-            else:
-                self.set_account_from_api(row['creator'], self.call_step_3_check_home_domain_element_exists, 'horizon')
+    def call_step_2_2_check_creator_account(self, q_thread_creator_account):
+        d_str = "QThread is on step 2.2: checking creator account"
+        self.output_terminal(d_str)
+        if pd.isna(q_thread_creator_account):
+            self.call_step_7_concluding_upstream_crawl()
+        else:
+            self.set_account_from_api(q_thread_creator_account, self.call_step_3_check_home_domain_element_exists, 'horizon')
 
 
     def call_step_3_check_home_domain_element_exists(self):

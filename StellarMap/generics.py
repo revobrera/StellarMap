@@ -1,12 +1,14 @@
+import json
+import os
+
 import pandas as pd
 import requests
 from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot
-import json
 
 
 class GenericRequestsWorkerThread(QThread):
     """
-    Generic HTTPS Requests Worker Thread
+    Generic HTTPS Requests Worker QThread
     """
     # the requests_response variable is the variable used to
     # emit the requests response to send out a signal out of the thread
@@ -48,7 +50,7 @@ class GenericRequestsWorkerThread(QThread):
 
 class GenericDescriptionOutputWorkerThread(QThread):
     """
-    Generic Output Worker Thread To Display Output Description
+    Generic Output Worker QThread To Display Output Description
     """
 
     q_thread_output_description = pyqtSignal(str)
@@ -70,7 +72,7 @@ class GenericDescriptionOutputWorkerThread(QThread):
 
 class GenericDataframeOutputWorkerThread(QThread):
     """
-    Generic Output Worker Thread To Display Output Dataframe
+    Generic Output Worker QThread To Display Output Dataframe
     """
     q_thread_output_df = pyqtSignal(pd.DataFrame)
 
@@ -88,7 +90,7 @@ class GenericDataframeOutputWorkerThread(QThread):
 
 class GenericJSONOutputWorkerThread(QThread):
     """
-    Generic Output Worker Thread To Display Output JSON
+    Generic Output Worker QThread To Display Output JSON
     """
     q_thread_output_json = pyqtSignal(str)
 
@@ -106,7 +108,7 @@ class GenericJSONOutputWorkerThread(QThread):
 
 class GenericTerminalOutputWorkerThread(QThread):
     """
-    Generic Output Worker Thread To Display Output Terminal
+    Generic Output Worker QThread To Display Output Terminal
     """
     q_thread_output_terminal = pyqtSignal(str)
 
@@ -118,6 +120,52 @@ class GenericTerminalOutputWorkerThread(QThread):
     @pyqtSlot()
     def run(self):
         self.q_thread_output_terminal.emit(self.input_terminal)
+
+        # exit thread
+        return
+
+
+class GenericGetCreatorWorkerThread(QThread):
+    """
+    Generic Worker QThread To Retrieve Creator Account
+    """
+    q_thread_output_json = pyqtSignal(str)
+    q_thread_creator_account = pyqtSignal(str)
+    
+
+    def __init__(self, input_json):
+        super().__init__()
+
+        self.input_json = input_json
+
+    @pyqtSlot()
+    def run(self):
+        # json string
+        res_string = json.dumps(self.input_json)
+        self.q_thread_output_json.emit(res_string)
+
+        # reading json into df
+        df = pd.read_json(res_string)
+
+        # return a new dataframe by dropping a
+        # row 'yearly' from dataframe
+        df_monthly = df.drop('yearly')
+
+        # adding abbrev columns
+        df_monthly['account_abbrev'] = str(df_monthly['account'])[-6:]
+        df_monthly['creator_abbrev'] = str(df_monthly['creator'])[-6:]
+
+        # adding stellar.expert url
+        df_monthly['account_url'] = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(df_monthly['account'])
+        df_monthly['creator_url'] = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(df_monthly['creator'])
+
+        # return creator
+        for index, row in df_monthly.iterrows():
+            print('Creator found: ' + str(row['creator']))
+            # return row['creator']
+            # use the creator account to check the home_domain element exists from the horizon api
+            self.q_thread_creator_account.emit(row['creator'])
+            
 
         # exit thread
         return
