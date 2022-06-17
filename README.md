@@ -2,8 +2,6 @@
 StellarMap is an open source, cross-platform PyQt desktop app used to explore the Stellar blockchain network.
 The app makes API calls via **horizon.stellar.org** and **api.stellar.expert**
 
-<img src="/docs/source/images/stellarmap_prototype_v0_1_2.PNG" width="100%" title="StellarMap">
-
 ## What can it do?
 
  - identify upstream creator accounts given a Stellar account
