@@ -408,6 +408,11 @@ class MainWindow(QMainWindow):
         # run q_thread
         # self.set_account_from_api(stellar_account)
 
+        # reset outputs
+        self.output_df("clear", reset_val=True)
+        self.output_json("clear", reset_val=True)
+        self.output_terminal("clear", reset_val=True)
+
         # creator accounts upstream crawl
         self.call_upstream_crawl_on_stellar_account(stellar_account)
 
@@ -419,26 +424,44 @@ class MainWindow(QMainWindow):
         time.sleep(0.17)
         # self.q_description.finished(self.stop_description_thread)
 
-    def output_df(self, input_df):
+    def output_df(self, input_df, reset_val=None):
         # create instance of GenericDataframeOutputWorkerThread
+
+        if reset_val:
+            # reset df in self
+            self.q_thread_df_row = {
+                'Creator Account': [],
+                'Home Domain': [],
+                'XLM Balance': [],
+                'Stellar.Expert': []
+            }
+            self.creator_df = pd.DataFrame(self.q_thread_df_row)
+            input_df = self.creator_df
+        
         self.q_df = GenericDataframeOutputWorkerThread(input_df)
         self.q_df.q_thread_output_df.connect(self.call_df_fn)
         self.q_df.start()
         time.sleep(0.17)
         # self.q_df.finished(self.stop_df_thread)
 
-    def output_json(self, input_json_txt):
+    def output_json(self, input_json_txt, reset_val=None):
         # create instance of GenericJSONOutputWorkerThread
         self.q_json = GenericJSONOutputWorkerThread(input_json_txt)
-        self.q_json.q_thread_output_json.connect(self.call_json_fn)
+        if reset_val:
+            self.q_json.q_thread_output_json.connect(self.reset_json_fn)
+        else:
+            self.q_json.q_thread_output_json.connect(self.call_json_fn)
         self.q_json.start()
         time.sleep(0.17)
         # self.q_json.finished(self.stop_json_thread)
 
-    def output_terminal(self, input_txt):
+    def output_terminal(self, input_txt, reset_val=None):
         # create instace of GenericTerminalOutputWorkerThread
         self.q_terminal = GenericTerminalOutputWorkerThread(input_txt)
-        self.q_terminal.q_thread_output_terminal.connect(self.call_terminal_fn)
+        if reset_val:
+            self.q_terminal.q_thread_output_terminal.connect(self.reset_terminal_fn)
+        else:
+            self.q_terminal.q_thread_output_terminal.connect(self.call_terminal_fn)
         self.q_terminal.start()
         time.sleep(0.17)
         # self.q_terminal.finished(self.stop_terminal_thread)
@@ -480,6 +503,12 @@ class MainWindow(QMainWindow):
     
     def call_terminal_fn(self, q_thread_output_terminal):
         self.ui.textEdit.append(q_thread_output_terminal)
+
+    def reset_json_fn(self):
+        self.ui.text_edit_json.clear()
+
+    def reset_terminal_fn(self):
+        self.ui.textEdit.clear()
 
     def set_account_from_api(self, stellar_account, callback_fn, api_name):
         # print(api_name)
