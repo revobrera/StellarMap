@@ -77,8 +77,8 @@ class MainWindow(QMainWindow):
         #--------------------------------------------------------------------------------------------------
 
         #--------------------------------Set names of window-----------------------------------------------
-        self.setWindowTitle('StellarMap [Prototype] - v0.1.2')
-        UIFunctions.labelTitle(self, 'StellarMap [Prototype] - v0.1.2')
+        self.setWindowTitle('StellarMap [Prototype] - v0.2.0')
+        UIFunctions.labelTitle(self, 'StellarMap [Prototype] - v0.2.0')
         #--------------------------------------------------------------------------------------------------
 
 
