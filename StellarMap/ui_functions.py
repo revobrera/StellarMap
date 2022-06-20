@@ -22,7 +22,8 @@ try:
                            GenericRequestsWorkerThread,
                            GenericTerminalOutputWorkerThread,
                            GenericGetCreatorWorkerThread,
-                           GenericGetHomeDomainWorkerThread)
+                           GenericGetHomeDomainWorkerThread,
+                           GenericGetXLMBalanceWorkerThread)
     from .icons_rc import *
     from .ui_styles import *
 
@@ -34,7 +35,8 @@ except:
                           GenericRequestsWorkerThread,
                           GenericTerminalOutputWorkerThread,
                           GenericGetCreatorWorkerThread,
-                          GenericGetHomeDomainWorkerThread)
+                          GenericGetHomeDomainWorkerThread,
+                          GenericGetXLMBalanceWorkerThread)
     from icons_rc import *
     from ui_styles import *
 

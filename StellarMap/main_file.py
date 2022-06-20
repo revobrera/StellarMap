@@ -572,7 +572,6 @@ class MainWindow(QMainWindow):
         self.output_terminal(d_str)
 
         if self.q_thread_status_code == 404:
-            # if requests_account.status_code == 404:
             # gracefully handling 404 errors and preventing the app to crash
             d_str_status = "ERROR: It is likely that you are searching for a stellar account that is no longer found on this network: " + str(os.getenv("NETWORK"))
 
@@ -599,7 +598,6 @@ class MainWindow(QMainWindow):
 
         self.q_thread_creator_account = q_thread_creator_account
 
-    
         # check if valid stellar address
         if self.is_valid_stellar_address(self.q_thread_creator_account):
             self.set_account_from_api(self.q_thread_creator_account, self.call_step_3_check_home_domain_element_exists, 'horizon')
@@ -643,39 +641,14 @@ class MainWindow(QMainWindow):
         d_str = "QThread is on step 5: retrieving balances element from creator account from horizon api"
         self.output_terminal(d_str)
 
-        try:
-            # check if balances is a list or a string
-            res_string = ''
-            if isinstance(self.q_thread_json['balances'], list):
-                # iterate through list of assets
-                for item in self.q_thread_json['balances']:
-                    # print(item)
-                    # check if balance element exists
-                    if 'asset_code' in item:
-                        # print('inside an item with asset_code')
-                        if item['asset_code'] == 'XLM':
-                            res_string = item['balance']
-                            # print('found XLM')
-                            # print(item['balance'])
-                    elif 'asset_type':
-                        # print('inside an item with asset_type')
-                        if item['asset_type'] == 'native':
-                            res_string = item['balance']
-                            # print('found XLM')
-                            # print(item['balance'])
-                    else:
-                        # print('Element not found')
-                        res_string = '0'
-            
-            else:
-                # json string
-                res_string = json.dumps(self.q_thread_json['balances'])
+        self.q_thread_xlm = GenericGetXLMBalanceWorkerThread(self.q_thread_json)
+        self.q_thread_xlm.start()
+        self.q_thread_xlm.q_thread_xlm_balance.connect(self.call_step_5_1_print_xlm_balance)
 
-            self.q_thread_xlm_balance = res_string
-            
-        except:
-            # if resource is not available - most likely an account (deleted)
-            self.q_thread_xlm_balance = 'Account (deleted)'
+    def call_step_5_1_print_xlm_balance(self, q_thread_xlm_balance):
+        self.q_thread_xlm_balance = q_thread_xlm_balance
+        d_str = "XLM Balance: " + str(self.q_thread_xlm_balance)
+        self.output_terminal(d_str)
 
         self.call_step_6_append_creator_to_df(self.q_thread_creator_account,
                                                 self.q_thread_home_domain,

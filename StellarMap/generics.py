@@ -197,3 +197,54 @@ class GenericGetHomeDomainWorkerThread(QThread):
 
         # exit thread
         return
+
+
+class GenericGetXLMBalanceWorkerThread(QThread):
+    """
+    Generic Worker QThread To Retrieve XLM Balance
+    """
+    q_thread_xlm_balance = pyqtSignal(str)
+
+    def __init__(self, input_json):
+        super().__init__()
+
+        self.input_json = input_json
+
+    @pyqtSlot()
+    def run(self):
+
+        try:
+            # check if balances is a list or a string
+            res_string = ''
+            if isinstance(self.input_json['balances'], list):
+                # iterate through list of assets
+                for item in self.input_json['balances']:
+                    # check if balance element exists
+                    if 'asset_code' in item:
+                        # print('inside an item with asset_code')
+                        if item['asset_code'] == 'XLM':
+                            res_string = item['balance']
+                            # print('found XLM')
+                            # print(item['balance'])
+                    elif 'asset_type':
+                        # print('inside an item with asset_type')
+                        if item['asset_type'] == 'native':
+                            res_string = item['balance']
+                            # print('found XLM')
+                            # print(item['balance'])
+                    else:
+                        # print('Element not found')
+                        res_string = '0'
+            
+            else:
+                # json string
+                res_string = json.dumps(self.input_json['balances'])
+
+            self.q_thread_xlm_balance.emit(res_string)
+            
+        except:
+            # if resource is not available - most likely an account (deleted)
+            self.q_thread_xlm_balance.emit('Account (deleted)')
+
+        # exit thread
+        return
