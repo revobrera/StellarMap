@@ -408,7 +408,7 @@ class MainWindow(QMainWindow):
         # run q_thread
         # self.set_account_from_api(stellar_account)
 
-        # reset outputs
+        # reset outputs when a new search is made by the user
         self.output_df("clear", reset_val=True)
         self.output_json("clear", reset_val=True)
         self.output_terminal("clear", reset_val=True)
@@ -554,7 +554,6 @@ class MainWindow(QMainWindow):
         self.output_json(json.dumps(requests_account.json()))
         self.output_terminal(d_str)
 
-
     def call_upstream_crawl_on_stellar_account(self, stellar_account):
         # chaining method algorithm to crawl upstream and identify creator accounts
         d_str = "QThread is on step 0: init call to crawl upstream"
@@ -572,10 +571,22 @@ class MainWindow(QMainWindow):
         d_str = "QThread is on step 2: retreiving and parsing the creator account from HTTPS response"
         self.output_terminal(d_str)
 
-        self.q_thread_creator = GenericGetCreatorWorkerThread(self.q_thread_json)
-        self.q_thread_creator.start()
-        self.q_thread_creator.q_thread_output_json.connect(self.call_step_2_1_print_output_json)
-        self.q_thread_creator.q_thread_creator_account.connect(self.call_step_2_2_check_creator_account)
+        if self.q_thread_status_code == 404:
+            # if requests_account.status_code == 404:
+            # gracefully handling 404 errors and preventing the app to crash
+            d_str_status = "ERROR: It is likely that you are searching for a stellar account that is no longer found on this network: " + str(os.getenv("NETWORK"))
+
+            # self.output_description(d_str_status)
+            self.output_terminal(d_str_status)
+
+            # rerouting to end of algorithm
+            self.call_step_8_graceful_exit()
+
+        else:
+            self.q_thread_creator = GenericGetCreatorWorkerThread(self.q_thread_json)
+            self.q_thread_creator.start()
+            self.q_thread_creator.q_thread_output_json.connect(self.call_step_2_1_print_output_json)
+            self.q_thread_creator.q_thread_creator_account.connect(self.call_step_2_2_check_creator_account)
 
     def call_step_2_1_print_output_json(self, q_thread_output_json):
         d_str = "QThread is on step 2.1: printing out json"
@@ -713,6 +724,9 @@ class MainWindow(QMainWindow):
         self.output_df(self.creator_df)
 
         self.output_terminal("done! \n " + "#"*49)
+
+    def call_step_8_graceful_exit(self):
+        self.output_terminal("Gracefully Exiting! \n " + "#"*49)
 
 
 def runall():
