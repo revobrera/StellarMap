@@ -23,7 +23,8 @@ try:
                            GenericTerminalOutputWorkerThread,
                            GenericGetCreatorWorkerThread,
                            GenericGetHomeDomainWorkerThread,
-                           GenericGetXLMBalanceWorkerThread)
+                           GenericGetXLMBalanceWorkerThread,
+                           GenericAppendCreatorToDfWorkerThread)
     from .icons_rc import *
     from .ui_styles import *
 
@@ -36,7 +37,8 @@ except:
                           GenericTerminalOutputWorkerThread,
                           GenericGetCreatorWorkerThread,
                           GenericGetHomeDomainWorkerThread,
-                          GenericGetXLMBalanceWorkerThread)
+                          GenericGetXLMBalanceWorkerThread,
+                          GenericAppendCreatorToDfWorkerThread)
     from icons_rc import *
     from ui_styles import *
 

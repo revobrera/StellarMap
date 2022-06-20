@@ -650,40 +650,43 @@ class MainWindow(QMainWindow):
         d_str = "XLM Balance: " + str(self.q_thread_xlm_balance)
         self.output_terminal(d_str)
 
-        self.call_step_6_append_creator_to_df(self.q_thread_creator_account,
-                                                self.q_thread_home_domain,
-                                                self.q_thread_xlm_balance)
+        self.call_step_6_append_creator_to_df()
 
 
-    def call_step_6_append_creator_to_df(self, creator_account, home_domain, xlm_balance):
+    def call_step_6_append_creator_to_df(self):
         d_str = "QThread is on step 6: appending row dictionary row to pandas dataframe"
         self.output_terminal(d_str)
 
         # stellar.expert site
-        stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(creator_account)
+        stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(self.q_thread_creator_account)
 
-        d_str = "creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (creator_account, home_domain,
-                                                                             xlm_balance, stellar_expert_site_url)
+        d_str = "creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_creator_account, self.q_thread_home_domain,
+                                                                             self.q_thread_xlm_balance, stellar_expert_site_url)
 
         self.output_terminal(d_str)
 
-        # the list to append as row
-        row_ls = [creator_account, home_domain, xlm_balance, stellar_expert_site_url]
+        row_dict = {
+            "creator_df": self.creator_df,
+            "creator_account": self.q_thread_creator_account,
+            "home_domain": self.q_thread_home_domain,
+            "xlm_balance": self.q_thread_xlm_balance,
+            "stellar_expert_url": stellar_expert_site_url
+        }
 
-        # create a pandas series from the list
-        row_s = pd.Series(row_ls, index=self.creator_df.columns)
+        self.q_thread_append_df = GenericAppendCreatorToDfWorkerThread(row_dict)
+        self.q_thread_append_df.start()
+        self.q_thread_append_df.q_thread_output_df.connect(self.call_step_6_1_print_df_and_recursive_upstream_crawl)
 
-        # append the row to the dataframe. [wARNING] .append would be deprecated soon, use .concat instead
-        self.creator_df = self.creator_df.append(row_s, ignore_index=True)
-
+    def call_step_6_1_print_df_and_recursive_upstream_crawl(self, q_thread_output_df):
         # real time outupt df to data tab - in case the algorithm is disrupted it will still display results retreived
+        self.creator_df = q_thread_output_df
         self.output_df(self.creator_df)
 
         # recursive call
-        if pd.isna(creator_account) or self.q_thread_status_code == 'status_code: 200':
+        if pd.isna(self.q_thread_creator_account) or self.q_thread_status_code == 'status_code: 200':
             self.call_step_7_concluding_upstream_crawl()
         else:
-            self.call_upstream_crawl_on_stellar_account(creator_account)
+            self.call_upstream_crawl_on_stellar_account(self.q_thread_creator_account)
     
     def call_step_7_concluding_upstream_crawl(self):
         d_str = "QThread is on step 7: completed chaining algorithm to crawl upstream successfully"
