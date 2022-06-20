@@ -397,18 +397,7 @@ class MainWindow(QMainWindow):
 
 
     def initCall(self, stellar_account):
-        
-        # tesnet
-        # stellar_account = 'GAIH3ULLFQ4DGSECF2AR555KZ4KNDGEKN4AFI4SU2M7B43MGK3QJZNSR'
-        # stellar_account = 'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5'
-
-        # public
-        # stellar_account = 'GCQTGZQQ5G4PTM2GL7CDIFKUBIPEC52BROAQIAPW53XBRJVN6ZJVTG6V' # contains a creator account that was deleted
-        
-        # run q_thread
-        # self.set_account_from_api(stellar_account)
-
-        # reset outputs
+        # reset outputs when a new search is made by the user
         self.output_df("clear", reset_val=True)
         self.output_json("clear", reset_val=True)
         self.output_terminal("clear", reset_val=True)
@@ -554,7 +543,6 @@ class MainWindow(QMainWindow):
         self.output_json(json.dumps(requests_account.json()))
         self.output_terminal(d_str)
 
-
     def call_upstream_crawl_on_stellar_account(self, stellar_account):
         # chaining method algorithm to crawl upstream and identify creator accounts
         d_str = "QThread is on step 0: init call to crawl upstream"
@@ -572,10 +560,21 @@ class MainWindow(QMainWindow):
         d_str = "QThread is on step 2: retreiving and parsing the creator account from HTTPS response"
         self.output_terminal(d_str)
 
-        self.q_thread_creator = GenericGetCreatorWorkerThread(self.q_thread_json)
-        self.q_thread_creator.start()
-        self.q_thread_creator.q_thread_output_json.connect(self.call_step_2_1_print_output_json)
-        self.q_thread_creator.q_thread_creator_account.connect(self.call_step_2_2_check_creator_account)
+        if self.q_thread_status_code == 404:
+            # gracefully handling 404 errors and preventing the app to crash
+            d_str_status = "ERROR: It is likely that you are searching for a stellar account that is no longer found on this network: " + str(os.getenv("NETWORK"))
+
+            # self.output_description(d_str_status)
+            self.output_terminal(d_str_status)
+
+            # rerouting to end of algorithm
+            self.call_step_8_graceful_exit()
+
+        else:
+            self.q_thread_creator = GenericGetCreatorWorkerThread(self.q_thread_json)
+            self.q_thread_creator.start()
+            self.q_thread_creator.q_thread_output_json.connect(self.call_step_2_1_print_output_json)
+            self.q_thread_creator.q_thread_creator_account.connect(self.call_step_2_2_check_creator_account)
 
     def call_step_2_1_print_output_json(self, q_thread_output_json):
         d_str = "QThread is on step 2.1: printing out json"
@@ -588,7 +587,6 @@ class MainWindow(QMainWindow):
 
         self.q_thread_creator_account = q_thread_creator_account
 
-    
         # check if valid stellar address
         if self.is_valid_stellar_address(self.q_thread_creator_account):
             self.set_account_from_api(self.q_thread_creator_account, self.call_step_3_check_home_domain_element_exists, 'horizon')
@@ -632,74 +630,52 @@ class MainWindow(QMainWindow):
         d_str = "QThread is on step 5: retrieving balances element from creator account from horizon api"
         self.output_terminal(d_str)
 
-        try:
-            # check if balances is a list or a string
-            res_string = ''
-            if isinstance(self.q_thread_json['balances'], list):
-                # iterate through list of assets
-                for item in self.q_thread_json['balances']:
-                    # print(item)
-                    # check if balance element exists
-                    if 'asset_code' in item:
-                        # print('inside an item with asset_code')
-                        if item['asset_code'] == 'XLM':
-                            res_string = item['balance']
-                            # print('found XLM')
-                            # print(item['balance'])
-                    elif 'asset_type':
-                        # print('inside an item with asset_type')
-                        if item['asset_type'] == 'native':
-                            res_string = item['balance']
-                            # print('found XLM')
-                            # print(item['balance'])
-                    else:
-                        # print('Element not found')
-                        res_string = '0'
-            
-            else:
-                # json string
-                res_string = json.dumps(self.q_thread_json['balances'])
+        self.q_thread_xlm = GenericGetXLMBalanceWorkerThread(self.q_thread_json)
+        self.q_thread_xlm.start()
+        self.q_thread_xlm.q_thread_xlm_balance.connect(self.call_step_5_1_print_xlm_balance)
 
-            self.q_thread_xlm_balance = res_string
-            
-        except:
-            # if resource is not available - most likely an account (deleted)
-            self.q_thread_xlm_balance = 'Account (deleted)'
+    def call_step_5_1_print_xlm_balance(self, q_thread_xlm_balance):
+        self.q_thread_xlm_balance = q_thread_xlm_balance
+        d_str = "XLM Balance: " + str(self.q_thread_xlm_balance)
+        self.output_terminal(d_str)
 
-        self.call_step_6_append_creator_to_df(self.q_thread_creator_account,
-                                                self.q_thread_home_domain,
-                                                self.q_thread_xlm_balance)
+        self.call_step_6_append_creator_to_df()
 
 
-    def call_step_6_append_creator_to_df(self, creator_account, home_domain, xlm_balance):
+    def call_step_6_append_creator_to_df(self):
         d_str = "QThread is on step 6: appending row dictionary row to pandas dataframe"
         self.output_terminal(d_str)
 
         # stellar.expert site
-        stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(creator_account)
+        stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(self.q_thread_creator_account)
 
-        d_str = "creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (creator_account, home_domain,
-                                                                             xlm_balance, stellar_expert_site_url)
+        d_str = "creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_creator_account, self.q_thread_home_domain,
+                                                                             self.q_thread_xlm_balance, stellar_expert_site_url)
 
         self.output_terminal(d_str)
 
-        # the list to append as row
-        row_ls = [creator_account, home_domain, xlm_balance, stellar_expert_site_url]
+        row_dict = {
+            "creator_df": self.creator_df,
+            "creator_account": self.q_thread_creator_account,
+            "home_domain": self.q_thread_home_domain,
+            "xlm_balance": self.q_thread_xlm_balance,
+            "stellar_expert_url": stellar_expert_site_url
+        }
 
-        # create a pandas series from the list
-        row_s = pd.Series(row_ls, index=self.creator_df.columns)
+        self.q_thread_append_df = GenericAppendCreatorToDfWorkerThread(row_dict)
+        self.q_thread_append_df.start()
+        self.q_thread_append_df.q_thread_output_df.connect(self.call_step_6_1_print_df_and_recursive_upstream_crawl)
 
-        # append the row to the dataframe. [wARNING] .append would be deprecated soon, use .concat instead
-        self.creator_df = self.creator_df.append(row_s, ignore_index=True)
-
+    def call_step_6_1_print_df_and_recursive_upstream_crawl(self, q_thread_output_df):
         # real time outupt df to data tab - in case the algorithm is disrupted it will still display results retreived
+        self.creator_df = q_thread_output_df
         self.output_df(self.creator_df)
 
         # recursive call
-        if pd.isna(creator_account) or self.q_thread_status_code == 'status_code: 200':
+        if pd.isna(self.q_thread_creator_account) or self.q_thread_status_code == 'status_code: 200':
             self.call_step_7_concluding_upstream_crawl()
         else:
-            self.call_upstream_crawl_on_stellar_account(creator_account)
+            self.call_upstream_crawl_on_stellar_account(self.q_thread_creator_account)
     
     def call_step_7_concluding_upstream_crawl(self):
         d_str = "QThread is on step 7: completed chaining algorithm to crawl upstream successfully"
@@ -713,6 +689,9 @@ class MainWindow(QMainWindow):
         self.output_df(self.creator_df)
 
         self.output_terminal("done! \n " + "#"*49)
+
+    def call_step_8_graceful_exit(self):
+        self.output_terminal("Gracefully Exiting! \n " + "#"*49)
 
 
 def runall():

@@ -197,3 +197,98 @@ class GenericGetHomeDomainWorkerThread(QThread):
 
         # exit thread
         return
+
+
+class GenericGetXLMBalanceWorkerThread(QThread):
+    """
+    Generic Worker QThread To Retrieve XLM Balance
+    """
+    q_thread_xlm_balance = pyqtSignal(str)
+
+    def __init__(self, input_json):
+        super().__init__()
+
+        self.input_json = input_json
+
+    @pyqtSlot()
+    def run(self):
+
+        try:
+            # check if balances is a list or a string
+            res_string = ''
+            if isinstance(self.input_json['balances'], list):
+                # iterate through list of assets
+                for item in self.input_json['balances']:
+                    # check if balance element exists
+                    if 'asset_code' in item:
+                        # print('inside an item with asset_code')
+                        if item['asset_code'] == 'XLM':
+                            res_string = item['balance']
+                            # print('found XLM')
+                            # print(item['balance'])
+                    elif 'asset_type':
+                        # print('inside an item with asset_type')
+                        if item['asset_type'] == 'native':
+                            res_string = item['balance']
+                            # print('found XLM')
+                            # print(item['balance'])
+                    else:
+                        # print('Element not found')
+                        res_string = '0'
+            
+            else:
+                # json string
+                res_string = json.dumps(self.input_json['balances'])
+
+            self.q_thread_xlm_balance.emit(res_string)
+            
+        except:
+            # if resource is not available - most likely an account (deleted)
+            self.q_thread_xlm_balance.emit('Account (deleted)')
+
+        # exit thread
+        return
+
+
+class GenericAppendCreatorToDfWorkerThread(QThread):
+    """
+    Generic Worker QThread To Append Creator Account To DataFrame
+    """
+    q_thread_output_df = pyqtSignal(pd.DataFrame)
+
+    def __init__(self, row_dict):
+        super().__init__()
+
+        # example of row_dict
+        # row_dict = {"creator_df": pandas_dataframe_object
+        #             "creator_account": "GCO2IP3MJNUOKS4PUDI4C7LGGMQDJGXG3COYX3WSB4HHNAHKYV5YL3VC",
+        #             "home_domain": "No home domain element found",
+        #             "xlm_balance": 4.9998397,
+        #             "stellar_expert_url": "https://stellar.expert/explorer/public/account/GCO2IP3MJNUOKS4PUDI4C7LGGMQDJGXG3COYX3WSB4HHNAHKYV5YL3VC",
+        #             }
+
+        self.creator_df = row_dict['creator_df']
+        self.creator_account = row_dict['creator_account']
+        self.home_domain = row_dict['home_domain']
+        self.xlm_balance = row_dict['xlm_balance']
+        self.stellar_expert_url = row_dict['stellar_expert_url']
+
+    @pyqtSlot()
+    def run(self):
+        # the list to append as row
+        row_ls = [self.creator_account, self.home_domain,
+                    self.xlm_balance, self.stellar_expert_url]
+
+        # create a pandas series from the list
+        row_s = pd.Series(row_ls, index=self.creator_df.columns)
+
+        # append the row to the dataframe. [WARNING] .append would be deprecated soon, use .concat instead
+        self.creator_df = self.creator_df.append(row_s, ignore_index=True)
+
+        # emit the dataframe
+        self.q_thread_output_df.emit(self.creator_df)
+
+        print(self.creator_df)
+
+        # exit thread
+        return
