@@ -557,7 +557,7 @@ class MainWindow(QMainWindow):
         self.set_account_from_api(stellar_account, self.call_step_2_get_creator_from_account, 'stellar_expert')
 
     def call_step_2_get_creator_from_account(self):
-        d_str = "QThread is on step 2: retreiving and parsing the creator account from HTTPS response"
+        d_str = "QThread is on step 2: retrieving and parsing the creator account from HTTPS response"
         self.output_terminal(d_str)
 
         if self.q_thread_status_code == 404:
@@ -646,7 +646,7 @@ class MainWindow(QMainWindow):
         d_str = "QThread is on step 6: appending row dictionary row to pandas dataframe"
         self.output_terminal(d_str)
 
-        # stellar.expert site
+        # generating stellar.expert site
         stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(self.q_thread_creator_account)
 
         d_str = "creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_creator_account, self.q_thread_home_domain,
@@ -667,15 +667,18 @@ class MainWindow(QMainWindow):
         self.q_thread_append_df.q_thread_output_df.connect(self.call_step_6_1_print_df_and_recursive_upstream_crawl)
 
     def call_step_6_1_print_df_and_recursive_upstream_crawl(self, q_thread_output_df):
-        # real time outupt df to data tab - in case the algorithm is disrupted it will still display results retreived
+        # real time outupt df to data tab - in case the algorithm is disrupted it will still display results retrieved
         self.creator_df = q_thread_output_df
         self.output_df(self.creator_df)
 
-        # recursive call
-        if pd.isna(self.q_thread_creator_account) or self.q_thread_status_code == 'status_code: 200':
-            self.call_step_7_concluding_upstream_crawl()
-        else:
+        # checks if valid address
+        if self.is_valid_stellar_address(self.q_thread_creator_account):
+            # valid creator account
+            # recursive call
             self.call_upstream_crawl_on_stellar_account(self.q_thread_creator_account)
+        else:
+            # captures nan and exits
+            self.call_step_7_concluding_upstream_crawl()
     
     def call_step_7_concluding_upstream_crawl(self):
         d_str = "QThread is on step 7: completed chaining algorithm to crawl upstream successfully"
