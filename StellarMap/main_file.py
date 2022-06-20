@@ -397,17 +397,6 @@ class MainWindow(QMainWindow):
 
 
     def initCall(self, stellar_account):
-        
-        # tesnet
-        # stellar_account = 'GAIH3ULLFQ4DGSECF2AR555KZ4KNDGEKN4AFI4SU2M7B43MGK3QJZNSR'
-        # stellar_account = 'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5'
-
-        # public
-        # stellar_account = 'GCQTGZQQ5G4PTM2GL7CDIFKUBIPEC52BROAQIAPW53XBRJVN6ZJVTG6V' # contains a creator account that was deleted
-        
-        # run q_thread
-        # self.set_account_from_api(stellar_account)
-
         # reset outputs when a new search is made by the user
         self.output_df("clear", reset_val=True)
         self.output_json("clear", reset_val=True)

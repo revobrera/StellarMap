@@ -417,19 +417,9 @@ class UIFunctions(QMainWindow):
             # call the function to walk up creator accounts
             self.customize_text('Searching on network: ' + os.getenv('BASE_SE_NETWORK_ACCOUNT'))
             stellar_account_url_link = os.getenv('BASE_SE_NETWORK_ACCOUNT') + search_input
-            # self.loading_dataset_to_ui(stellar_account_url_link)
+
+            # call upstream algorithm
             self.loading_dataset_to_ui(search_input)
-            # self.cba = CreatedByAccounts(search_input)
-
-            # set env
-            # import settings file
-            # app_env = EnvHelpers()
-            # app_env.set_public_network()
-            # app_env.set_testnet_network()
-
-            #stellar_account = 'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5'
-            # stellar_account = 'GCQTGZQQ5G4PTM2GL7CDIFKUBIPEC52BROAQIAPW53XBRJVN6ZJVTG6V'
-            # uc = CreatedByAccounts(stellar_account)
 
         else:
             # print on ui and terminal then clear the search bar
