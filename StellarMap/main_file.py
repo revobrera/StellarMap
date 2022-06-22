@@ -565,7 +565,6 @@ class MainWindow(QMainWindow):
                                                                                      requests_account.text,
                                                                                      requests_account.json())
 
-        self.output_json(json.dumps(requests_account.json()))
         self.output_terminal(d_str)
 
     def call_upstream_crawl_on_stellar_account(self, stellar_account):
