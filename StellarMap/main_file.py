@@ -579,7 +579,13 @@ class MainWindow(QMainWindow):
     def call_step_1_make_https_request(self, stellar_account):
         d_str = "QThread is on step 1: making the HTTPS request"
         self.output_terminal(d_str)
-        self.set_account_from_api(stellar_account, self.call_step_2_get_creator_from_account, 'stellar_expert')
+
+        # check if valid stellar address
+        if self.is_valid_stellar_address(stellar_account):
+            self.set_account_from_api(stellar_account, self.call_step_2_get_creator_from_account, 'stellar_expert')
+        else:
+            # captures nan value
+            self.call_step_7_concluding_upstream_crawl()
 
     def call_step_2_get_creator_from_account(self):
         d_str = "QThread is on step 2: retrieving and parsing the creator account from HTTPS response"
@@ -619,6 +625,27 @@ class MainWindow(QMainWindow):
             # captures nan value
             self.call_step_7_concluding_upstream_crawl()
 
+    # DO NOT uncomment this def! #################################################################################
+    # The code is able to continue even when a 404 error is encountered to identify the subsequent creator(s) of the account.
+    # Otherwise, the code exits when the first 404 error is encountered, which is not what we want.
+    # The 404 error code from the Horizon API is a result of an account being deleted from the network.
+    # We are recursively swimming upstream to identify all creator accounts INCLUDING all deleted accounts.
+    # def call_step_2_3_handle_404_errors(self):
+    #     d_str = "QThread is on step 2.3: handling 404 errors from response"
+    #     self.output_terminal(d_str)
+
+    #     if self.q_thread_status_code == 404:
+    #         # gracefully handling 404 errors and preventing the app to crash
+    #         d_str_status = "ERROR: It is likely that you are searching for a stellar account that is no longer found on this network: " + str(os.getenv("NETWORK"))
+
+    #         # self.output_description(d_str_status)
+    #         self.output_terminal(d_str_status)
+
+    #         # rerouting to end of algorithm
+    #         self.call_step_8_graceful_exit()
+    #     else:
+    #         self.call_step_3_check_home_domain_element_exists()
+    # DO NOT uncomment this def! #################################################################################
 
     def call_step_3_check_home_domain_element_exists(self):
         d_str = "QThread is on step 3: checking if home_domain element of creator account exists from horizon api"
@@ -728,11 +755,11 @@ class MainWindow(QMainWindow):
         self.output_terminal("Gracefully Exiting! \n " + "#"*49)
 
         # exiting any running threads
-        self.stop_requests_thread()
-        self.stop_df_thread()
-        self.stop_json_thread()
-        self.stop_terminal_thread()
-        self.stop_append_df_thread()
+        # self.stop_requests_thread()
+        # self.stop_df_thread()
+        # self.stop_json_thread()
+        # self.stop_terminal_thread()
+        # self.stop_append_df_thread()
 
 
 def runall():

@@ -1,7 +1,6 @@
 import json
 import os
 import time
-from xmlrpc.client import boolean
 
 import pandas as pd
 import requests
@@ -300,7 +299,7 @@ class GenericCheckInternetConnectivityWorkerThread(QThread):
     """
     Generic Worker QThread To Check User Internet Connectivity
     """
-    q_thread_is_connected = pyqtSignal(boolean)
+    q_thread_is_connected = pyqtSignal(bool)
 
     def __init__(self, sites_dict):
         super().__init__()
