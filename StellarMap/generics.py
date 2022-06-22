@@ -1,5 +1,7 @@
 import json
 import os
+import time
+from xmlrpc.client import boolean
 
 import pandas as pd
 import requests
@@ -292,3 +294,59 @@ class GenericAppendCreatorToDfWorkerThread(QThread):
 
         # exit thread
         return
+
+
+class GenericCheckInternetConnectivityWorkerThread(QThread):
+    """
+    Generic Worker QThread To Check User Internet Connectivity
+    """
+    q_thread_is_connected = pyqtSignal(boolean)
+
+    def __init__(self, sites_dict):
+        super().__init__()
+
+        # example of sites_dict
+        # sites_dict = {
+        #     "stellar_github": "https://github.com/stellar",
+        #     "stellar_org": "https://www.stellar.org",
+        #     "stellar_doc": "https://stellar-documentation.netlify.app/api/"
+        # }
+
+        self.q_threads_conn = {}
+        self.sites_dict = sites_dict
+        self.bool_val = False
+        self.sites_bool_dict = {}
+        self.output_bool_val = False
+
+    @pyqtSlot()
+    def run(self):
+        print(self.sites_dict)
+
+        # loop through dictionary
+        for ky, vl in self.sites_dict.items():
+
+            # call GenericRequestsWorkerThread() dynamically
+            self.q_threads_conn[ky] = GenericRequestsWorkerThread(vl)
+            self.q_threads_conn[ky].start()
+            self.q_threads_conn[ky].requests_response.connect(self.is_connected)
+            
+            time.sleep(0.17)
+
+            # assign boolean value to dict
+            self.sites_bool_dict[ky] = self.bool_val
+
+        print(self.sites_bool_dict)
+        # loop through assigned boolean value dict
+        for ky, vl in self.sites_bool_dict.items():
+            # if one or more received 200 status code
+            if vl is True:
+                self.output_bool_val = True
+
+        # emit connectivity
+        self.q_thread_is_connected.emit(self.output_bool_val)
+
+    def is_connected(self, requests_response):
+        if requests_response.status_code == 200:
+            self.bool_val = True
+        else:
+            self.bool_val = False

@@ -67,7 +67,7 @@ class MainWindow(QMainWindow):
             'Stellar.Expert': []
         }
         self.creator_df = pd.DataFrame(self.q_thread_df_row)
-
+        self.q_thread_is_user_internet_connected = False
         # self.initCall(stellar_account)
 
         #---------------------------
@@ -509,6 +509,29 @@ class MainWindow(QMainWindow):
 
     def reset_terminal_fn(self):
         self.ui.textEdit.clear()
+
+    def check_user_internet(self):
+
+        # dictionary of sites to check connectivity
+        sites_dict = {
+            "stellar_github": "https://github.com/stellar",
+            "stellar_org": "https://www.stellar.org",
+            "stellar_doc": "https://stellar-documentation.netlify.app/api/"
+        }
+
+        self.q_thread_conn = GenericCheckInternetConnectivityWorkerThread(sites_dict)
+        self.q_thread_conn.start()
+        self.q_thread_conn.q_thread_is_connected.connect(self.is_user_internet_on)
+
+        time.sleep(0.369)
+
+    def is_user_internet_on(self, q_thread_is_connected):
+        self.q_thread_is_user_internet_connected = q_thread_is_connected
+
+        if self.q_thread_is_user_internet_connected:
+            print("ONLINE")
+        else:
+            print("OFFLINE")
 
     def set_account_from_api(self, stellar_account, callback_fn, api_name):
         # print(api_name)
