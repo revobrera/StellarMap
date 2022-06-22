@@ -410,8 +410,7 @@ class MainWindow(QMainWindow):
         self.q_description = GenericDescriptionOutputWorkerThread(input_txt)
         self.q_description.q_thread_output_description.connect(self.call_description_fn)
         self.q_description.start()
-        time.sleep(0.17)
-        # self.q_description.finished(self.stop_description_thread)
+        time.sleep(0.017)
 
     def output_df(self, input_df, reset_val=None):
         # create instance of GenericDataframeOutputWorkerThread
@@ -430,8 +429,7 @@ class MainWindow(QMainWindow):
         self.q_df = GenericDataframeOutputWorkerThread(input_df)
         self.q_df.q_thread_output_df.connect(self.call_df_fn)
         self.q_df.start()
-        time.sleep(0.17)
-        # self.q_df.finished(self.stop_df_thread)
+        time.sleep(0.017)
 
     def output_json(self, input_json_txt, reset_val=None):
         # create instance of GenericJSONOutputWorkerThread
@@ -441,8 +439,7 @@ class MainWindow(QMainWindow):
         else:
             self.q_json.q_thread_output_json.connect(self.call_json_fn)
         self.q_json.start()
-        time.sleep(0.17)
-        # self.q_json.finished(self.stop_json_thread)
+        time.sleep(0.017)
 
     def output_terminal(self, input_txt, reset_val=None):
         # create instace of GenericTerminalOutputWorkerThread
@@ -452,8 +449,7 @@ class MainWindow(QMainWindow):
         else:
             self.q_terminal.q_thread_output_terminal.connect(self.call_terminal_fn)
         self.q_terminal.start()
-        time.sleep(0.17)
-        # self.q_terminal.finished(self.stop_terminal_thread)
+        time.sleep(0.017)
 
     def stop_description_thread(self):
         self.GenericDescriptionOutputWorkerThread.stop()
@@ -477,7 +473,6 @@ class MainWindow(QMainWindow):
 
     def call_description_fn(self, q_thread_output_description):
         self.labelDescription(q_thread_output_description)
-        # print(q_thread_output_description)
 
     def call_df_fn(self, q_thread_output_df):
         # put fetched data in a model
@@ -515,12 +510,8 @@ class MainWindow(QMainWindow):
         self.q_thread = GenericRequestsWorkerThread(self.stellar_account_url, callback_fn)
         self.q_thread.start()
         self.q_thread.requests_response.connect(self.get_account_from_api)
-        
-        # self.q_thread.finished.connect(self.stop_requests_thread)
-        # self.q_thread.wait() # Destroyed Destroyed while thread is still running
 
-        # adding time delay to avoid rate limiting from stellar api service
-        # time.sleep(1)
+        time.sleep(0.369)
 
     def stop_requests_thread(self):
         self.GenericRequestsWorkerThread.stop()
@@ -654,6 +645,7 @@ class MainWindow(QMainWindow):
 
         self.output_terminal(d_str)
 
+        # dictionary appended to dataframe
         row_dict = {
             "creator_df": self.creator_df,
             "creator_account": self.q_thread_creator_account,
@@ -702,6 +694,7 @@ def runall():
     QtGui.QFontDatabase.addApplicationFont('/StellarMap/fonts/Cascadia.ttf')
     window = MainWindow()
 
+    # default testnet network
     e = EnvHelpers()
     e.set_testnet_network()
 
