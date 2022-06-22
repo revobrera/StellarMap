@@ -451,25 +451,41 @@ class MainWindow(QMainWindow):
         self.q_terminal.start()
         time.sleep(0.017)
 
+    def stop_requests_thread(self):
+        if self.q_thread.isRunning():
+            self.q_thread.stop()
+            self.q_thread.quit()
+            self.q_thread.wait() 
+
     def stop_description_thread(self):
-        self.GenericDescriptionOutputWorkerThread.stop()
-        self.q_description.quit()
-        self.q_description.wait()
+        if self.q_description.isRunning():
+            self.q_description.stop()
+            self.q_description.quit()
+            self.q_description.wait()
 
     def stop_df_thread(self):
-        self.GenericDataframeOutputWorkerThread.stop()
-        self.q_df.quit()
-        self.q_df.wait()
+        if self.q_df.isRunning():
+            self.q_df.stop()
+            self.q_df.quit()
+            self.q_df.wait()
 
     def stop_json_thread(self):
-        self.GenericJSONOutputWorkerThread.stop()
-        self.q_json.quit()
-        self.q_json.wait()
+        if self.q_json.isRunning():
+            self.q_json.stop()
+            self.q_json.quit()
+            self.q_json.wait()
 
     def stop_terminal_thread(self):
-        self.GenericTerminalOutputWorkerThread.stop()
-        self.q_terminal.quit()
-        self.q_terminal.wait()
+        if self.q_terminal.isRunning():
+            self.q_terminal.stop()
+            self.q_terminal.quit()
+            self.q_terminal.wait()
+
+    def stop_append_df_thread(self):
+        if self.q_thread_creator.isRunning():
+            self.q_thread_creator.stop()
+            self.q_thread_creator.quit()
+            self.q_thread_creator.wait()
 
     def call_description_fn(self, q_thread_output_description):
         self.labelDescription(q_thread_output_description)
@@ -511,12 +527,7 @@ class MainWindow(QMainWindow):
         self.q_thread.start()
         self.q_thread.requests_response.connect(self.get_account_from_api)
 
-        time.sleep(0.369)
-
-    def stop_requests_thread(self):
-        self.GenericRequestsWorkerThread.stop()
-        self.q_thread.quit()
-        self.q_thread.wait()     
+        time.sleep(0.369) 
 
     def get_account_from_api(self, requests_account):
         # print info into terminal tab
@@ -683,8 +694,17 @@ class MainWindow(QMainWindow):
 
         self.output_terminal("done! \n " + "#"*49)
 
+        self.call_step_8_graceful_exit()
+
     def call_step_8_graceful_exit(self):
         self.output_terminal("Gracefully Exiting! \n " + "#"*49)
+
+        # exiting any running threads
+        self.stop_requests_thread()
+        self.stop_df_thread()
+        self.stop_json_thread()
+        self.stop_terminal_thread()
+        self.stop_append_df_thread()
 
 
 def runall():
