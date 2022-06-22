@@ -24,7 +24,8 @@ try:
                            GenericGetCreatorWorkerThread,
                            GenericGetHomeDomainWorkerThread,
                            GenericGetXLMBalanceWorkerThread,
-                           GenericAppendCreatorToDfWorkerThread)
+                           GenericAppendCreatorToDfWorkerThread,
+                           GenericCheckInternetConnectivityWorkerThread)
     from .icons_rc import *
     from .ui_styles import *
 
@@ -38,7 +39,8 @@ except:
                           GenericGetCreatorWorkerThread,
                           GenericGetHomeDomainWorkerThread,
                           GenericGetXLMBalanceWorkerThread,
-                          GenericAppendCreatorToDfWorkerThread)
+                          GenericAppendCreatorToDfWorkerThread,
+                          GenericCheckInternetConnectivityWorkerThread)
     from icons_rc import *
     from ui_styles import *
 

@@ -1696,7 +1696,7 @@ color: rgb(255,255,255);""")
         self.label.setStyleSheet("background-color: #261D45")
 
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_data),
-                                  QCoreApplication.translate("MainWindow", u"DATA", None))
+                                  QCoreApplication.translate("MainWindow", u"UPSTREAM CREATOR ACCOUNTS", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_json),
                                   QCoreApplication.translate("MainWindow", u"JSON", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_toml),

@@ -67,7 +67,7 @@ class MainWindow(QMainWindow):
             'Stellar.Expert': []
         }
         self.creator_df = pd.DataFrame(self.q_thread_df_row)
-
+        self.q_thread_is_user_internet_connected = False
         # self.initCall(stellar_account)
 
         #---------------------------
@@ -410,8 +410,7 @@ class MainWindow(QMainWindow):
         self.q_description = GenericDescriptionOutputWorkerThread(input_txt)
         self.q_description.q_thread_output_description.connect(self.call_description_fn)
         self.q_description.start()
-        time.sleep(0.17)
-        # self.q_description.finished(self.stop_description_thread)
+        time.sleep(0.017)
 
     def output_df(self, input_df, reset_val=None):
         # create instance of GenericDataframeOutputWorkerThread
@@ -430,8 +429,7 @@ class MainWindow(QMainWindow):
         self.q_df = GenericDataframeOutputWorkerThread(input_df)
         self.q_df.q_thread_output_df.connect(self.call_df_fn)
         self.q_df.start()
-        time.sleep(0.17)
-        # self.q_df.finished(self.stop_df_thread)
+        time.sleep(0.017)
 
     def output_json(self, input_json_txt, reset_val=None):
         # create instance of GenericJSONOutputWorkerThread
@@ -441,8 +439,7 @@ class MainWindow(QMainWindow):
         else:
             self.q_json.q_thread_output_json.connect(self.call_json_fn)
         self.q_json.start()
-        time.sleep(0.17)
-        # self.q_json.finished(self.stop_json_thread)
+        time.sleep(0.017)
 
     def output_terminal(self, input_txt, reset_val=None):
         # create instace of GenericTerminalOutputWorkerThread
@@ -452,32 +449,46 @@ class MainWindow(QMainWindow):
         else:
             self.q_terminal.q_thread_output_terminal.connect(self.call_terminal_fn)
         self.q_terminal.start()
-        time.sleep(0.17)
-        # self.q_terminal.finished(self.stop_terminal_thread)
+        time.sleep(0.017)
+
+    def stop_requests_thread(self):
+        if self.q_thread.isRunning():
+            self.q_thread.stop()
+            self.q_thread.quit()
+            self.q_thread.wait() 
 
     def stop_description_thread(self):
-        self.GenericDescriptionOutputWorkerThread.stop()
-        self.q_description.quit()
-        self.q_description.wait()
+        if self.q_description.isRunning():
+            self.q_description.stop()
+            self.q_description.quit()
+            self.q_description.wait()
 
     def stop_df_thread(self):
-        self.GenericDataframeOutputWorkerThread.stop()
-        self.q_df.quit()
-        self.q_df.wait()
+        if self.q_df.isRunning():
+            self.q_df.stop()
+            self.q_df.quit()
+            self.q_df.wait()
 
     def stop_json_thread(self):
-        self.GenericJSONOutputWorkerThread.stop()
-        self.q_json.quit()
-        self.q_json.wait()
+        if self.q_json.isRunning():
+            self.q_json.stop()
+            self.q_json.quit()
+            self.q_json.wait()
 
     def stop_terminal_thread(self):
-        self.GenericTerminalOutputWorkerThread.stop()
-        self.q_terminal.quit()
-        self.q_terminal.wait()
+        if self.q_terminal.isRunning():
+            self.q_terminal.stop()
+            self.q_terminal.quit()
+            self.q_terminal.wait()
+
+    def stop_append_df_thread(self):
+        if self.q_thread_creator.isRunning():
+            self.q_thread_creator.stop()
+            self.q_thread_creator.quit()
+            self.q_thread_creator.wait()
 
     def call_description_fn(self, q_thread_output_description):
         self.labelDescription(q_thread_output_description)
-        # print(q_thread_output_description)
 
     def call_df_fn(self, q_thread_output_df):
         # put fetched data in a model
@@ -499,6 +510,29 @@ class MainWindow(QMainWindow):
     def reset_terminal_fn(self):
         self.ui.textEdit.clear()
 
+    def check_user_internet(self):
+
+        # dictionary of sites to check connectivity
+        sites_dict = {
+            "stellar_github": "https://github.com/stellar",
+            "stellar_org": "https://www.stellar.org",
+            "stellar_doc": "https://stellar-documentation.netlify.app/api/"
+        }
+
+        self.q_thread_conn = GenericCheckInternetConnectivityWorkerThread(sites_dict)
+        self.q_thread_conn.start()
+        self.q_thread_conn.q_thread_is_connected.connect(self.is_user_internet_on)
+
+        time.sleep(0.369)
+
+    def is_user_internet_on(self, q_thread_is_connected):
+        self.q_thread_is_user_internet_connected = q_thread_is_connected
+
+        if self.q_thread_is_user_internet_connected:
+            print("ONLINE")
+        else:
+            print("OFFLINE")
+
     def set_account_from_api(self, stellar_account, callback_fn, api_name):
         # print(api_name)
         if api_name == 'stellar_expert':
@@ -515,17 +549,8 @@ class MainWindow(QMainWindow):
         self.q_thread = GenericRequestsWorkerThread(self.stellar_account_url, callback_fn)
         self.q_thread.start()
         self.q_thread.requests_response.connect(self.get_account_from_api)
-        
-        # self.q_thread.finished.connect(self.stop_requests_thread)
-        # self.q_thread.wait() # Destroyed Destroyed while thread is still running
 
-        # adding time delay to avoid rate limiting from stellar api service
-        # time.sleep(1)
-
-    def stop_requests_thread(self):
-        self.GenericRequestsWorkerThread.stop()
-        self.q_thread.quit()
-        self.q_thread.wait()     
+        time.sleep(0.369) 
 
     def get_account_from_api(self, requests_account):
         # print info into terminal tab
@@ -557,7 +582,7 @@ class MainWindow(QMainWindow):
         self.set_account_from_api(stellar_account, self.call_step_2_get_creator_from_account, 'stellar_expert')
 
     def call_step_2_get_creator_from_account(self):
-        d_str = "QThread is on step 2: retreiving and parsing the creator account from HTTPS response"
+        d_str = "QThread is on step 2: retrieving and parsing the creator account from HTTPS response"
         self.output_terminal(d_str)
 
         if self.q_thread_status_code == 404:
@@ -615,12 +640,10 @@ class MainWindow(QMainWindow):
         self.output_terminal(d_str)
         
         self.q_thread_xlm_balance = 0
-
         if 'balances' not in self.q_thread_json:
             self.q_thread_xlm_balance = 0
-            self.call_step_5_get_xlm_balance_from_api()
-        else:
-            self.call_step_5_get_xlm_balance_from_api()
+            
+        self.call_step_5_get_xlm_balance_from_api()
         
     def call_step_5_get_xlm_balance_from_api(self):
         # print(get_pretty_json_string(res))
@@ -646,7 +669,7 @@ class MainWindow(QMainWindow):
         d_str = "QThread is on step 6: appending row dictionary row to pandas dataframe"
         self.output_terminal(d_str)
 
-        # stellar.expert site
+        # generating stellar.expert site
         stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(self.q_thread_creator_account)
 
         d_str = "creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_creator_account, self.q_thread_home_domain,
@@ -654,6 +677,7 @@ class MainWindow(QMainWindow):
 
         self.output_terminal(d_str)
 
+        # dictionary appended to dataframe
         row_dict = {
             "creator_df": self.creator_df,
             "creator_account": self.q_thread_creator_account,
@@ -667,31 +691,48 @@ class MainWindow(QMainWindow):
         self.q_thread_append_df.q_thread_output_df.connect(self.call_step_6_1_print_df_and_recursive_upstream_crawl)
 
     def call_step_6_1_print_df_and_recursive_upstream_crawl(self, q_thread_output_df):
-        # real time outupt df to data tab - in case the algorithm is disrupted it will still display results retreived
+        # real time outupt df to data tab - in case the algorithm is disrupted it will still display results retrieved
         self.creator_df = q_thread_output_df
         self.output_df(self.creator_df)
 
-        # recursive call
-        if pd.isna(self.q_thread_creator_account) or self.q_thread_status_code == 'status_code: 200':
-            self.call_step_7_concluding_upstream_crawl()
-        else:
+        # checks if valid address
+        if self.is_valid_stellar_address(self.q_thread_creator_account):
+            # valid creator account
+            # recursive call
             self.call_upstream_crawl_on_stellar_account(self.q_thread_creator_account)
+        else:
+            # captures nan and exits
+            self.call_step_7_concluding_upstream_crawl()
     
     def call_step_7_concluding_upstream_crawl(self):
-        d_str = "QThread is on step 7: completed chaining algorithm to crawl upstream successfully"
+        d_str = "QThread is on step 7: completed chaining algorithm to crawl upstream successfully \n"
         self.output_terminal(d_str)
 
-        # display max rows
+        # Permanently changes the pandas settings
         pd.set_option('display.max_rows', None)
-        
-        # adjust max column widths
-        pd.set_option('display.max_colwidth', 0)
+        pd.set_option('display.max_columns', None)
+        pd.set_option('display.width', None)
+        pd.set_option('display.max_colwidth', -1)
+
         self.output_df(self.creator_df)
+
+        # select columns to print
+        print_df = self.creator_df[self.creator_df.columns[0:3]]
+        self.output_terminal(print_df.to_csv())
 
         self.output_terminal("done! \n " + "#"*49)
 
+        self.call_step_8_graceful_exit()
+
     def call_step_8_graceful_exit(self):
         self.output_terminal("Gracefully Exiting! \n " + "#"*49)
+
+        # exiting any running threads
+        self.stop_requests_thread()
+        self.stop_df_thread()
+        self.stop_json_thread()
+        self.stop_terminal_thread()
+        self.stop_append_df_thread()
 
 
 def runall():
@@ -699,6 +740,7 @@ def runall():
     QtGui.QFontDatabase.addApplicationFont('/StellarMap/fonts/Cascadia.ttf')
     window = MainWindow()
 
+    # default testnet network
     e = EnvHelpers()
     e.set_testnet_network()
 
