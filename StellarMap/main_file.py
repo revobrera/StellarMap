@@ -682,15 +682,20 @@ class MainWindow(QMainWindow):
             self.call_step_7_concluding_upstream_crawl()
     
     def call_step_7_concluding_upstream_crawl(self):
-        d_str = "QThread is on step 7: completed chaining algorithm to crawl upstream successfully"
+        d_str = "QThread is on step 7: completed chaining algorithm to crawl upstream successfully \n"
         self.output_terminal(d_str)
 
-        # display max rows
+        # Permanently changes the pandas settings
         pd.set_option('display.max_rows', None)
-        
-        # adjust max column widths
-        pd.set_option('display.max_colwidth', 0)
+        pd.set_option('display.max_columns', None)
+        pd.set_option('display.width', None)
+        pd.set_option('display.max_colwidth', -1)
+
         self.output_df(self.creator_df)
+
+        # select columns to print
+        print_df = self.creator_df[self.creator_df.columns[0:3]]
+        self.output_terminal(print_df.to_csv())
 
         self.output_terminal("done! \n " + "#"*49)
 
