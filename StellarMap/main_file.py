@@ -606,12 +606,10 @@ class MainWindow(QMainWindow):
         self.output_terminal(d_str)
         
         self.q_thread_xlm_balance = 0
-
         if 'balances' not in self.q_thread_json:
             self.q_thread_xlm_balance = 0
-            self.call_step_5_get_xlm_balance_from_api()
-        else:
-            self.call_step_5_get_xlm_balance_from_api()
+            
+        self.call_step_5_get_xlm_balance_from_api()
         
     def call_step_5_get_xlm_balance_from_api(self):
         # print(get_pretty_json_string(res))
