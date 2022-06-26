@@ -16,7 +16,7 @@ from ui_main import Ui_MainWindow
 
 try:
     from .env import EnvHelpers  # Settings file
-    from .generics import (GenericDataframeOutputWorkerThread,
+    from .helpers.generics import (GenericDataframeOutputWorkerThread,
                            GenericDescriptionOutputWorkerThread,
                            GenericJSONOutputWorkerThread,
                            GenericRequestsWorkerThread,
@@ -31,7 +31,7 @@ try:
 
 except:
     from env import EnvHelpers  # Settings file
-    from generics import (GenericDataframeOutputWorkerThread,
+    from helpers.generics import (GenericDataframeOutputWorkerThread,
                           GenericDescriptionOutputWorkerThread,
                           GenericJSONOutputWorkerThread,
                           GenericRequestsWorkerThread,
