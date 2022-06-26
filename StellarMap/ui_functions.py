@@ -8,39 +8,18 @@ import time
 import pandas as pd
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import (  # PyQt5 libraries and sub-libaries
-    QAbstractTableModel, QPropertyAnimation, QSize, Qt)
-from PyQt5.QtGui import QColor, QFont, QIcon
+    QPropertyAnimation, QSize, Qt)
+from PyQt5.QtGui import QColor, QFont
 from PyQt5.QtWidgets import (QGraphicsDropShadowEffect, QMainWindow,
-                             QPushButton, QSizeGrip, QSizePolicy, QDialog)
-from ui_main import Ui_MainWindow
+                             QPushButton, QSizeGrip, QSizePolicy)
 
 try:
     from .env import EnvHelpers  # Settings file
-    from .helpers.q_thread_generics import (GenericDataframeOutputWorkerThread,
-                           GenericDescriptionOutputWorkerThread,
-                           GenericJSONOutputWorkerThread,
-                           GenericRequestsWorkerThread,
-                           GenericTerminalOutputWorkerThread,
-                           GenericGetCreatorWorkerThread,
-                           GenericGetHomeDomainWorkerThread,
-                           GenericGetXLMBalanceWorkerThread,
-                           GenericAppendCreatorToDfWorkerThread,
-                           GenericCheckInternetConnectivityWorkerThread)
     from .icons_rc import *
     from .ui_styles import *
 
 except:
     from env import EnvHelpers  # Settings file
-    from helpers.q_thread_generics import (GenericDataframeOutputWorkerThread,
-                          GenericDescriptionOutputWorkerThread,
-                          GenericJSONOutputWorkerThread,
-                          GenericRequestsWorkerThread,
-                          GenericTerminalOutputWorkerThread,
-                          GenericGetCreatorWorkerThread,
-                          GenericGetHomeDomainWorkerThread,
-                          GenericGetXLMBalanceWorkerThread,
-                          GenericAppendCreatorToDfWorkerThread,
-                          GenericCheckInternetConnectivityWorkerThread)
     from icons_rc import *
     from ui_styles import *
 

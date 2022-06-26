@@ -1,22 +1,20 @@
 #Importing libraries for 
 
-import datetime                 #   Managing date and time
-import json                     #   Handling json format files
-import platform                 #   Getting system information
-import re                       #   Regular expressions (For putting checks on emails, names etc)
-import sys                      #   To perform system level operations
-from threading import Thread    #   To handle multiple threads (processes) at once
+import datetime  # Managing date and time
+import json  # Handling json format files
+import platform  # Getting system information
+import re  # Regular expressions (For putting checks on emails, names etc)
+import sys  # To perform system level operations
+from threading import Thread  # To handle multiple threads (processes) at once
 
-import pandas as pd             #   For managing and handling text data
-from PIL.ImageQt import rgb     #   For managing and handling image data
-
-
+import pandas as pd  # For managing and handling text data
+from PIL.ImageQt import rgb  # For managing and handling image data
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtWidgets import QApplication, QMainWindow
 
 #-----------------------------PyQt5 libraries and extensions----------------------------------
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QAbstractTableModel, QSize, Qt
-from PyQt5.QtWidgets import QApplication, QMainWindow
 
 #----------------------------------------------------------------------------------------------
 
@@ -25,15 +23,15 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 
 try:
     from .app_modules import *
+    from .helpers.recursive_upstream_created_accounts import CreatedByAccounts
     from .icons_rc import *
     from .settings.env import EnvHelpers
-    from .helpers.recursive_upstream_created_accounts import CreatedByAccounts
 
 except:
     from app_modules import *
+    from helpers.recursive_upstream_created_accounts import CreatedByAccounts
     from icons_rc import *
     from settings.env import EnvHelpers
-    from helpers.recursive_upstream_created_accounts import CreatedByAccounts
 
 #----------------------------------------------------------------------------------------------
 

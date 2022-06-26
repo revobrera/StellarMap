@@ -1,5 +1,6 @@
 from PyQt5.QtCore import (  # PyQt5 libraries and sub-libaries
-    QAbstractTableModel, QPropertyAnimation, QSize, Qt)
+    QAbstractTableModel, Qt)
+
 
 class PandasModel(QAbstractTableModel):
 
