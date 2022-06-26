@@ -22,16 +22,20 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 #----------------------------------Importing UI files------------------------------------------
 
 try:
-    from .app_modules import *
     from .helpers.created_accounts import CreatedByAccounts
     from .icons_rc import *
     from .settings.env import EnvHelpers
+    from .ui_functions import *  # IMPORT FUNCTIONS
+    from .ui_main import Ui_MainWindow  # GUI FILE
+    from .ui_styles import Style  # IMPORT QSS CUSTOM
 
 except:
-    from app_modules import *
     from helpers.created_accounts import CreatedByAccounts
     from icons_rc import *
     from settings.env import EnvHelpers
+    from ui_functions import *
+    from ui_main import Ui_MainWindow
+    from ui_styles import Style
 
 #----------------------------------------------------------------------------------------------
 
