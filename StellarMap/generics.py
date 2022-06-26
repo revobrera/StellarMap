@@ -42,6 +42,8 @@ class GenericRequestsWorkerThread(QThread):
         except requests.exceptions.RequestException as err:
             print ("Uh Oh: Something broke... ",err)
 
+        time.sleep(1)
+
         # exit thread
         return
 
@@ -67,6 +69,8 @@ class GenericDescriptionOutputWorkerThread(QThread):
         # emit the description from the thread
         self.q_thread_output_description.emit(self.label_description)
 
+        time.sleep(0.369)
+
         # exit thread
         return
 
@@ -86,6 +90,8 @@ class GenericDataframeOutputWorkerThread(QThread):
     def run(self):
         self.q_thread_output_df.emit(self.input_df)
 
+        time.sleep(0.369)
+
         # exit thread
         return
 
@@ -104,6 +110,8 @@ class GenericJSONOutputWorkerThread(QThread):
     def run(self):
         self.q_thread_output_json.emit(self.input_json)
 
+        time.sleep(0.369)
+
         # exit thread
         return
 
@@ -121,6 +129,8 @@ class GenericTerminalOutputWorkerThread(QThread):
     @pyqtSlot()
     def run(self):
         self.q_thread_output_terminal.emit(self.input_terminal)
+
+        time.sleep(0.369)
 
         # exit thread
         return
@@ -329,7 +339,7 @@ class GenericCheckInternetConnectivityWorkerThread(QThread):
             self.q_threads_conn[ky].start()
             self.q_threads_conn[ky].requests_response.connect(self.is_connected)
             
-            time.sleep(0.17)
+            time.sleep(0.369)
 
             # assign boolean value to dict
             self.sites_bool_dict[ky] = self.bool_val

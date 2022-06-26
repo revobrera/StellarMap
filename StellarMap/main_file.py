@@ -35,9 +35,6 @@ except:
 
 #----------------------------------------------------------------------------------------------
 
-
-
-
 class MainWindow(QMainWindow):
 
 
@@ -393,9 +390,7 @@ class MainWindow(QMainWindow):
 
     #--------------------------------------------------------------------------------------------------
 
-
-
-
+    # swimming upstream crawl for creator accounts
     def initCall(self, stellar_account):
         # reset outputs when a new search is made by the user
         self.output_df("clear", reset_val=True)
@@ -410,7 +405,7 @@ class MainWindow(QMainWindow):
         self.q_description = GenericDescriptionOutputWorkerThread(input_txt)
         self.q_description.q_thread_output_description.connect(self.call_description_fn)
         self.q_description.start()
-        time.sleep(0.017)
+        time.sleep(0.0017)
 
     def output_df(self, input_df, reset_val=None):
         # create instance of GenericDataframeOutputWorkerThread
@@ -429,7 +424,7 @@ class MainWindow(QMainWindow):
         self.q_df = GenericDataframeOutputWorkerThread(input_df)
         self.q_df.q_thread_output_df.connect(self.call_df_fn)
         self.q_df.start()
-        time.sleep(0.017)
+        time.sleep(0.0017)
 
     def output_json(self, input_json_txt, reset_val=None):
         # create instance of GenericJSONOutputWorkerThread
@@ -439,7 +434,7 @@ class MainWindow(QMainWindow):
         else:
             self.q_json.q_thread_output_json.connect(self.call_json_fn)
         self.q_json.start()
-        time.sleep(0.017)
+        time.sleep(0.0017)
 
     def output_terminal(self, input_txt, reset_val=None):
         # create instace of GenericTerminalOutputWorkerThread
@@ -449,7 +444,7 @@ class MainWindow(QMainWindow):
         else:
             self.q_terminal.q_thread_output_terminal.connect(self.call_terminal_fn)
         self.q_terminal.start()
-        time.sleep(0.017)
+        time.sleep(0.0017)
 
     def stop_requests_thread(self):
         if self.q_thread.isRunning():
@@ -523,8 +518,6 @@ class MainWindow(QMainWindow):
         self.q_thread_conn.start()
         self.q_thread_conn.q_thread_is_connected.connect(self.is_user_internet_on)
 
-        time.sleep(0.369)
-
     def is_user_internet_on(self, q_thread_is_connected):
         self.q_thread_is_user_internet_connected = q_thread_is_connected
 
@@ -550,8 +543,6 @@ class MainWindow(QMainWindow):
         self.q_thread.start()
         self.q_thread.requests_response.connect(self.get_account_from_api)
 
-        time.sleep(0.369) 
-
     def get_account_from_api(self, requests_account):
         # print info into terminal tab
         self.q_thread_headers = requests_account.headers
@@ -565,7 +556,6 @@ class MainWindow(QMainWindow):
                                                                                      requests_account.text,
                                                                                      requests_account.json())
 
-        self.output_json(json.dumps(requests_account.json()))
         self.output_terminal(d_str)
 
     def call_upstream_crawl_on_stellar_account(self, stellar_account):
