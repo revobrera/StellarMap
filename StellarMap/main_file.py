@@ -23,13 +23,13 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 
 try:
     from .app_modules import *
-    from .helpers.recursive_upstream_created_accounts import CreatedByAccounts
+    from .helpers.created_accounts import CreatedByAccounts
     from .icons_rc import *
     from .settings.env import EnvHelpers
 
 except:
     from app_modules import *
-    from helpers.recursive_upstream_created_accounts import CreatedByAccounts
+    from helpers.created_accounts import CreatedByAccounts
     from icons_rc import *
     from settings.env import EnvHelpers
 
