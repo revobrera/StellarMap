@@ -6,7 +6,7 @@ import pandas as pd
 
 try:
     from .helpers.custom_pandas import PandasModel
-    from .helpers.generics import (
+    from .helpers.q_thread_generics import (
         GenericAppendCreatorToDfWorkerThread,
         GenericCheckInternetConnectivityWorkerThread,
         GenericDataframeOutputWorkerThread,
@@ -17,7 +17,7 @@ try:
 
 except:
     from helpers.custom_pandas import PandasModel
-    from helpers.generics import (GenericAppendCreatorToDfWorkerThread,
+    from helpers.q_thread_generics import (GenericAppendCreatorToDfWorkerThread,
                                   GenericCheckInternetConnectivityWorkerThread,
                                   GenericDataframeOutputWorkerThread,
                                   GenericDescriptionOutputWorkerThread,
