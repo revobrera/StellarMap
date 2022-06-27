@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
 
     name='StellarMap',
-    version = '0.2.0',
+    version = '0.3.0',
     description='StellarMap is an open source, cross-platform PyQt desktop app used to explore the Stellar blockchain network.',
     long_description='StellarMap is an open source desktop app written in Python, used to explore the Stellar blockchain network. The desktop app is available on Windows, GNU/Linux, Mac OS X, Android, & iOS. ',
     author='Rev Obrera',
