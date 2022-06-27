@@ -22,20 +22,20 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 #----------------------------------Importing UI files------------------------------------------
 
 try:
-    from .helpers.created_accounts import CreatedByAccounts
-    from .static.icons.icons_rc import *
-    from .settings.env import EnvHelpers
     from .gui.events import *  # IMPORT FUNCTIONS
     from .gui.mainwindow import Ui_MainWindow  # GUI FILE
     from .gui.styles import Style  # IMPORT QSS CUSTOM
+    from .helpers.created_accounts import CreatedByAccounts
+    from .settings.env import EnvHelpers
+    from .static.icons.icons_rc import *
 
 except:
-    from helpers.created_accounts import CreatedByAccounts
-    from static.icons.icons_rc import *
-    from settings.env import EnvHelpers
     from gui.events import *
     from gui.mainwindow import Ui_MainWindow
     from gui.styles import Style
+    from helpers.created_accounts import CreatedByAccounts
+    from settings.env import EnvHelpers
+    from static.icons.icons_rc import *
 
 #----------------------------------------------------------------------------------------------
 
