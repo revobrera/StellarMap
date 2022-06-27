@@ -4,7 +4,7 @@ import os
 import pandas as pd
 
 try:
-    from .helpers.custom_pandas import PandasModel
+    from .helpers.data_model import PandasModel
     from .helpers.data_output import DataOutput
     from .helpers.q_thread_generics import (
         GenericAppendCreatorToDfWorkerThread,

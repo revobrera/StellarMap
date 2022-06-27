@@ -23,19 +23,19 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 
 try:
     from .helpers.created_accounts import CreatedByAccounts
-    from .icons_rc import *
+    from .static.icons.icons_rc import *
     from .settings.env import EnvHelpers
-    from .ui_functions import *  # IMPORT FUNCTIONS
-    from .ui_main import Ui_MainWindow  # GUI FILE
-    from .ui_styles import Style  # IMPORT QSS CUSTOM
+    from .gui.events import *  # IMPORT FUNCTIONS
+    from .gui.mainwindow import Ui_MainWindow  # GUI FILE
+    from .gui.styles import Style  # IMPORT QSS CUSTOM
 
 except:
     from helpers.created_accounts import CreatedByAccounts
-    from icons_rc import *
+    from static.icons.icons_rc import *
     from settings.env import EnvHelpers
-    from ui_functions import *
-    from ui_main import Ui_MainWindow
-    from ui_styles import Style
+    from gui.events import *
+    from gui.mainwindow import Ui_MainWindow
+    from gui.styles import Style
 
 #----------------------------------------------------------------------------------------------
 
@@ -378,7 +378,7 @@ class MainWindow(QMainWindow, CreatedByAccounts):
 
 def runall():
     app = QApplication(sys.argv)
-    QtGui.QFontDatabase.addApplicationFont('/StellarMap/fonts/Cascadia.ttf')
+    QtGui.QFontDatabase.addApplicationFont('/StellarMap/static/fonts/Cascadia.ttf')
     window = MainWindow()
 
     # default testnet network
