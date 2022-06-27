@@ -11,8 +11,8 @@ from NodeGraphQt import (
 )
 
 # import example nodes from the "example_nodes" package
-from nodegraphqt_examples import group_node
-from nodegraphqt_examples.custom_nodes import (
+import group_node
+from custom_nodes import (
     basic_nodes,
     custom_ports_node,
     widget_nodes,
