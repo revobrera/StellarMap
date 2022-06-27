@@ -1,5 +1,4 @@
-from PyQt5.QtCore import (  # PyQt5 libraries and sub-libaries
-    QAbstractTableModel, Qt)
+from PyQt5.QtCore import QAbstractTableModel, Qt
 
 
 class PandasModel(QAbstractTableModel):
