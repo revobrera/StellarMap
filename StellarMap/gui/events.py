@@ -10,12 +10,12 @@ from PyQt5.QtWidgets import (QGraphicsDropShadowEffect, QMainWindow,
                              QPushButton, QSizeGrip, QSizePolicy)
 
 try:
-    from .icons_rc import *
+    from .static.icons.icons_rc import *
     from .settings.env import EnvHelpers
     from .gui.styles import *
 
 except:
-    from icons_rc import *
+    from static.icons.icons_rc import *
     from settings.env import EnvHelpers
     from gui.styles import *
 

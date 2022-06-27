@@ -23,7 +23,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 
 try:
     from .helpers.created_accounts import CreatedByAccounts
-    from .icons_rc import *
+    from .static.icons.icons_rc import *
     from .settings.env import EnvHelpers
     from .gui.events import *  # IMPORT FUNCTIONS
     from .gui.mainwindow import Ui_MainWindow  # GUI FILE
@@ -31,7 +31,7 @@ try:
 
 except:
     from helpers.created_accounts import CreatedByAccounts
-    from icons_rc import *
+    from static.icons.icons_rc import *
     from settings.env import EnvHelpers
     from gui.events import *
     from gui.mainwindow import Ui_MainWindow
@@ -378,7 +378,7 @@ class MainWindow(QMainWindow, CreatedByAccounts):
 
 def runall():
     app = QApplication(sys.argv)
-    QtGui.QFontDatabase.addApplicationFont('/StellarMap/fonts/Cascadia.ttf')
+    QtGui.QFontDatabase.addApplicationFont('/StellarMap/static/fonts/Cascadia.ttf')
     window = MainWindow()
 
     # default testnet network

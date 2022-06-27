@@ -6,8 +6,8 @@ from PyQt5.QtGui import (QBrush, QColor,QFont,
                            QPalette)
 from PyQt5.QtWidgets import *
 
-try: from .icons_rc import *
-except: from icons_rc import *
+try: from .static.icons.icons_rc import *
+except: from static.icons.icons_rc import *
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
