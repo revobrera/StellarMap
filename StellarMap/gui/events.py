@@ -1,27 +1,23 @@
-#Importing libraries for
-
-
-import json  # Performing operating system operations
+import json
 import os
 import time
 
 import pandas as pd
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtCore import (  # PyQt5 libraries and sub-libaries
-    QPropertyAnimation, QSize, Qt)
+from PyQt5.QtCore import QPropertyAnimation, QSize, Qt
 from PyQt5.QtGui import QColor, QFont
 from PyQt5.QtWidgets import (QGraphicsDropShadowEffect, QMainWindow,
                              QPushButton, QSizeGrip, QSizePolicy)
 
 try:
-    from .env import EnvHelpers  # Settings file
     from .icons_rc import *
-    from .ui_styles import *
+    from .settings.env import EnvHelpers
+    from .gui.styles import *
 
 except:
-    from env import EnvHelpers  # Settings file
     from icons_rc import *
-    from ui_styles import *
+    from settings.env import EnvHelpers
+    from gui.styles import *
 
 #-------------------------------------Global variables-------------------------------------------
 GLOBAL_STATE = 0

@@ -960,8 +960,8 @@ color: rgb(255,255,255);""")
         self.splitter.addWidget(self.frame)
         self.gridLayout.addWidget(self.splitter, 0, 0, 1, 1)
 
-        # make the first tab default as active
-        self.tabWidget.setCurrentIndex(0)
+        # make the 4th tab default as active with 0 as starting index
+        self.tabWidget.setCurrentIndex(3)
 
 
         # self.verticalLayout_10 = QVBoxLayout(self.page_home)
