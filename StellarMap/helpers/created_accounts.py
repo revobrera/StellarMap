@@ -1,10 +1,9 @@
-import json
 import os
 
 import pandas as pd
 
 try:
-    from .helpers.data_model import PandasModel
+    
     from .helpers.data_output import DataOutput
     from .helpers.q_thread_generics import (
         GenericAppendCreatorToDfWorkerThread,
@@ -13,7 +12,6 @@ try:
         GenericGetXLMBalanceWorkerThread, GenericRequestsWorkerThread)
 
 except:
-    from helpers.data_model import PandasModel
     from helpers.data_output import DataOutput
     from helpers.q_thread_generics import (
         GenericAppendCreatorToDfWorkerThread,
@@ -89,29 +87,6 @@ class CreatedByAccounts(DataOutput):
             self.q_thread_creator.stop()
             self.q_thread_creator.quit()
             self.q_thread_creator.wait()
-
-    def call_description_fn(self, q_thread_output_description):
-        self.labelDescription(q_thread_output_description)
-
-    def call_df_fn(self, q_thread_output_df):
-        # put fetched data in a model
-        q_model = PandasModel(q_thread_output_df)
-        self.ui.tableView.setModel(q_model)
-
-    def call_json_fn(self, q_thread_output_json):
-        self.ui.text_edit_json.acceptRichText()
-        my_json_obj = json.loads(q_thread_output_json)
-        my_json_str_formatted = json.dumps(my_json_obj, indent=4)
-        self.ui.text_edit_json.append(my_json_str_formatted)
-    
-    def call_terminal_fn(self, q_thread_output_terminal):
-        self.ui.textEdit.append(q_thread_output_terminal)
-
-    def reset_json_fn(self):
-        self.ui.text_edit_json.clear()
-
-    def reset_terminal_fn(self):
-        self.ui.textEdit.clear()
 
     def check_user_internet(self):
 
