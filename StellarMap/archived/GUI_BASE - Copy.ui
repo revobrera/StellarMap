@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <author>Wanderson M. Pimenta</author>
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <author>Rev Obrera</author>
+ <class>ApplicationWindow</class>
+ <widget class="QMainWindow" name="ApplicationWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -547,7 +547,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>ApplicationWindow</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow {background: transparent; }
