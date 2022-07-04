@@ -42,7 +42,7 @@ class GenericRequestsWorkerThread(QThread):
         except requests.exceptions.RequestException as err:
             print ("Uh Oh: Something broke... ",err)
 
-        time.sleep(1)
+        time.sleep(1.3)
 
         # exit thread
         return
