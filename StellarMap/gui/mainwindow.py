@@ -10,10 +10,8 @@ from PyQt5.QtWidgets import *
 
 try: 
         from .static.icons.icons_rc import *
-        from .helpers.q_thread_generics import GenericGraphWorkerThread
 except: 
         from static.icons.icons_rc import *
-        from helpers.q_thread_generics import GenericGraphWorkerThread
 
 
 
@@ -812,16 +810,16 @@ color: rgb(113, 72, 150);""")
         self.gridLayout_5.addWidget(self.line_edit_search_input, 0, 0, 1, 1)
 
         # local html graph
-        self.view = QtWebEngineWidgets.QWebEngineView()
-        self.view.load(QtCore.QUrl().fromLocalFile(
-                '/StellarMap/static/html/test.html'
-        ))
+        # self.view = QtWebEngineWidgets.QWebEngineView()
+        # self.view.load(QtCore.QUrl().fromLocalFile(
+        #         '/StellarMap/static/html/test.html'
+        # ))
         
         
         self.gridLayout_2.addLayout(self.gridLayout_5, 0, 0, 1, 1)
         
         # add local html graph widget to ApplicationWindow layout
-        self.gridLayout_2.addWidget(self.view)
+        # self.gridLayout_2.addWidget(self.view)
         
 
         self.splitter.addWidget(self.frame_2)

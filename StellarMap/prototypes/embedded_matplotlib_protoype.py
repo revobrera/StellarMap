@@ -45,17 +45,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self._line.set_data(t, np.sin(t + time.time()))
         self._line.figure.canvas.draw()
 
-class PlotDynamicGraph():
-    def initFigure(self):
-        self._main = QtWidgets.QWidget()
-        self.setCentralWidget(self._main)
-        self.fig_layout = QtWidgets.QVBoxLayout(self._main)
-
-        self.dynamic_canvas = FigureCanvas(Figure(figsize=(5, 3)))
-
-        self.fig_layout.addWidget(NavigationToolbar(self.dynamic_canvas, self))
-        self.fig_layout.addWidget(self.dynamic_canvas)
-
 
 if __name__ == "__main__":
     # Check whether there is already a running QApplication (e.g., if running

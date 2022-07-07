@@ -383,6 +383,4 @@ def runall():
     # default testnet network
     e = EnvHelpers()
 
-    
-
     sys.exit(app.exec_())
