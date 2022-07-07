@@ -31,6 +31,7 @@ class CreatedByAccounts(DataOutput):
         self.q_thread_json = None
         self.q_thread_home_domain = None
         self.q_thread_creator_account = None
+        self.q_thread_account_active = ""
         self.q_thread_xlm_balance = 0
         self.q_thread_df_row = {
             'Creator Account': [],
@@ -178,18 +179,19 @@ class CreatedByAccounts(DataOutput):
             self.q_thread_creator = GenericGetCreatorWorkerThread(self.q_thread_json)
             self.q_thread_creator.start()
             self.q_thread_creator.q_thread_output_json.connect(self.call_step_2_1_print_output_json)
-            self.q_thread_creator.q_thread_creator_account.connect(self.call_step_2_2_check_creator_account)
+            self.q_thread_creator.q_thread_account_dict.connect(self.call_step_2_2_check_creator_account)
 
     def call_step_2_1_print_output_json(self, q_thread_output_json):
         d_str = "QThread is on step 2.1: printing out json"
         self.output_terminal(d_str)
         self.output_json(q_thread_output_json)
 
-    def call_step_2_2_check_creator_account(self, q_thread_creator_account):
+    def call_step_2_2_check_creator_account(self, q_thread_account_dict):
         d_str = "QThread is on step 2.2: checking creator account"
         self.output_terminal(d_str)
 
-        self.q_thread_creator_account = q_thread_creator_account
+        self.q_thread_account_active = str(q_thread_account_dict["account_active"])
+        self.q_thread_creator_account = q_thread_account_dict["creator_account"]
 
         # check if valid stellar address
         if self.is_valid_stellar_address(self.q_thread_creator_account):
@@ -272,7 +274,8 @@ class CreatedByAccounts(DataOutput):
         # generating stellar.expert site
         stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(self.q_thread_creator_account)
 
-        d_str = "creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_creator_account, self.q_thread_home_domain,
+        d_str = "active: %s, creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_account_active, 
+                                                                             self.q_thread_creator_account, self.q_thread_home_domain,
                                                                              self.q_thread_xlm_balance, stellar_expert_site_url)
 
         self.output_terminal(d_str)
@@ -280,6 +283,7 @@ class CreatedByAccounts(DataOutput):
         # dictionary appended to dataframe
         row_dict = {
             "creator_df": self.creator_df,
+            "account_active": str(self.q_thread_account_active),
             "creator_account": self.q_thread_creator_account,
             "home_domain": self.q_thread_home_domain,
             "xlm_balance": self.q_thread_xlm_balance,
@@ -317,7 +321,7 @@ class CreatedByAccounts(DataOutput):
         self.output_df(self.creator_df)
 
         # select columns to print
-        print_df = self.creator_df[self.creator_df.columns[0:3]]
+        print_df = self.creator_df[self.creator_df.columns[0:4]]
         self.output_terminal(print_df.to_csv())
 
         self.output_terminal("done! \n " + "#"*49)
