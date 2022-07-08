@@ -171,12 +171,12 @@ class GenericGetCreatorWorkerThread(QThread):
         df_monthly['creator_url'] = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(df_monthly['creator'])
 
         # checking account active or deleted
-        is_deleted = df_monthly['deleted']
+        is_deleted = df_monthly['deleted'].bool()
         is_deleted_str = ""
-        if is_deleted is True:
+        if is_deleted:
             is_deleted_str = "Account (deleted)"
         else:
-            is_deleted_str = "Active"
+            is_deleted_str = "Account (active)"
 
         # return creator
         for index, row in df_monthly.iterrows():
@@ -303,8 +303,11 @@ class GenericAppendCreatorToDfWorkerThread(QThread):
         # the list to append as row
         row_ls = [self.account_active, self.creator_account, self.home_domain, self.xlm_balance, self.stellar_expert_url]
 
+        print(self.creator_df.columns)
+
         # create a pandas series from the list
-        row_s = pd.Series(row_ls, index=self.creator_df.columns)
+        # row_s = pd.Series(row_ls, index=self.creator_df.columns)
+        row_s = pd.Series(row_ls, index=['Active', 'Creator Account', 'Home Domain', 'XLM Balance', 'Stellar.Expert'])
 
         # append the row to the dataframe. [WARNING] .append would be deprecated soon, use .concat instead
         self.creator_df = self.creator_df.append(row_s, ignore_index=True)

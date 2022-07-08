@@ -31,9 +31,11 @@ class CreatedByAccounts(DataOutput):
         self.q_thread_json = None
         self.q_thread_home_domain = None
         self.q_thread_creator_account = None
-        self.q_thread_account_active = ""
+        self.q_thread_account_active = None
+        self.q_thread_account_info = {}
         self.q_thread_xlm_balance = 0
         self.q_thread_df_row = {
+            'Active': [],
             'Creator Account': [],
             'Home Domain': [],
             'XLM Balance': [],
@@ -190,12 +192,14 @@ class CreatedByAccounts(DataOutput):
         d_str = "QThread is on step 2.2: checking creator account"
         self.output_terminal(d_str)
 
-        self.q_thread_account_active = str(q_thread_account_dict["account_active"])
-        self.q_thread_creator_account = q_thread_account_dict["creator_account"]
+        self.q_thread_account_info = q_thread_account_dict.copy()
+
+        self.q_thread_account_active = self.q_thread_account_info["account_active"]
+        self.q_thread_creator_account = self.q_thread_account_info["creator_account"]
 
         # check if valid stellar address
-        if self.is_valid_stellar_address(self.q_thread_creator_account):
-            self.set_account_from_api(self.q_thread_creator_account, self.call_step_3_check_home_domain_element_exists, 'horizon')
+        if self.is_valid_stellar_address(self.q_thread_account_info["creator_account"]):
+            self.set_account_from_api(self.q_thread_account_info["creator_account"], self.call_step_3_check_home_domain_element_exists, 'horizon')
         else:
             # captures nan value
             self.call_step_7_concluding_upstream_crawl()
@@ -272,19 +276,21 @@ class CreatedByAccounts(DataOutput):
         self.output_terminal(d_str)
 
         # generating stellar.expert site
-        stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(self.q_thread_creator_account)
+        stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(self.q_thread_account_info["creator_account"])
 
-        d_str = "active: %s, creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_account_active, 
-                                                                             self.q_thread_creator_account, self.q_thread_home_domain,
+        d_str = "active: %s, creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_account_info["account_active"], 
+                                                                             self.q_thread_account_info["creator_account"], self.q_thread_home_domain,
                                                                              self.q_thread_xlm_balance, stellar_expert_site_url)
 
         self.output_terminal(d_str)
+        print(d_str)
 
         # dictionary appended to dataframe
+        row_dict = {}
         row_dict = {
             "creator_df": self.creator_df,
-            "account_active": str(self.q_thread_account_active),
-            "creator_account": self.q_thread_creator_account,
+            "account_active": self.q_thread_account_info["account_active"],
+            "creator_account": self.q_thread_account_info["creator_account"],
             "home_domain": self.q_thread_home_domain,
             "xlm_balance": self.q_thread_xlm_balance,
             "stellar_expert_url": stellar_expert_site_url
@@ -300,10 +306,10 @@ class CreatedByAccounts(DataOutput):
         self.output_df(self.creator_df)
 
         # checks if valid address
-        if self.is_valid_stellar_address(self.q_thread_creator_account):
+        if self.is_valid_stellar_address(self.q_thread_account_info["creator_account"]):
             # valid creator account
             # recursive call
-            self.call_upstream_crawl_on_stellar_account(self.q_thread_creator_account)
+            self.call_upstream_crawl_on_stellar_account(self.q_thread_account_info["creator_account"])
         else:
             # captures nan and exits
             self.call_step_7_concluding_upstream_crawl()
@@ -321,7 +327,7 @@ class CreatedByAccounts(DataOutput):
         self.output_df(self.creator_df)
 
         # select columns to print
-        print_df = self.creator_df[self.creator_df.columns[0:4]]
+        print_df = self.creator_df[self.creator_df.columns[0:3]]
         self.output_terminal(print_df.to_csv())
 
         self.output_terminal("done! \n " + "#"*49)
