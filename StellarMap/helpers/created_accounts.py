@@ -25,6 +25,9 @@ class CreatedByAccounts(DataOutput):
     def initCall(self, stellar_account):
 
         #--------------------------- init variables for CreatedByAccounts()
+        self.recursive_count = 0
+        self.stellar_account = stellar_account
+        self.current_stellar_account = None
         self.q_thread_headers = None
         self.q_thread_text = None
         self.q_thread_status_code = None
@@ -36,6 +39,7 @@ class CreatedByAccounts(DataOutput):
         self.q_thread_xlm_balance = 0
         self.q_thread_df_row = {
             'Active': [],
+            'Created': [],
             'Creator Account': [],
             'Home Domain': [],
             'XLM Balance': [],
@@ -158,13 +162,13 @@ class CreatedByAccounts(DataOutput):
 
         # check if valid stellar address
         if self.is_valid_stellar_address(stellar_account):
-            self.set_account_from_api(stellar_account, self.call_step_2_get_creator_from_account, 'stellar_expert')
+            self.set_account_from_api(stellar_account, self.call_step_2_get_account_info, 'stellar_expert')
         else:
             # captures nan value
-            self.call_step_7_concluding_upstream_crawl()
+            self.call_step_8_concluding_upstream_crawl()
 
-    def call_step_2_get_creator_from_account(self):
-        d_str = "QThread is on step 2: retrieving and parsing the creator account from HTTPS response"
+    def call_step_2_get_account_info(self):
+        d_str = "QThread is on step 2: retrieving account info from stellar.expert"
         self.output_terminal(d_str)
 
         if self.q_thread_status_code == 404:
@@ -175,34 +179,85 @@ class CreatedByAccounts(DataOutput):
             self.output_terminal(d_str_status)
 
             # rerouting to end of algorithm
-            self.call_step_8_graceful_exit()
+            self.call_step_9_graceful_exit()
 
         else:
             self.q_thread_creator = GenericGetCreatorWorkerThread(self.q_thread_json)
             self.q_thread_creator.start()
-            self.q_thread_creator.q_thread_output_json.connect(self.call_step_2_1_print_output_json)
-            self.q_thread_creator.q_thread_account_dict.connect(self.call_step_2_2_check_creator_account)
+            self.q_thread_creator.q_thread_output_json.connect(self.call_step_3_1_print_output_json)
+            self.q_thread_creator.q_thread_account_dict.connect(self.call_step_3_set_account_info)
 
-    def call_step_2_1_print_output_json(self, q_thread_output_json):
-        d_str = "QThread is on step 2.1: printing out json"
-        self.output_terminal(d_str)
-        self.output_json(q_thread_output_json)
-
-    def call_step_2_2_check_creator_account(self, q_thread_account_dict):
-        d_str = "QThread is on step 2.2: checking creator account"
+    def call_step_3_set_account_info(self, q_thread_account_dict):
+        d_str = "QThread is on step 3: setting account info to variables"
         self.output_terminal(d_str)
 
         self.q_thread_account_info = q_thread_account_dict.copy()
 
+        self.q_thread_json = self.q_thread_account_info['json_str']
         self.q_thread_account_active = self.q_thread_account_info["account_active"]
         self.q_thread_creator_account = self.q_thread_account_info["creator_account"]
+        self.q_thread_created_datetime = self.q_thread_account_info["created"]
+
+        # first recursive call is the starting stellar account
+        if self.recursive_count == 0:
+            self.current_stellar_account = self.stellar_account
+        else:
+            self.current_stellar_account = self.q_thread_account_info["creator_account"]
 
         # check if valid stellar address
-        if self.is_valid_stellar_address(self.q_thread_account_info["creator_account"]):
-            self.set_account_from_api(self.q_thread_account_info["creator_account"], self.call_step_3_check_home_domain_element_exists, 'horizon')
+        if self.is_valid_stellar_address(self.current_stellar_account):
+            self.set_account_from_api(self.current_stellar_account, self.call_step_4_check_home_domain_element_exists, 'horizon')
         else:
             # captures nan value
-            self.call_step_7_concluding_upstream_crawl()
+            self.call_step_8_concluding_upstream_crawl()
+
+    # def call_step_2_get_creator_from_account(self):
+    #     d_str = "QThread is on step 2: retrieving and parsing the creator account from HTTPS response"
+    #     self.output_terminal(d_str)
+
+    #     if self.q_thread_status_code == 404:
+    #         # gracefully handling 404 errors and preventing the app to crash
+    #         d_str_status = "ERROR: It is likely that you are searching for a stellar account that is no longer found on this network: " + str(os.getenv("NETWORK"))
+
+    #         # self.output_description(d_str_status)
+    #         self.output_terminal(d_str_status)
+
+    #         # rerouting to end of algorithm
+    #         self.call_step_8_graceful_exit()
+
+    #     else:
+    #         self.q_thread_creator = GenericGetCreatorWorkerThread(self.q_thread_json)
+    #         self.q_thread_creator.start()
+    #         self.q_thread_creator.q_thread_output_json.connect(self.call_step_2_1_print_output_json)
+    #         self.q_thread_creator.q_thread_account_dict.connect(self.call_step_2_2_check_creator_account)
+
+    def call_step_3_1_print_output_json(self, q_thread_output_json):
+        d_str = "QThread is on step 3.1: printing out json"
+        self.output_terminal(d_str)
+        self.output_json(q_thread_output_json)
+
+    # def call_step_2_2_check_creator_account(self, q_thread_account_dict):
+    #     d_str = "QThread is on step 2.2: checking creator account"
+    #     self.output_terminal(d_str)
+
+    #     self.q_thread_account_info = q_thread_account_dict.copy()
+
+    #     self.q_thread_account_active = self.q_thread_account_info["account_active"]
+    #     self.q_thread_creator_account = self.q_thread_account_info["creator_account"]
+    #     self.q_thread_created_datetime = self.q_thread_account_info["created"]
+
+    #     # first recursive call is the starting stellar account
+    #     if self.recursive_count == 0:
+    #         self.current_stellar_account = self.stellar_account
+    #     else:
+    #         self.current_stellar_account = self.q_thread_account_info["creator_account"]
+
+    #     # check if valid stellar address
+    #     if self.is_valid_stellar_address(self.current_stellar_account):
+    #         self.set_account_from_api(self.current_stellar_account, self.call_step_3_check_home_domain_element_exists, 'horizon')
+    #     else:
+    #         # captures nan value
+    #         self.call_step_7_concluding_upstream_crawl()
 
     # DO NOT uncomment this def! #################################################################################
     # The code is able to continue even when a 404 error is encountered to identify the subsequent creator(s) of the account.
@@ -226,60 +281,60 @@ class CreatedByAccounts(DataOutput):
     #         self.call_step_3_check_home_domain_element_exists()
     # DO NOT uncomment this def! #################################################################################
 
-    def call_step_3_check_home_domain_element_exists(self):
-        d_str = "QThread is on step 3: checking if home_domain element of creator account exists from horizon api"
+    def call_step_4_check_home_domain_element_exists(self):
+        d_str = "QThread is on step 4: checking if home_domain element of creator account exists from horizon api"
         self.output_terminal(d_str)
         
         self.q_thread_hd = GenericGetHomeDomainWorkerThread(self.q_thread_json)
         self.q_thread_hd.start()
-        self.q_thread_hd.q_thread_home_domain.connect(self.call_step_3_1_print_hd)
+        self.q_thread_hd.q_thread_home_domain.connect(self.call_step_4_1_print_hd)
 
-    def call_step_3_1_print_hd(self, q_thread_home_domain):
+    def call_step_4_1_print_hd(self, q_thread_home_domain):
         self.q_thread_home_domain = q_thread_home_domain
         d_str = "home_domain: " + str(self.q_thread_home_domain)
         self.output_terminal(d_str)
 
-        self.call_step_4_check_xlm_balance_element_exists()
+        self.call_step_5_check_xlm_balance_element_exists()
 
-    def call_step_4_check_xlm_balance_element_exists(self):
-        d_str = "QThread is on step 4: checking if xlm_balance element of creator account exists from horizon api"
+    def call_step_5_check_xlm_balance_element_exists(self):
+        d_str = "QThread is on step 5: checking if xlm_balance element of creator account exists from horizon api"
         self.output_terminal(d_str)
         
         self.q_thread_xlm_balance = 0
         if 'balances' not in self.q_thread_json:
             self.q_thread_xlm_balance = 0
             
-        self.call_step_5_get_xlm_balance_from_api()
+        self.call_step_6_get_xlm_balance_from_api()
         
-    def call_step_5_get_xlm_balance_from_api(self):
+    def call_step_6_get_xlm_balance_from_api(self):
         # print(get_pretty_json_string(res))
         # print(res['home_domain'])
         # print(res['last_modified_time'])
         # print(res['_links']['data']['href'])
-        d_str = "QThread is on step 5: retrieving balances element from creator account from horizon api"
+        d_str = "QThread is on step 6: retrieving balances element from creator account from horizon api"
         self.output_terminal(d_str)
 
         self.q_thread_xlm = GenericGetXLMBalanceWorkerThread(self.q_thread_json)
         self.q_thread_xlm.start()
-        self.q_thread_xlm.q_thread_xlm_balance.connect(self.call_step_5_1_print_xlm_balance)
+        self.q_thread_xlm.q_thread_xlm_balance.connect(self.call_step_6_1_print_xlm_balance)
 
-    def call_step_5_1_print_xlm_balance(self, q_thread_xlm_balance):
+    def call_step_6_1_print_xlm_balance(self, q_thread_xlm_balance):
         self.q_thread_xlm_balance = q_thread_xlm_balance
         d_str = "XLM Balance: " + str(self.q_thread_xlm_balance)
         self.output_terminal(d_str)
 
-        self.call_step_6_append_creator_to_df()
+        self.call_step_7_append_creator_to_df()
 
 
-    def call_step_6_append_creator_to_df(self):
-        d_str = "QThread is on step 6: appending row dictionary row to pandas dataframe"
+    def call_step_7_append_creator_to_df(self):
+        d_str = "QThread is on step 7: appending row dictionary row to pandas dataframe"
         self.output_terminal(d_str)
 
         # generating stellar.expert site
-        stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(self.q_thread_account_info["creator_account"])
+        stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(self.current_stellar_account)
 
-        d_str = "active: %s, creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_account_info["account_active"], 
-                                                                             self.q_thread_account_info["creator_account"], self.q_thread_home_domain,
+        d_str = "active: %s, created: %d, creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_account_info["account_active"], self.q_thread_created_datetime,
+                                                                             self.current_stellar_account, self.q_thread_home_domain,
                                                                              self.q_thread_xlm_balance, stellar_expert_site_url)
 
         self.output_terminal(d_str)
@@ -290,7 +345,8 @@ class CreatedByAccounts(DataOutput):
         row_dict = {
             "creator_df": self.creator_df,
             "account_active": self.q_thread_account_info["account_active"],
-            "creator_account": self.q_thread_account_info["creator_account"],
+            "created": self.q_thread_created_datetime,
+            "creator_account": self.current_stellar_account,
             "home_domain": self.q_thread_home_domain,
             "xlm_balance": self.q_thread_xlm_balance,
             "stellar_expert_url": stellar_expert_site_url
@@ -298,24 +354,27 @@ class CreatedByAccounts(DataOutput):
 
         self.q_thread_append_df = GenericAppendCreatorToDfWorkerThread(row_dict)
         self.q_thread_append_df.start()
-        self.q_thread_append_df.q_thread_output_df.connect(self.call_step_6_1_print_df_and_recursive_upstream_crawl)
+        self.q_thread_append_df.q_thread_output_df.connect(self.call_step_7_1_print_df_and_recursive_upstream_crawl)
 
-    def call_step_6_1_print_df_and_recursive_upstream_crawl(self, q_thread_output_df):
+    def call_step_7_1_print_df_and_recursive_upstream_crawl(self, q_thread_output_df):
         # real time outupt df to data tab - in case the algorithm is disrupted it will still display results retrieved
         self.creator_df = q_thread_output_df
         self.output_df(self.creator_df)
 
         # checks if valid address
-        if self.is_valid_stellar_address(self.q_thread_account_info["creator_account"]):
+        if self.is_valid_stellar_address(self.current_stellar_account):
             # valid creator account
+            # increments recursive count
+            self.recursive_count = self.recursive_count + 1
+
             # recursive call
-            self.call_upstream_crawl_on_stellar_account(self.q_thread_account_info["creator_account"])
+            self.call_upstream_crawl_on_stellar_account(self.current_stellar_account)
         else:
             # captures nan and exits
-            self.call_step_7_concluding_upstream_crawl()
+            self.call_step_8_concluding_upstream_crawl()
     
-    def call_step_7_concluding_upstream_crawl(self):
-        d_str = "QThread is on step 7: completed chaining algorithm to crawl upstream successfully \n"
+    def call_step_8_concluding_upstream_crawl(self):
+        d_str = "QThread is on step 8: completed chaining algorithm to crawl upstream successfully \n"
         self.output_terminal(d_str)
 
         # Permanently changes the pandas settings
@@ -332,9 +391,9 @@ class CreatedByAccounts(DataOutput):
 
         self.output_terminal("done! \n " + "#"*49)
 
-        self.call_step_8_graceful_exit()
+        self.call_step_9_graceful_exit()
 
-    def call_step_8_graceful_exit(self):
+    def call_step_9_graceful_exit(self):
         self.output_terminal("Gracefully Exiting! \n " + "#"*49)
 
         # exiting any running threads
