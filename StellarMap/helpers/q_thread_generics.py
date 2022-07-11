@@ -185,9 +185,10 @@ class GenericGetCreatorWorkerThread(QThread):
             # use the creator account to check the home_domain element exists from the horizon api
             account_dict = {
                 "json_str": res_string,
-                "account_active": str(is_deleted_str),
+                "account": str(row['account']),
+                "created": row['created'],
                 "creator_account": str(row['creator']),
-                "created": row['created']
+                "account_active": str(is_deleted_str)
             }
             self.q_thread_account_dict.emit(account_dict)
             
