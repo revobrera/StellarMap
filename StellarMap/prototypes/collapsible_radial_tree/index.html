@@ -108,7 +108,7 @@ function update(source) {
       .on("mouseenter", function(d) {
         tooltip.style("opacity", 1)
         tooltip
-            .html("<b>Name:</b> " + d.name +"<br><b>Full Id:</b> "+ d.full_id + "<br><b>Description:</b> "+ d.description 
+            .html("<b>Name:</b> " + d.name +"<br><b>Issuer Id:</b> "+ d.issuer_id + "<br><b>Description:</b> "+ d.description 
             + "<br><b>URL:</b> "+ '<a href=https://www.'+ d.url +'>'+ d.url+'</a>' + "<br><b>Created:</b> "+ d.created)
             .style("left", (d3.event.pageX) + "px") 
             .style("top", (d3.event.pageY ) + "px")
