@@ -59,7 +59,7 @@ var tooltip = d3.select(".tooltip")
                 .style("opacity", 0)
                 .style("left", (0) + "px") 
                 .style("top", (0) + "px")
-var diameter = 800;
+var diameter = 570;
 
 // var margin = {top: 20, right: 120, bottom: 20, left: 120},
     width = diameter,
@@ -95,24 +95,37 @@ var svg = d3.select("body").append("svg")
               .attr("y", height - 18)
               .attr("width", 18)
               .attr("height", 18)
-              .style("fill", '#3f2c70');
+              .style("fill", '#cc3463');
   
           legend.append("text")
               .attr("x", 50)
               .attr("y", height - 9)
               .attr("dy", ".35em")
-              .text("Issuer");
+              .text("Deleted");
 
           legend.append("rect")
               .attr("x", 18)
               .attr("y", height - 40)
               .attr("width", 18)
               .attr("height", 18)
-              .style("fill", '#fcec04');
+              .style("fill", '#00FF9C');
   
           legend.append("text")
               .attr("x", 50)
               .attr("y", height - 30)
+              .attr("dy", ".35em")
+              .text("Issuer");
+
+          legend.append("rect")
+              .attr("x", 18)
+              .attr("y", height - 62)
+              .attr("width", 18)
+              .attr("height", 18)
+              .style("fill", '#fcec04');
+  
+          legend.append("text")
+              .attr("x", 50)
+              .attr("y", height - 51)
               .attr("dy", ".35em")
               .text("Asset");
 
@@ -150,7 +163,7 @@ function update(source) {
         //if node type is 'ISSUER' change the tooltip prooperties accordingly
         if(d.node_type == 'ASSET')
         {
-          tooltip.style("opacity", 1).style("background-color" , '#837a01')
+          tooltip.style("opacity", 1).style("background-color" , '#fcec04')
           tooltip
             .html("<b>Name:</b> " + d.name +"<br><b>Issuer Id:</b> "+ d.issuer_id 
               +"<br><b>Asset type:</b> "+ d.asset_type 
@@ -167,6 +180,9 @@ function update(source) {
         }
         else{
           tooltip.style("opacity", 1).style("background-color" , '#00FF9C')
+          if(d.deleted == true) {
+            tooltip.style("opacity", 1).style("background-color" , '#cc3463')
+          }
           tooltip
             .html("<b>Name:</b> " + d.name +"<br><b>Issuer Id:</b> "+ d.issuer_id + "<br><b>Description:</b> "+ d.description 
             + "<br><b>URL:</b> "+ '<a href=https://www.'+ d.url +'>'+ d.url+'</a>' + "<br><b>Created:</b> "+ d.created
@@ -216,11 +232,17 @@ function update(source) {
       .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
 
   nodeUpdate.select("circle")
-      .attr("r", diameter/400)
+      .attr("r", diameter/300)
       .style("fill", function(d) { 
-        if(d.node_type == 'ISSUER') {return '#3f2c70'}
+        if(d.node_type == 'ISSUER') { return '#3f2c70'}
         else
-        return '#fcec04'
+        return '#3f2c70'
+      })
+      .style("stroke", function(d) { 
+        if(d.node_type == 'ASSET') { return '#fcec04'}
+        else {
+          if(d.deleted == true) { return '#cc3463'}
+        }
       });
 
 
