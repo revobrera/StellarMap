@@ -199,14 +199,14 @@ class CreatedByAccounts(DataOutput):
         self.q_thread_created_datetime = self.q_thread_account_info["created"]
 
         # first recursive call is the starting stellar account
-        # if self.recursive_count == 0:
-        #     self.current_stellar_account = self.stellar_account
-        # else:
-        #     self.current_stellar_account = self.q_thread_account_info["creator_account"]
+        if self.recursive_count == 0:
+            self.current_stellar_account = self.stellar_account
+        else:
+            self.current_stellar_account = self.q_thread_account_info["creator_account"]
 
         # check if valid stellar address
-        if self.is_valid_stellar_address(self.q_thread_creator_account):
-            self.set_account_from_api(self.q_thread_creator_account, self.call_step_4_check_home_domain_element_exists, 'horizon')
+        if self.is_valid_stellar_address(self.current_stellar_account):
+            self.set_account_from_api(self.current_stellar_account, self.call_step_4_check_home_domain_element_exists, 'horizon')
         else:
             # captures nan value
             self.call_step_8_concluding_upstream_crawl()
@@ -284,20 +284,6 @@ class CreatedByAccounts(DataOutput):
     def call_step_4_check_home_domain_element_exists(self):
         d_str = "QThread is on step 4: checking if home_domain element of creator account exists from horizon api"
         self.output_terminal(d_str)
-
-        if self.q_thread_status_code == 404:
-            # gracefully handling 404 errors and preventing the app to crash
-            d_str_status = "ERROR: It is likely that you are searching for a stellar account that is no longer found on this network: " + str(os.getenv("NETWORK"))
-
-            # self.output_description(d_str_status)
-            self.output_terminal(d_str_status)
-
-            self.q_thread_home_domain = '404 Error: No home_domain element found!'
-            self.q_thread_xlm_balance = '404 Error: No balances element found!'
-
-            # rerouting to end of algorithm
-            # self.call_step_9_graceful_exit()
-            # benign condition --> keep the algorithm going
         
         self.q_thread_hd = GenericGetHomeDomainWorkerThread(self.q_thread_json)
         self.q_thread_hd.start()
@@ -337,10 +323,7 @@ class CreatedByAccounts(DataOutput):
         d_str = "XLM Balance: " + str(self.q_thread_xlm_balance)
         self.output_terminal(d_str)
 
-        self.output_terminal(self.q_thread_account_active)
-        self.output_terminal(self.q_thread_created_datetime)
-
-        # self.call_step_7_append_creator_to_df()
+        self.call_step_7_append_creator_to_df()
 
 
     def call_step_7_append_creator_to_df(self):
@@ -348,10 +331,10 @@ class CreatedByAccounts(DataOutput):
         self.output_terminal(d_str)
 
         # generating stellar.expert site
-        stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(self.q_thread_creator_account)
+        stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(self.current_stellar_account)
 
         d_str = "active: %s, created: %d, creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_account_info["account_active"], self.q_thread_created_datetime,
-                                                                             self.q_thread_creator_account, self.q_thread_home_domain,
+                                                                             self.current_stellar_account, self.q_thread_home_domain,
                                                                              self.q_thread_xlm_balance, stellar_expert_site_url)
 
         self.output_terminal(d_str)
@@ -363,7 +346,7 @@ class CreatedByAccounts(DataOutput):
             "creator_df": self.creator_df,
             "account_active": self.q_thread_account_info["account_active"],
             "created": self.q_thread_created_datetime,
-            "creator_account": self.q_thread_creator_account,
+            "creator_account": self.current_stellar_account,
             "home_domain": self.q_thread_home_domain,
             "xlm_balance": self.q_thread_xlm_balance,
             "stellar_expert_url": stellar_expert_site_url
@@ -379,13 +362,13 @@ class CreatedByAccounts(DataOutput):
         self.output_df(self.creator_df)
 
         # checks if valid address
-        if self.is_valid_stellar_address(self.q_thread_creator_account):
+        if self.is_valid_stellar_address(self.current_stellar_account):
             # valid creator account
             # increments recursive count
             self.recursive_count = self.recursive_count + 1
 
             # recursive call
-            self.call_upstream_crawl_on_stellar_account(self.q_thread_creator_account)
+            self.call_upstream_crawl_on_stellar_account(self.current_stellar_account)
         else:
             # captures nan and exits
             self.call_step_8_concluding_upstream_crawl()

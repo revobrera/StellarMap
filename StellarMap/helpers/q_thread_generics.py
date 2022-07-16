@@ -310,8 +310,8 @@ class GenericAppendCreatorToDfWorkerThread(QThread):
         print(self.creator_df.columns)
 
         # create a pandas series from the list
-        # row_s = pd.Series(row_ls, index=self.creator_df.columns)
-        row_s = pd.Series(row_ls, index=['Active', 'Created', 'Creator Account', 'Home Domain', 'XLM Balance', 'Stellar.Expert'])
+        row_s = pd.Series(row_ls, index=self.creator_df.columns)
+        # row_s = pd.Series(row_ls, index=['Active', 'Created', 'Creator Account', 'Home Domain', 'XLM Balance', 'Stellar.Expert'])
 
         # append the row to the dataframe. [WARNING] .append would be deprecated soon, use .concat instead
         self.creator_df = self.creator_df.append(row_s, ignore_index=True)
