@@ -39,9 +39,8 @@ except:
 
 #----------------------------------------------------------------------------------------------
 
-  
 
-class MainWindow(QMainWindow, CreatedByAccounts):
+class ApplicationWindow(QMainWindow, CreatedByAccounts):
 
 
     def __init__(self):
@@ -364,7 +363,7 @@ class MainWindow(QMainWindow, CreatedByAccounts):
         """
 
         self.resizeFunction()
-        return super(MainWindow, self).resizeEvent(event)
+        return super(ApplicationWindow, self).resizeEvent(event)
 
     def resizeFunction(self):
         """
@@ -379,7 +378,7 @@ class MainWindow(QMainWindow, CreatedByAccounts):
 def runall():
     app = QApplication(sys.argv)
     QtGui.QFontDatabase.addApplicationFont('/StellarMap/static/fonts/Cascadia.ttf')
-    window = MainWindow()
+    window = ApplicationWindow()
 
     # default testnet network
     e = EnvHelpers()

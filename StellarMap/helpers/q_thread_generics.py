@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 import time
@@ -42,7 +43,7 @@ class GenericRequestsWorkerThread(QThread):
         except requests.exceptions.RequestException as err:
             print ("Uh Oh: Something broke... ",err)
 
-        time.sleep(1)
+        time.sleep(1.3)
 
         # exit thread
         return
@@ -141,7 +142,7 @@ class GenericGetCreatorWorkerThread(QThread):
     Generic Worker QThread To Retrieve Creator Account
     """
     q_thread_output_json = pyqtSignal(str)
-    q_thread_creator_account = pyqtSignal(str)
+    q_thread_account_dict = pyqtSignal(dict)
     
 
     def __init__(self, input_json):
@@ -170,16 +171,43 @@ class GenericGetCreatorWorkerThread(QThread):
         df_monthly['account_url'] = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(df_monthly['account'])
         df_monthly['creator_url'] = os.getenv('BASE_SE_NETWORK_ACCOUNT') + str(df_monthly['creator'])
 
+        # checking account active or deleted
+        is_deleted = df_monthly['deleted'].bool()
+        is_deleted_str = ""
+        if is_deleted:
+            is_deleted_str = "Account (deleted)"
+        else:
+            is_deleted_str = "Account (active)"
+
         # return creator
         for index, row in df_monthly.iterrows():
             print('Creator found: ' + str(row['creator']))
             # return row['creator']
             # use the creator account to check the home_domain element exists from the horizon api
-            self.q_thread_creator_account.emit(str(row['creator']))
+            account_dict = {
+                "json_str": res_string,
+                "account": str(row['account']),
+                # "created": row['created'], # unix time
+                "created": self.convert_unix_to_text(row['created']),
+                "creator_account": str(row['creator']),
+                "account_active": str(is_deleted_str)
+            }
+            self.q_thread_account_dict.emit(account_dict)
             
 
         # exit thread
         return
+
+    def convert_unix_to_text(self, unix_time):
+        
+        if isinstance(unix_time, int):
+            date_time = datetime.datetime.fromtimestamp(unix_time)
+            date_time = date_time.strftime('%x %X') # 07/16/22 09:26:26
+        else:
+            date_time = ""
+
+        return date_time
+
 
 
 class GenericGetHomeDomainWorkerThread(QThread):
@@ -202,7 +230,7 @@ class GenericGetHomeDomainWorkerThread(QThread):
             home_domain_str = json.dumps(self.input_json['home_domain'])
 
         else:
-            home_domain_str = 'No home_domain element found.'
+            home_domain_str = 'No home_domain element found!'
 
         self.q_thread_home_domain.emit(home_domain_str)
 
@@ -255,7 +283,7 @@ class GenericGetXLMBalanceWorkerThread(QThread):
             
         except:
             # if resource is not available - most likely an account (deleted)
-            self.q_thread_xlm_balance.emit('Account (deleted)')
+            self.q_thread_xlm_balance.emit('No balances element found!')
 
         # exit thread
         return
@@ -272,13 +300,16 @@ class GenericAppendCreatorToDfWorkerThread(QThread):
 
         # example of row_dict
         # row_dict = {"creator_df": pandas_dataframe_object
+        #             "account_active": "Account (deleted)"
         #             "creator_account": "GCO2IP3MJNUOKS4PUDI4C7LGGMQDJGXG3COYX3WSB4HHNAHKYV5YL3VC",
-        #             "home_domain": "No home domain element found",
+        #             "home_domain": "No home domain element found!",
         #             "xlm_balance": 4.9998397,
         #             "stellar_expert_url": "https://stellar.expert/explorer/public/account/GCO2IP3MJNUOKS4PUDI4C7LGGMQDJGXG3COYX3WSB4HHNAHKYV5YL3VC",
         #             }
 
         self.creator_df = row_dict['creator_df']
+        self.account_active = row_dict['account_active']
+        self.created = row_dict['created']
         self.creator_account = row_dict['creator_account']
         self.home_domain = row_dict['home_domain']
         self.xlm_balance = row_dict['xlm_balance']
@@ -287,11 +318,13 @@ class GenericAppendCreatorToDfWorkerThread(QThread):
     @pyqtSlot()
     def run(self):
         # the list to append as row
-        row_ls = [self.creator_account, self.home_domain,
-                    self.xlm_balance, self.stellar_expert_url]
+        row_ls = [self.account_active, self.created, self.creator_account, self.home_domain, self.xlm_balance, self.stellar_expert_url]
+
+        print(self.creator_df.columns)
 
         # create a pandas series from the list
         row_s = pd.Series(row_ls, index=self.creator_df.columns)
+        # row_s = pd.Series(row_ls, index=['Active', 'Created', 'Creator Account', 'Home Domain', 'XLM Balance', 'Stellar.Expert'])
 
         # append the row to the dataframe. [WARNING] .append would be deprecated soon, use .concat instead
         self.creator_df = self.creator_df.append(row_s, ignore_index=True)

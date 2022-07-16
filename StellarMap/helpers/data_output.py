@@ -77,6 +77,8 @@ class DataOutput:
         if reset_val:
             # reset df in self
             self.q_thread_df_row = {
+                'Active': [],
+                'Created': [],
                 'Creator Account': [],
                 'Home Domain': [],
                 'XLM Balance': [],

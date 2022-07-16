@@ -1,20 +1,28 @@
+import os
 
 from PyQt5.QtCore import (QCoreApplication, QMetaObject,
                             QRect, QSize, Qt)
 from PyQt5.QtGui import (QBrush, QColor,QFont,
                         QIcon,
                            QPalette)
+from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtWidgets import *
 
-try: from .static.icons.icons_rc import *
-except: from static.icons.icons_rc import *
+try: 
+        from .static.icons.icons_rc import *
+except: 
+        from static.icons.icons_rc import *
+
+
+
+
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        if MainWindow.objectName():
-            MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1000, 720)
-        MainWindow.setMinimumSize(QSize(1000, 720))
+    def setupUi(self, ApplicationWindow):
+        if ApplicationWindow.objectName():
+            ApplicationWindow.setObjectName(u"ApplicationWindow")
+        ApplicationWindow.resize(1000, 720)
+        ApplicationWindow.setMinimumSize(QSize(1000, 720))
         palette = QPalette()
         brush = QBrush(QColor(255, 255, 255, 255))
         brush.setStyle(Qt.BrushStyle.SolidPattern)
@@ -109,19 +117,19 @@ class Ui_MainWindow(object):
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         palette.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.PlaceholderText, brush14)
 #endif
-        MainWindow.setPalette(palette)
+        ApplicationWindow.setPalette(palette)
         font = QFont()
         font.setFamily(u"Cascadia")
         font.setPointSize(10)
-        MainWindow.setFont(font)
-        MainWindow.setStyleSheet(u"QMainWindow {background: transparent; }\n"
+        ApplicationWindow.setFont(font)
+        ApplicationWindow.setStyleSheet(u"QMainWindow {background: transparent; }\n"
 "QToolTip {\n"
 "	color: #975EAB;\n"
 "	background-color: rgba(27, 29, 35, 160);\n"
 "	border: 1px solid rgb(40, 40, 40);\n"
 "	border-radius: 2px;\n"
 "}")
-        self.centralwidget = QWidget(MainWindow)
+        self.centralwidget = QWidget(ApplicationWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.centralwidget.setStyleSheet(u"background: transparent;\n"
 "color: #975EAB;")
@@ -785,7 +793,7 @@ color: rgb(113, 72, 150);""")
         self.line_edit_search_input = QLineEdit(self.frame_2)
         self.line_edit_search_input.setObjectName(u"line_edit_search_input")
         self.line_edit_search_input.setMinimumSize(QSize(0, 30))
-        self.line_edit_search_input.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search by Stellar Address", None))
+        self.line_edit_search_input.setPlaceholderText(QCoreApplication.translate("ApplicationWindow", u"Search by Stellar Address", None))
         self.line_edit_search_input.setStyleSheet(u"QLineEdit {\n"
 "	background-color: rgb(27, 29, 35);\n"
 "	border-radius: 5px;\n"
@@ -801,9 +809,18 @@ color: rgb(113, 72, 150);""")
 
         self.gridLayout_5.addWidget(self.line_edit_search_input, 0, 0, 1, 1)
 
-
+        # local html graph
+        # self.view = QtWebEngineWidgets.QWebEngineView()
+        # self.view.load(QtCore.QUrl().fromLocalFile(
+        #         '/StellarMap/static/html/test.html'
+        # ))
+        
+        
         self.gridLayout_2.addLayout(self.gridLayout_5, 0, 0, 1, 1)
-
+        
+        # add local html graph widget to ApplicationWindow layout
+        # self.gridLayout_2.addWidget(self.view)
+        
 
         self.splitter.addWidget(self.frame_2)
         self.frame = QFrame(self.splitter)
@@ -1578,7 +1595,7 @@ color: rgb(255,255,255);""")
 
         self.horizontalLayout.addWidget(self.frame_main)
 
-        MainWindow.setCentralWidget(self.centralwidget)
+        ApplicationWindow.setCentralWidget(self.centralwidget)
         QWidget.setTabOrder(self.btn_minimize, self.btn_maximize_restore)
         QWidget.setTabOrder(self.btn_maximize_restore, self.btn_close)
         QWidget.setTabOrder(self.btn_close, self.btn_toggle_menu)
@@ -1592,119 +1609,123 @@ color: rgb(255,255,255);""")
         QWidget.setTabOrder(self.plainTextEdit, self.tableWidget)
         QWidget.setTabOrder(self.tableWidget, self.commandLinkButton)
 
-        self.retranslateUi(MainWindow)
+        self.retranslateUi(ApplicationWindow)
 
         self.stackedWidget.setCurrentIndex(1)
 
 
-        QMetaObject.connectSlotsByName(MainWindow)
+        QMetaObject.connectSlotsByName(ApplicationWindow)
     # setupUi
 
-    def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+    def retranslateUi(self, ApplicationWindow):
+        ApplicationWindow.setWindowTitle(QCoreApplication.translate("ApplicationWindow", u"ApplicationWindow", None))
         self.btn_toggle_menu.setText("")
-        self.label_title_bar_top.setText(QCoreApplication.translate("MainWindow", u"Main Window - Base", None))
+        self.label_title_bar_top.setText(QCoreApplication.translate("ApplicationWindow", u"Main Window - Base", None))
 #if QT_CONFIG(tooltip)
-        self.btn_minimize.setToolTip(QCoreApplication.translate("MainWindow", u"Minimize", None))
+        self.btn_minimize.setToolTip(QCoreApplication.translate("ApplicationWindow", u"Minimize", None))
 #endif // QT_CONFIG(tooltip)
         self.btn_minimize.setText("")
 #if QT_CONFIG(tooltip)
-        self.btn_maximize_restore.setToolTip(QCoreApplication.translate("MainWindow", u"Maximize", None))
+        self.btn_maximize_restore.setToolTip(QCoreApplication.translate("ApplicationWindow", u"Maximize", None))
 #endif // QT_CONFIG(tooltip)
         self.btn_maximize_restore.setText("")
 #if QT_CONFIG(tooltip)
-        self.btn_close.setToolTip(QCoreApplication.translate("MainWindow", u"Close", None))
+        self.btn_close.setToolTip(QCoreApplication.translate("ApplicationWindow", u"Close", None))
 #endif // QT_CONFIG(tooltip)
         self.btn_close.setText("")
-        self.label_top_info_1.setText(QCoreApplication.translate("MainWindow", u"C:\\Program Files\\Blender Foundation\\Blender 2.82", None))
-        self.label_top_info_2.setText(QCoreApplication.translate("MainWindow", u"| HOME", None)) # init label
-        self.label_user_icon.setText(QCoreApplication.translate("MainWindow", u"RO", None))
-        # self.label_6.setText(QCoreApplication.translate("MainWindow", u"HOME", None))
-        # self.label.setText(QCoreApplication.translate("MainWindow", u"Empyt Page - By: Wanderson M. Pimenta", None))
-        # self.label_7.setText(QCoreApplication.translate("MainWindow", u"Page Index 0", None))
-        self.labelBoxBlenderInstalation.setText(QCoreApplication.translate("MainWindow", u"BLENDER INSTALLATION", None))
-        self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Your Password", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Open Blender", None))
-        self.labelVersion_3.setText(QCoreApplication.translate("MainWindow", u"Ex: C:Program FilesBlender FoundationBlender 2.82 blender.exe", None))
-        self.checkBox.setText(QCoreApplication.translate("MainWindow", u"CheckBox", None))
-        self.radioButton.setText(QCoreApplication.translate("MainWindow", u"RadioButton", None))
-        self.comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"Test 1", None))
-        self.comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"Test 2", None))
-        self.comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"Test 3", None))
+        self.label_top_info_1.setText(QCoreApplication.translate("ApplicationWindow", u"C:\\Program Files\\Blender Foundation\\Blender 2.82", None))
+        self.label_top_info_2.setText(QCoreApplication.translate("ApplicationWindow", u"| HOME", None)) # init label
+        self.label_user_icon.setText(QCoreApplication.translate("ApplicationWindow", u"RO", None))
+        # self.label_6.setText(QCoreApplication.translate("ApplicationWindow", u"HOME", None))
+        # self.label.setText(QCoreApplication.translate("ApplicationWindow", u"Empyt Page - By: Wanderson M. Pimenta", None))
+        # self.label_7.setText(QCoreApplication.translate("ApplicationWindow", u"Page Index 0", None))
+        self.labelBoxBlenderInstalation.setText(QCoreApplication.translate("ApplicationWindow", u"BLENDER INSTALLATION", None))
+        self.lineEdit.setPlaceholderText(QCoreApplication.translate("ApplicationWindow", u"Your Password", None))
+        self.pushButton.setText(QCoreApplication.translate("ApplicationWindow", u"Open Blender", None))
+        self.labelVersion_3.setText(QCoreApplication.translate("ApplicationWindow", u"Ex: C:Program FilesBlender FoundationBlender 2.82 blender.exe", None))
+        self.checkBox.setText(QCoreApplication.translate("ApplicationWindow", u"CheckBox", None))
+        self.radioButton.setText(QCoreApplication.translate("ApplicationWindow", u"RadioButton", None))
+        self.comboBox.setItemText(0, QCoreApplication.translate("ApplicationWindow", u"Test 1", None))
+        self.comboBox.setItemText(1, QCoreApplication.translate("ApplicationWindow", u"Test 2", None))
+        self.comboBox.setItemText(2, QCoreApplication.translate("ApplicationWindow", u"Test 3", None))
 
-        self.commandLinkButton.setText(QCoreApplication.translate("MainWindow", u"CommandLinkButton", None))
-        self.commandLinkButton.setDescription(QCoreApplication.translate("MainWindow", u"Open External Link", None))
+        self.commandLinkButton.setText(QCoreApplication.translate("ApplicationWindow", u"CommandLinkButton", None))
+        self.commandLinkButton.setDescription(QCoreApplication.translate("ApplicationWindow", u"Open External Link", None))
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
-        ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"0", None));
+        ___qtablewidgetitem.setText(QCoreApplication.translate("ApplicationWindow", u"0", None));
         ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"1", None));
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("ApplicationWindow", u"1", None));
         ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(2)
-        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"2", None));
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("ApplicationWindow", u"2", None));
         ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(3)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"3", None));
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("ApplicationWindow", u"3", None));
         ___qtablewidgetitem4 = self.tableWidget.verticalHeaderItem(0)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("ApplicationWindow", u"New Row", None));
         ___qtablewidgetitem5 = self.tableWidget.verticalHeaderItem(1)
-        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("ApplicationWindow", u"New Row", None));
         ___qtablewidgetitem6 = self.tableWidget.verticalHeaderItem(2)
-        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("ApplicationWindow", u"New Row", None));
         ___qtablewidgetitem7 = self.tableWidget.verticalHeaderItem(3)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("ApplicationWindow", u"New Row", None));
         ___qtablewidgetitem8 = self.tableWidget.verticalHeaderItem(4)
-        ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("ApplicationWindow", u"New Row", None));
         ___qtablewidgetitem9 = self.tableWidget.verticalHeaderItem(5)
-        ___qtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem9.setText(QCoreApplication.translate("ApplicationWindow", u"New Row", None));
         ___qtablewidgetitem10 = self.tableWidget.verticalHeaderItem(6)
-        ___qtablewidgetitem10.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem10.setText(QCoreApplication.translate("ApplicationWindow", u"New Row", None));
         ___qtablewidgetitem11 = self.tableWidget.verticalHeaderItem(7)
-        ___qtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem11.setText(QCoreApplication.translate("ApplicationWindow", u"New Row", None));
         ___qtablewidgetitem12 = self.tableWidget.verticalHeaderItem(8)
-        ___qtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem12.setText(QCoreApplication.translate("ApplicationWindow", u"New Row", None));
         ___qtablewidgetitem13 = self.tableWidget.verticalHeaderItem(9)
-        ___qtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem13.setText(QCoreApplication.translate("ApplicationWindow", u"New Row", None));
         ___qtablewidgetitem14 = self.tableWidget.verticalHeaderItem(10)
-        ___qtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem14.setText(QCoreApplication.translate("ApplicationWindow", u"New Row", None));
         ___qtablewidgetitem15 = self.tableWidget.verticalHeaderItem(11)
-        ___qtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem15.setText(QCoreApplication.translate("ApplicationWindow", u"New Row", None));
         ___qtablewidgetitem16 = self.tableWidget.verticalHeaderItem(12)
-        ___qtablewidgetitem16.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem16.setText(QCoreApplication.translate("ApplicationWindow", u"New Row", None));
         ___qtablewidgetitem17 = self.tableWidget.verticalHeaderItem(13)
-        ___qtablewidgetitem17.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem17.setText(QCoreApplication.translate("ApplicationWindow", u"New Row", None));
         ___qtablewidgetitem18 = self.tableWidget.verticalHeaderItem(14)
-        ___qtablewidgetitem18.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem18.setText(QCoreApplication.translate("ApplicationWindow", u"New Row", None));
         ___qtablewidgetitem19 = self.tableWidget.verticalHeaderItem(15)
-        ___qtablewidgetitem19.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem19.setText(QCoreApplication.translate("ApplicationWindow", u"New Row", None));
 
         __sortingEnabled = self.tableWidget.isSortingEnabled()
         self.tableWidget.setSortingEnabled(False)
         ___qtablewidgetitem20 = self.tableWidget.item(0, 0)
-        ___qtablewidgetitem20.setText(QCoreApplication.translate("MainWindow", u"Test", None));
+        ___qtablewidgetitem20.setText(QCoreApplication.translate("ApplicationWindow", u"Test", None));
         ___qtablewidgetitem21 = self.tableWidget.item(0, 1)
-        ___qtablewidgetitem21.setText(QCoreApplication.translate("MainWindow", u"Text", None));
+        ___qtablewidgetitem21.setText(QCoreApplication.translate("ApplicationWindow", u"Text", None));
         ___qtablewidgetitem22 = self.tableWidget.item(0, 2)
-        ___qtablewidgetitem22.setText(QCoreApplication.translate("MainWindow", u"Cell", None));
+        ___qtablewidgetitem22.setText(QCoreApplication.translate("ApplicationWindow", u"Cell", None));
         ___qtablewidgetitem23 = self.tableWidget.item(0, 3)
-        ___qtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"Line", None));
+        ___qtablewidgetitem23.setText(QCoreApplication.translate("ApplicationWindow", u"Line", None));
         self.tableWidget.setSortingEnabled(__sortingEnabled)
 
-        self.label_credits.setText(QCoreApplication.translate("MainWindow", u"https://github.com/revobrera/StellarMap", None))
-        self.label_version.setText(QCoreApplication.translate("MainWindow", u"v0.3.0", None))
+        self.label_credits.setText(QCoreApplication.translate("ApplicationWindow", u"https://github.com/revobrera/StellarMap", None))
+        self.label_version.setText(QCoreApplication.translate("ApplicationWindow", u"v0.3.0", None))
 
 
-        self.label.setText(QCoreApplication.translate("MainWindow", u"Charts Area", None))
+        self.label.setText(QCoreApplication.translate("ApplicationWindow", u"Charts Area", None))
 
         self.label.setStyleSheet("background-color: #261D45")
 
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_data),
-                                  QCoreApplication.translate("MainWindow", u"UPSTREAM CREATOR ACCOUNTS", None))
+                                  QCoreApplication.translate("ApplicationWindow", u"UPSTREAM CREATOR ACCOUNTS", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_json),
-                                  QCoreApplication.translate("MainWindow", u"JSON", None))
+                                  QCoreApplication.translate("ApplicationWindow", u"JSON", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_toml),
-                                  QCoreApplication.translate("MainWindow", u"TOML", None))
+                                  QCoreApplication.translate("ApplicationWindow", u"TOML", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_terminal),
-                                  QCoreApplication.translate("MainWindow", u"TERMINAL", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Open Blender", None))
-        self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search Stellar Address", None))
+                                  QCoreApplication.translate("ApplicationWindow", u"TERMINAL", None))
+        self.pushButton.setText(QCoreApplication.translate("ApplicationWindow", u"Open Blender", None))
+        self.lineEdit.setPlaceholderText(QCoreApplication.translate("ApplicationWindow", u"Search Stellar Address", None))        
 
+
+    def showWebWidget(self, q_thread_view):
+        self.q_thread_view = q_thread_view
+        self.gridLayout_5.addWidget(self.q_thread_view)
 
     # retranslateUi
