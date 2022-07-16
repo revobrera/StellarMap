@@ -7,13 +7,13 @@
 }
 
 .node circle {
-  fill: #3f2c70;
+  /* fill: #3f2c70; */
   stroke: #00FF9C;
-  stroke-width: 1.5px;
+  stroke-width: 1px;
 }
 
 .node text {
-  font: 10px sans-serif;
+  font: 5px sans-serif;
 }
 
 .link {
@@ -21,10 +21,17 @@
   stroke: #3f2c70;
   stroke-width: 1.5px;
 }
-
+.legend text{
+  font: 15px sans-serif;
+  text-anchor: start;
+  fill: rgb(235, 239, 241);
+}
+.legend rect{
+  stroke: rgb(235, 239, 241);
+}
   
 div.tooltip {  
-    background-color: #00FF9C;
+    /* background-color: #00FF9C; */
     position: absolute;
     padding: 7px;
     font-size: 1.2em;
@@ -54,7 +61,7 @@ var tooltip = d3.select(".tooltip")
                 .style("top", (0) + "px")
 var diameter = 800;
 
-var margin = {top: 20, right: 120, bottom: 20, left: 120},
+// var margin = {top: 20, right: 120, bottom: 20, left: 120},
     width = diameter,
     height = diameter;
     
@@ -63,17 +70,51 @@ var i = 0,
     root;
 
 var tree = d3.layout.tree()
-    .size([360, diameter / 2 - 80])
+    .size([360, diameter ])
     .separation(function(a, b) { return (a.parent == b.parent ? 1 : 1.5) / a.depth; });
 
 var diagonal = d3.svg.diagonal.radial()
     .projection(function(d) { return [d.y, d.x / 180 * Math.PI]; });
 
 var svg = d3.select("body").append("svg")
-    .attr("width", width )
-    .attr("height", height )
+          .attr("preserveAspectRatio", "xMinYMin meet")
+          .attr("viewBox", "0 0 "+width+" "+height)
   .append("g")
     .attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
+    //add legend
+    var color = d3.scale.ordinal([`#3f2c70`, `#fcec04`]);
+  var legend = d3.select('body svg').append('g').attr('class' , "legend")
+
+          //     .data(color.domain())
+          //     .enter().append("g")
+          //     .attr("class", "legend")
+          //     .attr("transform", function(d, i) { return "translate(-350," + i * 20 + ")"; });
+  
+          legend.append("rect")
+              .attr("x", 18)
+              .attr("y", height - 18)
+              .attr("width", 18)
+              .attr("height", 18)
+              .style("fill", '#3f2c70');
+  
+          legend.append("text")
+              .attr("x", 50)
+              .attr("y", height - 9)
+              .attr("dy", ".35em")
+              .text("Issuer");
+
+          legend.append("rect")
+              .attr("x", 18)
+              .attr("y", height - 40)
+              .attr("width", 18)
+              .attr("height", 18)
+              .style("fill", '#fcec04');
+  
+          legend.append("text")
+              .attr("x", 50)
+              .attr("y", height - 30)
+              .attr("dy", ".35em")
+              .text("Asset");
 
 root = pubs;
 root.x0 = height / 2;
@@ -106,12 +147,34 @@ function update(source) {
       // A function that change this tooltip when the user hover a point.
       // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
       .on("mouseenter", function(d) {
-        tooltip.style("opacity", 1)
-        tooltip
-            .html("<b>Name:</b> " + d.name +"<br><b>Issuer Id:</b> "+ d.issuer_id + "<br><b>Description:</b> "+ d.description 
-            + "<br><b>URL:</b> "+ '<a href=https://www.'+ d.url +'>'+ d.url+'</a>' + "<br><b>Created:</b> "+ d.created)
+        //if node type is 'ISSUER' change the tooltip prooperties accordingly
+        if(d.node_type == 'ASSET')
+        {
+          tooltip.style("opacity", 1).style("background-color" , '#837a01')
+          tooltip
+            .html("<b>Name:</b> " + d.name +"<br><b>Issuer Id:</b> "+ d.issuer_id 
+              +"<br><b>Asset type:</b> "+ d.asset_type 
+              +"<br><b>Asset Code:</b> "+ d.asset_code
+              +"<br><b>Number of Accounts:</b> "+ d.num_accounts
+              +"<br><b>Number of Claimable Balances:</b> "+ d.num_claimable_balances
+              +"<br><b>Num of Liquidity Pools:</b> "+ d.num_liquidity_pools
+              + "<br><b>Amount:</b> "+ d.amount
+              + "<br><b>Link:</b> "+ '<a href='+ d._links.toml.href +'>'+ d._links.toml.href+'</a>'
+              )
             .style("left", (d3.event.pageX) + "px") 
             .style("top", (d3.event.pageY ) + "px")
+         
+        }
+        else{
+          tooltip.style("opacity", 1).style("background-color" , '#00FF9C')
+          tooltip
+            .html("<b>Name:</b> " + d.name +"<br><b>Issuer Id:</b> "+ d.issuer_id + "<br><b>Description:</b> "+ d.description 
+            + "<br><b>URL:</b> "+ '<a href=https://www.'+ d.url +'>'+ d.url+'</a>' + "<br><b>Created:</b> "+ d.created
+             + "<br><b>Deleted:</b> "+ d.deleted)
+            .style("left", (d3.event.pageX) + "px") 
+            .style("top", (d3.event.pageY ) + "px")
+        }
+        
       })
       //set the opacity and position of tooltip to null when mouse leaves
       .on ("mouseleave", function (event, d) {
@@ -137,14 +200,13 @@ function update(source) {
       })
 
   nodeEnter.append("circle")
-      .attr("r", 1e-6)
-      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#714896"; })
+      .attr("r", 1e-7)
 
   nodeEnter.append("text")
-      .attr("x", 5)
-      .attr("dy", ".35em")
-      .attr("text-anchor", "start")
-      //.attr("transform", function(d) { return d.x < 180 ? "translate(0)" : "rotate(180)translate(-" + (d.name.length * 8.5)  + ")"; })
+      .attr("x", function(d) { return d.x < Math.PI === !d.children ? 6 : 6; })
+      .attr("dy", "0.31em")
+      .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+      // .attr("transform", function(d) { return "rotate(" + (d.x < Math.PI ? d.x - Math.PI / 2 : d.x + Math.PI / 2) * 180 / Math.PI + ")"; })
       .text(function(d) { return d.name; })
       .style("fill-opacity", 1e-6);
 
@@ -154,12 +216,19 @@ function update(source) {
       .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
 
   nodeUpdate.select("circle")
-      .attr("r", 4.5)
-      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#714896"; });
+      .attr("r", diameter/400)
+      .style("fill", function(d) { 
+        if(d.node_type == 'ISSUER') {return '#3f2c70'}
+        else
+        return '#fcec04'
+      });
+
+
+
 
   nodeUpdate.select("text")
       .style("fill-opacity", 1)
-      .attr("transform", function(d) { return d.x < 180 ? "translate(0)" : "rotate(180)translate(-" + (d.name.length + 50)  + ")"; });
+      .attr("transform", function(d) { return d.x < 180 ? "translate(0)" : "rotate(180)translate(-" + (12)  + ")"; });
 
   // TODO: appropriate transform
   var nodeExit = node.exit().transition()
