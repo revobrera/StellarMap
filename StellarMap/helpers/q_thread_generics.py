@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 import time
@@ -186,7 +187,8 @@ class GenericGetCreatorWorkerThread(QThread):
             account_dict = {
                 "json_str": res_string,
                 "account": str(row['account']),
-                "created": row['created'],
+                # "created": row['created'], # unix time
+                "created": self.convert_unix_to_text(row['created']),
                 "creator_account": str(row['creator']),
                 "account_active": str(is_deleted_str)
             }
@@ -195,6 +197,17 @@ class GenericGetCreatorWorkerThread(QThread):
 
         # exit thread
         return
+
+    def convert_unix_to_text(self, unix_time):
+        
+        if isinstance(unix_time, int):
+            date_time = datetime.datetime.fromtimestamp(unix_time)
+            date_time = date_time.strftime('%x %X') # 07/16/22 09:26:26
+        else:
+            date_time = ""
+
+        return date_time
+
 
 
 class GenericGetHomeDomainWorkerThread(QThread):

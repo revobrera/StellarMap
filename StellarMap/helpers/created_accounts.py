@@ -338,9 +338,9 @@ class CreatedByAccounts(DataOutput):
         self.output_terminal(d_str)
 
         self.output_terminal(self.q_thread_account_active)
-        self.output_terminal(self.q_thread_created_datetime)
+        self.output_terminal(str(self.q_thread_created_datetime))
 
-        # self.call_step_7_append_creator_to_df()
+        self.call_step_7_append_creator_to_df()
 
 
     def call_step_7_append_creator_to_df(self):
@@ -350,7 +350,7 @@ class CreatedByAccounts(DataOutput):
         # generating stellar.expert site
         stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(self.q_thread_creator_account)
 
-        d_str = "active: %s, created: %d, creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_account_info["account_active"], self.q_thread_created_datetime,
+        d_str = "active: %s, created: %s, creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_account_info["account_active"], self.q_thread_created_datetime,
                                                                              self.q_thread_creator_account, self.q_thread_home_domain,
                                                                              self.q_thread_xlm_balance, stellar_expert_site_url)
 
