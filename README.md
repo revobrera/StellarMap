@@ -14,6 +14,7 @@ The app makes API calls via **horizon.stellar.org** and **api.stellar.expert**
  <img src="/docs/source/images/stellarmap_prototype_terminal_v0_3_0_swisscustody_org.PNG" width="100%" title="StellarMap TERMINAL tab">
 
 ### Display visually the network of creator accounts
+ <img src="/docs/source/images/stellarmap_prototype_radial_tidy_tree_v0_4_0_example.PNG" width="100%" title="StellarMap Radial Tidy Tree">
 
 ## Usage
 
