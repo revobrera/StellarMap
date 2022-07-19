@@ -7,11 +7,14 @@ from PyQt5.QtGui import (QBrush, QColor,QFont,
                            QPalette)
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtWidgets import *
+from prototypes.html_prototype import Ui_Dialog
 
 try: 
         from .static.icons.icons_rc import *
+        from .prototypes import html_prototype
 except: 
         from static.icons.icons_rc import *
+        from prototypes import html_prototype
 
 
 
@@ -747,7 +750,7 @@ color: rgb(113, 72, 150);""")
         self.label.setFont(font)
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.gridLayout_2.addWidget(self.label, 1, 0, 1, 1)
+        # self.gridLayout_2.addWidget(self.label, 1, 0, 1, 1)
 
         self.gridLayout_5 = QGridLayout()
         self.gridLayout_5.setObjectName(u"gridLayout_5")
@@ -811,15 +814,21 @@ color: rgb(113, 72, 150);""")
 
         # local html graph
         # self.view = QtWebEngineWidgets.QWebEngineView()
-        # self.view.load(QtCore.QUrl().fromLocalFile(
-        #         '/StellarMap/static/html/test.html'
+        # self.view.open(QtCore.QUrl().fromLocalFile(
+        #         '/StellarMap/prototypes/collapsible_radial_tree/index.html'
         # ))
-        
         
         self.gridLayout_2.addLayout(self.gridLayout_5, 0, 0, 1, 1)
         
         # add local html graph widget to ApplicationWindow layout
         # self.gridLayout_2.addWidget(self.view)
+
+        chartDialog = QDialog()
+        chart_ui = Ui_Dialog()
+        chart_ui.setupUi(chartDialog)
+
+        self.gridLayout_2.addWidget(chartDialog)
+        
         
 
         self.splitter.addWidget(self.frame_2)
