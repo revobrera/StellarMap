@@ -1,3 +1,4 @@
+import json
 import os
 
 import pandas as pd
@@ -33,6 +34,7 @@ class CreatedByAccounts(DataOutput):
         self.q_thread_status_code = None
         self.q_thread_json = None
         self.q_thread_home_domain = None
+        self.q_thread_account = None
         self.q_thread_creator_account = None
         self.q_thread_account_active = None
         self.q_thread_account_info = {}
@@ -40,13 +42,14 @@ class CreatedByAccounts(DataOutput):
         self.q_thread_df_row = {
             'Active': [],
             'Created': [],
-            'Creator Account': [],
+            'Account': [],
             'Home Domain': [],
             'XLM Balance': [],
             'Stellar.Expert': []
         }
         self.creator_df = pd.DataFrame(self.q_thread_df_row)
         self.q_thread_is_user_internet_connected = False
+        self.collection_issuers_dict = {}
         # self.initCall(stellar_account)
 
         #---------------------------
@@ -167,6 +170,14 @@ class CreatedByAccounts(DataOutput):
             # captures nan value
             self.call_step_8_concluding_upstream_crawl()
 
+    def call_step_2_1_collect_stellar_expert_issuers(self):
+        # collect stellar_expert json dictionary 
+
+        issuer_dict = {}
+        issuer_dict = self.q_thread_json
+
+        self.collection_issuers_dict['ISSUER_' + str(self.recursive_count)] = issuer_dict
+
     def call_step_2_get_account_info(self):
         d_str = "QThread is on step 2: retrieving account info from stellar.expert"
         self.output_terminal(d_str)
@@ -182,6 +193,8 @@ class CreatedByAccounts(DataOutput):
             self.call_step_9_graceful_exit()
 
         else:
+            self.call_step_2_1_collect_stellar_expert_issuers()
+
             self.q_thread_creator = GenericGetCreatorWorkerThread(self.q_thread_json)
             self.q_thread_creator.start()
             self.q_thread_creator.q_thread_output_json.connect(self.call_step_3_1_print_output_json)
@@ -194,6 +207,7 @@ class CreatedByAccounts(DataOutput):
         self.q_thread_account_info = q_thread_account_dict.copy()
 
         self.q_thread_json = self.q_thread_account_info['json_str']
+        self.q_thread_account = self.q_thread_account_info["account"]
         self.q_thread_account_active = self.q_thread_account_info["account_active"]
         self.q_thread_creator_account = self.q_thread_account_info["creator_account"]
         self.q_thread_created_datetime = self.q_thread_account_info["created"]
@@ -205,8 +219,8 @@ class CreatedByAccounts(DataOutput):
         #     self.current_stellar_account = self.q_thread_account_info["creator_account"]
 
         # check if valid stellar address
-        if self.is_valid_stellar_address(self.q_thread_creator_account):
-            self.set_account_from_api(self.q_thread_creator_account, self.call_step_4_check_home_domain_element_exists, 'horizon')
+        if self.is_valid_stellar_address(self.q_thread_account):
+            self.set_account_from_api(self.q_thread_account, self.call_step_4_check_home_domain_element_exists, 'horizon')
         else:
             # captures nan value
             self.call_step_8_concluding_upstream_crawl()
@@ -231,10 +245,22 @@ class CreatedByAccounts(DataOutput):
     #         self.q_thread_creator.q_thread_output_json.connect(self.call_step_2_1_print_output_json)
     #         self.q_thread_creator.q_thread_account_dict.connect(self.call_step_2_2_check_creator_account)
 
+    def call_step_3_3_collect_horizon_issuers(self, horizon_json):
+        # collect horizon json dict 
+
+        issuer_dict = {}
+        issuer_dict = horizon_json
+
+        if horizon_json:
+            # join issuer stellar_expert and horizon issuers jsons
+            self.collection_issuers_dict['ISSUER_' + str(self.recursive_count)].update(issuer_dict)
+
+
     def call_step_3_1_print_output_json(self, q_thread_output_json):
         d_str = "QThread is on step 3.1: printing out json"
         self.output_terminal(d_str)
         self.output_json(q_thread_output_json)
+        
 
     # def call_step_2_2_check_creator_account(self, q_thread_account_dict):
     #     d_str = "QThread is on step 2.2: checking creator account"
@@ -284,6 +310,8 @@ class CreatedByAccounts(DataOutput):
     def call_step_4_check_home_domain_element_exists(self):
         d_str = "QThread is on step 4: checking if home_domain element of creator account exists from horizon api"
         self.output_terminal(d_str)
+
+        self.call_step_3_3_collect_horizon_issuers(self.q_thread_json)
 
         if self.q_thread_status_code == 404:
             # gracefully handling 404 errors and preventing the app to crash
@@ -348,10 +376,10 @@ class CreatedByAccounts(DataOutput):
         self.output_terminal(d_str)
 
         # generating stellar.expert site
-        stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(self.q_thread_creator_account)
+        stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(self.q_thread_account_info["account"])
 
-        d_str = "active: %s, created: %s, creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_account_info["account_active"], self.q_thread_created_datetime,
-                                                                             self.q_thread_creator_account, self.q_thread_home_domain,
+        d_str = "active: %s, created: %s, account: %s, creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_account_info["account_active"], self.q_thread_created_datetime,
+                                                                             self.q_thread_account_info["account"], self.q_thread_creator_account, self.q_thread_home_domain,
                                                                              self.q_thread_xlm_balance, stellar_expert_site_url)
 
         self.output_terminal(d_str)
@@ -363,6 +391,7 @@ class CreatedByAccounts(DataOutput):
             "creator_df": self.creator_df,
             "account_active": self.q_thread_account_info["account_active"],
             "created": self.q_thread_created_datetime,
+            "account": self.q_thread_account_info["account"],
             "creator_account": self.q_thread_creator_account,
             "home_domain": self.q_thread_home_domain,
             "xlm_balance": self.q_thread_xlm_balance,
@@ -412,6 +441,8 @@ class CreatedByAccounts(DataOutput):
 
     def call_step_9_graceful_exit(self):
         self.output_terminal("Gracefully Exiting! \n " + "#"*49)
+
+        self.output_json(json.dumps(self.collection_issuers_dict))
 
         # exiting any running threads
         # self.stop_requests_thread()
