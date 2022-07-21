@@ -42,7 +42,7 @@ class CreatedByAccounts(DataOutput):
         self.q_thread_df_row = {
             'Active': [],
             'Created': [],
-            'Creator Account': [],
+            'Account': [],
             'Home Domain': [],
             'XLM Balance': [],
             'Stellar.Expert': []
@@ -376,10 +376,10 @@ class CreatedByAccounts(DataOutput):
         self.output_terminal(d_str)
 
         # generating stellar.expert site
-        stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(self.q_thread_creator_account)
+        stellar_expert_site_url = os.getenv('BASE_SITE_NETWORK_ACCOUNT') + str(self.q_thread_account_info["account"])
 
-        d_str = "active: %s, created: %s, creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_account_info["account_active"], self.q_thread_created_datetime,
-                                                                             self.q_thread_creator_account, self.q_thread_home_domain,
+        d_str = "active: %s, created: %s, account: %s, creator: %s, home_domain: %s, XLM: %s, stellar.expert: %s" % (self.q_thread_account_info["account_active"], self.q_thread_created_datetime,
+                                                                             self.q_thread_account_info["account"], self.q_thread_creator_account, self.q_thread_home_domain,
                                                                              self.q_thread_xlm_balance, stellar_expert_site_url)
 
         self.output_terminal(d_str)
@@ -391,6 +391,7 @@ class CreatedByAccounts(DataOutput):
             "creator_df": self.creator_df,
             "account_active": self.q_thread_account_info["account_active"],
             "created": self.q_thread_created_datetime,
+            "account": self.q_thread_account_info["account"],
             "creator_account": self.q_thread_creator_account,
             "home_domain": self.q_thread_home_domain,
             "xlm_balance": self.q_thread_xlm_balance,
@@ -441,7 +442,7 @@ class CreatedByAccounts(DataOutput):
     def call_step_9_graceful_exit(self):
         self.output_terminal("Gracefully Exiting! \n " + "#"*49)
 
-        self.output_terminal(json.dumps(self.collection_issuers_dict))
+        self.output_json(json.dumps(self.collection_issuers_dict))
 
         # exiting any running threads
         # self.stop_requests_thread()

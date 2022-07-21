@@ -40,7 +40,7 @@ class CreatedByAccounts(DataOutput):
         self.q_thread_df_row = {
             'Active': [],
             'Created': [],
-            'Creator Account': [],
+            'Account': [],
             'Home Domain': [],
             'XLM Balance': [],
             'Stellar.Expert': []
