@@ -310,6 +310,7 @@ class GenericAppendCreatorToDfWorkerThread(QThread):
         self.creator_df = row_dict['creator_df']
         self.account_active = row_dict['account_active']
         self.created = row_dict['created']
+        self.account = row_dict['account']
         self.creator_account = row_dict['creator_account']
         self.home_domain = row_dict['home_domain']
         self.xlm_balance = row_dict['xlm_balance']
@@ -318,7 +319,7 @@ class GenericAppendCreatorToDfWorkerThread(QThread):
     @pyqtSlot()
     def run(self):
         # the list to append as row
-        row_ls = [self.account_active, self.created, self.creator_account, self.home_domain, self.xlm_balance, self.stellar_expert_url]
+        row_ls = [self.account_active, self.created, self.account, self.home_domain, self.xlm_balance, self.stellar_expert_url]
 
         print(self.creator_df.columns)
 
@@ -392,3 +393,31 @@ class GenericCheckInternetConnectivityWorkerThread(QThread):
             self.bool_val = True
         else:
             self.bool_val = False
+
+
+class GenericRenderD3ChartWorkerThread(QThread):
+    """
+    Generic Worker QThread To Render D3 Chart
+    """
+    q_thread_home_domain = pyqtSignal(str)
+
+    def __init__(self, input_json):
+        super().__init__()
+
+        self.input_json = input_json
+
+    @pyqtSlot()
+    def run(self):
+
+        home_domain_str = ""
+        if 'home_domain' in self.input_json:
+            # json string
+            home_domain_str = json.dumps(self.input_json['home_domain'])
+
+        else:
+            home_domain_str = 'No home_domain element found!'
+
+        self.q_thread_home_domain.emit(home_domain_str)
+
+        # exit thread
+        return
