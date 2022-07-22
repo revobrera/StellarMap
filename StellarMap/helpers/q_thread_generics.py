@@ -422,7 +422,7 @@ class GenericCollectIssuersWorkerThread(QThread):
 
     @pyqtSlot()
     def run(self):
-        # add node_type
+        # add node_type element
         self.issuer_dict['node_type'] = "ISSUER"
 
         # add issuer data properties to dictionary
