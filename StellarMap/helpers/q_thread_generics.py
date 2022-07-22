@@ -395,6 +395,48 @@ class GenericCheckInternetConnectivityWorkerThread(QThread):
             self.bool_val = False
 
 
+class GenericCollectIssuersWorkerThread(QThread):
+    """
+    Generic Worker QThread To Collect Lineage of Issuer Accounts
+    """
+    collected_issuers = pyqtSignal(dict)
+
+    def __init__(self, param_dict):
+        super().__init__()
+
+        # example of param_dict
+        # param_dict = {
+        #     "issuer_count": 1,
+        #     "issuer_data": {
+        #           "account": "GBXRPL45NPHCVMFFAYZVUVFFVKSIZ362ZXFP7I2ETNQ3QKZMFLPRDTD5",
+        #           "created": 1517906561,
+        #           "creator": "GACJFMOXTSE7QOL5HNYI2NIAQ4RDHZTGD6FNYK4P5THDVNWIKQDGOODU",
+        #           "deleted": false
+        #           },
+        #     "issuer_cumulative_dict": {"ISSUER_0": ..., "ISSUER_1":...}
+        # }
+
+        self.recursive_count = param_dict['issuer_count']
+        self.issuer_dict = param_dict['issuer_data']
+        self.collection_issuers_dict = param_dict['issuer_cumulative_dict']
+
+    @pyqtSlot()
+    def run(self):
+        # add node_type element
+        self.issuer_dict['node_type'] = "ISSUER"
+
+        # add issuer data properties to dictionary
+        self.collection_issuers_dict['ISSUER_' + str(self.recursive_count)] = self.issuer_dict
+
+        # emit the cumulative list of issuers
+        self.collected_issuers.emit(self.collection_issuers_dict)
+
+        time.sleep(0.71)
+
+        # exit thread
+        return
+
+
 class GenericRenderD3ChartWorkerThread(QThread):
     """
     Generic Worker QThread To Render D3 Chart

@@ -9,16 +9,18 @@ try:
     from .helpers.q_thread_generics import (
         GenericAppendCreatorToDfWorkerThread,
         GenericCheckInternetConnectivityWorkerThread,
-        GenericGetCreatorWorkerThread, GenericGetHomeDomainWorkerThread,
-        GenericGetXLMBalanceWorkerThread, GenericRequestsWorkerThread)
+        GenericCollectIssuersWorkerThread, GenericGetCreatorWorkerThread,
+        GenericGetHomeDomainWorkerThread, GenericGetXLMBalanceWorkerThread,
+        GenericRequestsWorkerThread)
 
 except:
     from helpers.data_output import DataOutput
     from helpers.q_thread_generics import (
         GenericAppendCreatorToDfWorkerThread,
         GenericCheckInternetConnectivityWorkerThread,
-        GenericGetCreatorWorkerThread, GenericGetHomeDomainWorkerThread,
-        GenericGetXLMBalanceWorkerThread, GenericRequestsWorkerThread)
+        GenericCollectIssuersWorkerThread, GenericGetCreatorWorkerThread,
+        GenericGetHomeDomainWorkerThread, GenericGetXLMBalanceWorkerThread,
+        GenericRequestsWorkerThread)
 
 
 class CreatedByAccounts(DataOutput):
@@ -173,10 +175,25 @@ class CreatedByAccounts(DataOutput):
     def call_step_2_1_collect_stellar_expert_issuers(self):
         # collect stellar_expert json dictionary 
 
-        issuer_dict = {}
-        issuer_dict = self.q_thread_json
+        # issuer_dict = {}
+        # issuer_dict = self.q_thread_json
+        # self.collection_issuers_dict['ISSUER_' + str(self.recursive_count)] = issuer_dict
 
-        self.collection_issuers_dict['ISSUER_' + str(self.recursive_count)] = issuer_dict
+        # dictionary appended to dataframe
+        param_dict = {}
+        param_dict = {
+            "issuer_count": self.recursive_count,
+            "issuer_data": self.q_thread_json,
+            "issuer_cumulative_dict": self.collection_issuers_dict
+        }
+
+        self.q_thread_issuers = GenericCollectIssuersWorkerThread(param_dict)
+        self.q_thread_issuers.start()
+        self.q_thread_issuers.collected_issuers.connect(self.call_step_2_2_set_cumulative_issuers)
+
+    def call_step_2_2_set_cumulative_issuers(self, collected_issuers):
+        self.collection_issuers_dict = collected_issuers.copy()
+        # self.output_json(json.dumps(self.collection_issuers_dict))
 
     def call_step_2_get_account_info(self):
         d_str = "QThread is on step 2: retrieving account info from stellar.expert"
@@ -443,6 +460,7 @@ class CreatedByAccounts(DataOutput):
         self.output_terminal("Gracefully Exiting! \n " + "#"*49)
 
         self.output_json(json.dumps(self.collection_issuers_dict))
+        self.output_terminal(json.dumps(self.collection_issuers_dict))
 
         # exiting any running threads
         # self.stop_requests_thread()
