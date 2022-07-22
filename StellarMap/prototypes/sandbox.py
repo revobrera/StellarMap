@@ -137,5 +137,9 @@ issuer_test_dict = {
 }
 
 
-print(issuer_test_dict)
 print(issuer_test_dict['ISSUER_2'])
+
+issuer_test_dict['ISSUER_2']['node_type'] = "ISSUER"
+
+print(json.dumps(issuer_test_dict))
+
