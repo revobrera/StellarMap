@@ -422,6 +422,9 @@ class GenericCollectIssuersWorkerThread(QThread):
 
     @pyqtSlot()
     def run(self):
+        # add name element
+        self.issuer_dict['name'] = str(self.issuer_dict['account'])[:4] + '...' + str(self.issuer_dict['account'])[-4:]
+
         # add node_type element
         self.issuer_dict['node_type'] = "ISSUER"
 
