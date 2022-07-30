@@ -7,7 +7,7 @@
 }
 
 .node circle {
-  /* fill: #3f2c70; */
+  fill: #3f2c70;
   stroke: #00FF9C;
   stroke-width: 1px;
 }
@@ -42,10 +42,88 @@ div.tooltip {
     word-wrap: break-word;
     width: 196px
   } 
+
+  .breadcrumbs {
+  /* border: 1px solid #cbd2d9; */
+  display: inline-flex;
+  overflow: hidden;
+}
+
+.breadcrumbs__item {
+  /* background: red; */
+  color: rgb(248, 244, 244);
+  outline: none;
+  padding: 0.75em 0.75em 0.75em 1.25em;
+  position: relative;
+  text-decoration: none;
+  transition: background 0.2s linear;
+}
+.breadcrumbs__item:before{
+  background: #3f2c70;
+  bottom: 0;
+  clip-path: polygon(50% 50%, -50% -50%, 0 100%);
+  content: "";
+  left: 100%;
+  position: absolute;
+  top: 0;
+  transition: background 0.5s linear;
+  width: 1.5em;
+  z-index: 1;
+}
+
+.breadcrumbs__item:hover:after,
+.breadcrumbs__item:hover {
+  background: #edf1f5;
+}
+
+.breadcrumbs__item:focus:after,
+.breadcrumbs__item:focus,
+.breadcrumbs__item.is-active:focus {
+  background: #323f4a;
+  color: #fff;
+}
+
+div.after {
+  /* background: red; */
+  bottom: 0;
+  clip-path: polygon(50% 50%, -50% -50%, 0 100%);
+  content: "";
+  left: 100%;
+  position: absolute;
+  top: 0;
+  transition: background 0.2s linear;
+  width: 1em;
+  z-index: 1;
+}
+
+.breadcrumbs__item:before {
+  /* background: #cbd2d9; */
+  margin-left: 1px;
+}
+
+.breadcrumbs__item:last-child {
+  border-right: none;
+}
+
+.breadcrumbs__item.is-active {
+  background: #edf1f5;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding: 10px;
+  position: fixed
+}
+
+
 </style>
 
 <body style="background-color:#261D45">
-  <!-- <div class="tooltip"></div> -->
+   <div class="grid-container">
+    <div class="b"></div>
+   </div>
+   
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
  //original code see fiddle http://jsfiddle.net/Nivaldo/CbGh2/
@@ -54,24 +132,55 @@ div.tooltip {
     
 //initially set the opacity and position of tooltip to null
 
+console.log(pubs)
+
+
 d3.select('body').append('div').attr('class' , "tooltip")
 var tooltip = d3.select(".tooltip")
                 .style("opacity", 0)
                 .style("left", (0) + "px") 
                 .style("top", (0) + "px")
+
+var navbars = d3.select('div.b').append('nav').attr('class' , "breadcrumbs")
+
 var diameter = 570;
 
 // var margin = {top: 20, right: 120, bottom: 20, left: 120},
     width = diameter,
     height = diameter;
-    
+ 
 var i = 0,
     duration = 350,
     root;
 
 var tree = d3.layout.tree()
     .size([360, diameter ])
-    .separation(function(a, b) { return (a.parent == b.parent ? 1 : 1.5) / a.depth; });
+    .separation(function(a, b) { return (a.parent == b.parent ? 1 : 1.5) / a.depth; })
+
+    console.log(tree)
+
+var filteredPartition = d3.layout.partition()
+    .value(function(d) { return d.value; })
+    .children(function(d){
+
+       if (isNaN(d.value)) {
+         var filteredChildren = [];
+         d3.entries(d.value).forEach(function(d2){
+           if (d2.node_type != "ISSUER") filteredChildren.push(d);
+           //a.push(d) adds d to the end of the array 'a'
+         });
+         return filteredChildren;
+       //Note that the nodes which PASS the filter test will be shown
+       //and the nodes that fail will be hidden; make sure your filter
+       //is written in the way you want.
+       }
+       else return null;
+    });
+
+    console.log(filteredPartition)
+
+    // var partitionTree = 
+    
 
 var diagonal = d3.svg.diagonal.radial()
     .projection(function(d) { return [d.y, d.x / 180 * Math.PI]; });
@@ -80,10 +189,76 @@ var svg = d3.select("body").append("svg")
           .attr("preserveAspectRatio", "xMinYMin meet")
           .attr("viewBox", "0 0 "+width+" "+height)
   .append("g")
-    .attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
+    .attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ") rotate(0)");
     //add legend
+
+    // svg.attr('transform', 'rotate(180)')
+    // svg.attr('transform',function(){
+    //             var me = svg.node()
+    //             var x1 = me.getBBox().x + me.getBBox().width/4;//the center x about which you want to rotate
+    //             var y1 = me.getBBox().y + me.getBBox().height/4;//the center y about which you want to rotate
+
+    //             return `rotate(180, ${x1}, ${y1})`;//rotate 180 degrees about x and y
+    //         }); 
     var color = d3.scale.ordinal([`#3f2c70`, `#fcec04`]);
   var legend = d3.select('body svg').append('g').attr('class' , "legend")
+  var angle = 0;
+  var buttons = d3.select('body svg').append('g').attr('class' , "button")
+  buttons.append("rect")
+              .attr("x", diameter/2-10)
+              .attr("y", height - 10)
+              .attr("width", 10)
+              .attr("height", 10)
+              .style("fill", 'white')
+
+              buttons.append("text")
+              .attr("x", diameter/2 -9)
+              .attr("y", height - 5)
+              .attr("alignment-baseline", "middle")
+              .attr("font-size", 24)
+              .style("fill", "#000000")
+              .text("-")
+              .on('click', function(){
+                angle = angle - 10;
+                svg.attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ") rotate("+(angle)+")");
+
+              }).on({
+                  "mouseover": function(d) {
+                    d3.select(this).style("cursor", "pointer"); 
+                  },
+                  "mouseout": function(d) {
+                    d3.select(this).style("cursor", "default"); 
+                  }
+                });
+
+              buttons.append("rect")
+              .attr("x", diameter/2+10)
+              .attr("y", height - 10)
+              .attr("width", 10)
+              .attr("height", 10)
+              .style("fill", 'white')
+
+              buttons.append("text")
+              .attr("x", diameter/2 +12)
+              .attr("y", height - 5)
+              .attr("alignment-baseline", "middle")
+              .attr("font-size", 10)
+              .attr("font-weight",'bold')
+              .style("fill", "#000000")
+              .text("+")
+              .on('click', function(){
+                angle = angle + 10;
+                svg.attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ") rotate("+(angle)+")");
+
+              }).on({
+                  "mouseover": function(d) {
+                    d3.select(this).style("cursor", "pointer"); 
+                  },
+                  "mouseout": function(d) {
+                    d3.select(this).style("cursor", "default"); 
+                  }
+                });
+  
 
           //     .data(color.domain())
           //     .enter().append("g")
@@ -95,7 +270,39 @@ var svg = d3.select("body").append("svg")
               .attr("y", height - 18)
               .attr("width", 18)
               .attr("height", 18)
-              .style("fill", '#cc3463');
+              .style("fill", '#cc3463')
+             
+              
+              legend.append("text")
+              .attr("x", 22)
+              .attr("y", height - 9)
+              .attr("alignment-baseline", "middle")
+              .attr("font-size", 24)
+              .style("fill", "#000000")
+              .text("✔")
+              .attr("classed", "checked")
+              .on('click' , function(){
+               if(d3.select(this).attr('classed') == 'checked')
+               {
+                d3.select(this).attr('classed' , "unchecked").style("opacity", 0)
+                d3.selectAll("g[name='DELETED']").style("opacity", 0)
+                d3.selectAll("path[name='DELETED']").style("opacity", 0)
+               }
+               else{
+                d3.select(this).attr('classed' , "checked").style("opacity", 1)
+                d3.selectAll("g[name='DELETED']").style("opacity", 1)
+                d3.selectAll("path[name='DELETED']").style("opacity", 1)
+               }
+              })
+              .on({
+                  "mouseover": function(d) {
+                    d3.select(this).style("cursor", "pointer"); 
+                  },
+                  "mouseout": function(d) {
+                    d3.select(this).style("cursor", "default"); 
+                  }
+                });
+
   
           legend.append("text")
               .attr("x", 50)
@@ -109,6 +316,36 @@ var svg = d3.select("body").append("svg")
               .attr("width", 18)
               .attr("height", 18)
               .style("fill", '#00FF9C');
+
+              legend.append("text")
+              .attr("x", 22)
+              .attr("y", height - 31)
+              .attr("alignment-baseline", "middle")
+              .attr("font-size", 24)
+              .style("fill", "#000000")
+              .text("✔")
+              .attr("classed", "checked")
+              .on('click' , function(){
+               if(d3.select(this).attr('classed') == 'checked')
+               {
+                d3.select(this).attr('classed' , "unchecked").style("opacity", 0)
+                d3.selectAll("g[name='ISSUER']").style("opacity", 0)
+                d3.selectAll("path[name='ISSUER']").style("opacity", 0)
+               }
+               else{
+                d3.select(this).attr('classed' , "checked").style("opacity", 1)
+                d3.selectAll("g[name='ISSUER']").style("opacity", 1)
+                d3.selectAll("path[name='ISSUER']").style("opacity", 1)
+               }
+              })
+              .on({
+                  "mouseover": function(d) {
+                    d3.select(this).style("cursor", "pointer"); 
+                  },
+                  "mouseout": function(d) {
+                    d3.select(this).style("cursor", "default"); 
+                  }
+                });
   
           legend.append("text")
               .attr("x", 50)
@@ -122,6 +359,36 @@ var svg = d3.select("body").append("svg")
               .attr("width", 18)
               .attr("height", 18)
               .style("fill", '#fcec04');
+
+              legend.append("text")
+              .attr("x", 22)
+              .attr("y", height - 53)
+              .attr("alignment-baseline", "middle")
+              .attr("font-size", 24)
+              .style("fill", "#000000")
+              .text("✔")
+              .attr("classed", "checked")
+              .on('click' , function(){
+               if(d3.select(this).attr('classed') == 'checked')
+               {
+                d3.select(this).attr('classed' , "unchecked").style("opacity", 0)
+                d3.selectAll("g[name='ASSET']").style("opacity", 0)
+                d3.selectAll("path[name='ASSET']").style("opacity", 0)
+               }
+               else{
+                d3.select(this).attr('classed' , "checked").style("opacity", 1)
+                d3.selectAll("g[name='ASSET']").style("opacity", 1)
+                d3.selectAll("path[name='ASSET']").style("opacity", 1)
+               }
+              })
+              .on({
+                  "mouseover": function(d) {
+                    d3.select(this).style("cursor", "pointer"); 
+                  },
+                  "mouseout": function(d) {
+                    d3.select(this).style("cursor", "default"); 
+                  }
+                });
   
           legend.append("text")
               .attr("x", 50)
@@ -152,15 +419,73 @@ function update(source) {
       .data(nodes, function(d) { return d.id || (d.id = ++i); });
 
   // Enter any new nodes at the parent's previous position.
-  var nodeEnter = node.enter().append("g")
+  var nodeEnter = node.enter()
+  .append("g")
       .attr("class", "node")
+      .attr('name' , d=>{
+        if(d.deleted == true){return "DELETED"}
+        else
+        return d.node_type})
       //.attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
-       
-      
+      .on("click", click)
       // A function that change this tooltip when the user hover a point.
       // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
       .on("mouseenter", function(d) {
-        //if node type is 'ISSUER' change the tooltip prooperties accordingly
+        //  reset all nodes color
+        var lineage = []
+         var type = []
+        d3.selectAll("circle").style("fill", "#3f2c70");
+        d3.selectAll("path").style("stroke", "#3f2c70");
+        while (d.parent) {
+          d3.selectAll("#node"+d.id).style("fill", "red")
+          if (d.parent != "null"){
+            lineage.push(d.name)
+            if(d.node_type == 'ASSET') { type.push('#fcec04') }
+          else {
+          if(d.deleted == true) {  type.push('#cc3463')}
+          else
+              type.push("#00FF9C")
+        }
+            d3.selectAll("#link"+d.parent.id + "-" + d.id).style("stroke", "red")
+          }
+          d = d.parent;
+          
+        }
+            for(i=lineage.length-1; i>=0; i--){
+              navbars.append('a').attr('class' , 'breadcrumbs__item')
+              .style('background',type[i])
+              .append('text')
+              .style('fill' , 'black')
+              .text(lineage[i])
+              .append('div').attr('class' , 'after').style('background',type[i])
+            }
+      })
+      //set the opacity and position of tooltip to null when mouse leaves
+      .on ("mouseleave", function (event, d) {
+        tooltip.style("opacity", 0)
+        d3.selectAll("circle").style("fill", "#3f2c70");
+        d3.selectAll("path").style("stroke", "#3f2c70");
+        d3.selectAll('.breadcrumbs__item').remove()           
+      });
+
+      //create a function to keep the tooltip displaying as long as the mouse does not leave it
+      tooltip.on('mouseenter' , function(d)
+      {
+        d3.select(this).style("opacity", 1)
+      })
+      .on('mouseleave' , function(d)
+      {
+        d3.select(this).style("opacity", 0)
+            .html("")
+            .style("left", (0) + "px") 
+            .style("top", (0) + "px")
+      })
+
+  nodeEnter.append("circle")
+      .attr("r", 1e-7)
+      .on("mouseenter", function(d){
+        
+                //if node type is 'ISSUER' change the tooltip prooperties accordingly
         if(d.node_type == 'ASSET')
         {
           tooltip.style("opacity", 1).style("background-color" , '#fcec04')
@@ -190,33 +515,23 @@ function update(source) {
             .style("left", (d3.event.pageX) + "px") 
             .style("top", (d3.event.pageY ) + "px")
         }
-        
-      })
-      //set the opacity and position of tooltip to null when mouse leaves
-      .on ("mouseleave", function (event, d) {
-        tooltip.style("opacity", 0)
 
-        // tooltip
-        // .style("left", (0) + "px") 
-        //     .style("top", (0) + "px")
-            
-      });
-
-      //create a function to keep the tooltip displaying as long as the mouse does not leave it
-      tooltip.on('mouseenter' , function(d)
-      {
-        d3.select(this).style("opacity", 1)
+        if(d.x <90 && d.x>0){
+          tooltip
+            .style("left", (d3.event.pageX - tooltip.node().offsetWidth) + "px") 
+            .style("top", (d3.event.pageY ) + "px")
+        }
+        else if(d.x <180 && d.x>90){
+          tooltip
+            .style("left", (d3.event.pageX - tooltip.node().offsetWidth) + "px") 
+            .style("top", (d3.event.pageY - tooltip.node().offsetHeight) + "px")
+        }
+        else if(d.x <270 && d.x>180){
+          tooltip
+            .style("left", (d3.event.pageX) + "px") 
+            .style("top", (d3.event.pageY - tooltip.node().offsetHeight) + "px")
+        }
       })
-      .on('mouseleave' , function(d)
-      {
-        d3.select(this).style("opacity", 0)
-            .html("")
-            .style("left", (0) + "px") 
-            .style("top", (0) + "px")
-      })
-
-  nodeEnter.append("circle")
-      .attr("r", 1e-7)
 
   nodeEnter.append("text")
       .attr("x", function(d) { return d.x < Math.PI === !d.children ? 6 : 6; })
@@ -226,6 +541,8 @@ function update(source) {
       .text(function(d) { return d.name; })
       .style("fill-opacity", 1e-6);
 
+      // d3.selectAll("g[name='23']").remove()
+
   // Transition nodes to their new position.
   var nodeUpdate = node.transition()
       .duration(duration)
@@ -233,11 +550,7 @@ function update(source) {
 
   nodeUpdate.select("circle")
       .attr("r", diameter/300)
-      .style("fill", function(d) { 
-        if(d.node_type == 'ISSUER') { return '#3f2c70'}
-        else
-        return '#3f2c70'
-      })
+      .style("fill", function(d) { return d._children ? "#fff" : "#3f2c70"; })
       .style("stroke", function(d) { 
         if(d.node_type == 'ASSET') { return '#fcec04'}
         else {
@@ -271,10 +584,15 @@ function update(source) {
   // Enter any new links at the parent's previous position.
   link.enter().insert("path", "g")
       .attr("class", "link")
+      .attr("id", function(d){ return ("link" + d.source.id + "-" + d.target.id)})
+      .attr("name" , function(d){ if(d.target.deleted == true){return "DELETED"}
+        else
+        return (d.target.node_type )})
       .attr("d", function(d) {
         var o = {x: source.x0, y: source.y0};
         return diagonal({source: o, target: o});
       });
+
 
   // Transition links to their new position.
   link.transition()
@@ -318,6 +636,7 @@ function collapse(d) {
       d.children = null;
     }
 }
+
 
 });
 </script>
