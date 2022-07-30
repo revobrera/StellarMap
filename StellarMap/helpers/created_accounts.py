@@ -11,7 +11,7 @@ try:
         GenericCheckInternetConnectivityWorkerThread,
         GenericCollectIssuersWorkerThread, GenericGetCreatorWorkerThread,
         GenericGetHomeDomainWorkerThread, GenericGetXLMBalanceWorkerThread,
-        GenericRequestsWorkerThread)
+        GenericParseOperationsWorkerThread, GenericRequestsWorkerThread)
 
 except:
     from helpers.data_output import DataOutput
@@ -20,7 +20,7 @@ except:
         GenericCheckInternetConnectivityWorkerThread,
         GenericCollectIssuersWorkerThread, GenericGetCreatorWorkerThread,
         GenericGetHomeDomainWorkerThread, GenericGetXLMBalanceWorkerThread,
-        GenericRequestsWorkerThread)
+        GenericParseOperationsWorkerThread, GenericRequestsWorkerThread)
 
 
 class CreatedByAccounts(DataOutput):
@@ -237,6 +237,9 @@ class CreatedByAccounts(DataOutput):
 
         # check if valid stellar address
         if self.is_valid_stellar_address(self.q_thread_account):
+            # get operation records
+            self.collect_operations_records()
+
             self.set_account_from_api(self.q_thread_account, self.call_step_4_check_home_domain_element_exists, 'horizon')
         else:
             # captures nan value
@@ -462,9 +465,52 @@ class CreatedByAccounts(DataOutput):
         self.output_json(json.dumps(self.collection_issuers_dict))
         self.output_terminal(json.dumps(self.collection_issuers_dict))
 
+        self.output_terminal("Gracefully Exiting! \n " + "#"*49)
+        self.output_terminal(json.dumps(self.self.collection_issuers_dict))
+
         # exiting any running threads
         # self.stop_requests_thread()
         # self.stop_df_thread()
         # self.stop_json_thread()
         # self.stop_terminal_thread()
         # self.stop_append_df_thread()
+
+    def collect_operations_records(self):
+        # horizon operations url
+        # limit optional
+        
+        # The maximum number of records returned. The limit can range from 1 to 200 - an upper limit
+        # that is hardcoded in Horizon for performance reasons. If this argument isn’t designated,
+        # it defaults to 10.
+        horizon_operations_url = os.getenv('BASE_HORIZON_ACCOUNT') + str(self.q_thread_account) + '/operations?cursor=&limit=200&order=asc'
+
+        self.q_thread = GenericRequestsWorkerThread(horizon_operations_url)
+        self.q_thread.start()
+        self.q_thread.requests_response.connect(self.call_operations_records)
+
+    def call_operations_records(self, requests_ops):
+        # print info into terminal tab
+        # self.q_thread_headers = requests_ops.headers
+        # self.q_thread_text = requests_ops.text
+        # self.q_thread_status_code = requests_ops.status_code
+        # self.q_thread_json = requests_ops.json()
+
+        # debug print
+        d_str = "\n status_code: %d \n| headers: %s \n| text: %s \n| json: %s \n" % (requests_ops.status_code,
+                                                                                     requests_ops.headers,
+                                                                                     requests_ops.text,
+                                                                                     requests_ops.json())
+
+        # self.output_terminal(d_str)
+        # self.output_terminal(requests_ops.json())
+
+        # GenericParseOperationsWorkerThread based on account
+        self.q_thread_parse_ops = GenericParseOperationsWorkerThread(requests_ops.json())
+        self.q_thread_parse_ops.start()
+        self.q_thread_parse_ops.cumulative_operations.connect(self.set_operations_records)
+
+    def set_operations_records(self, ops_dict):
+        self.collection_issuers_dict = ops_dict.copy()
+
+
+
