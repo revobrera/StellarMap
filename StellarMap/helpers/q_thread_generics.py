@@ -422,6 +422,9 @@ class GenericCollectIssuersWorkerThread(QThread):
 
     @pyqtSlot()
     def run(self):
+        # add name element
+        self.issuer_dict['name'] = str(self.issuer_dict['account'])[:4] + '...' + str(self.issuer_dict['account'])[-4:]
+
         # add node_type element
         self.issuer_dict['node_type'] = "ISSUER"
 
@@ -432,6 +435,47 @@ class GenericCollectIssuersWorkerThread(QThread):
         self.collected_issuers.emit(self.collection_issuers_dict)
 
         time.sleep(0.71)
+
+        # exit thread
+        return
+
+
+class GenericParseOperationsWorkerThread(QThread):
+    """
+    Generic Worker QThread To Parse Account Operations
+    """
+    cumulative_operations = pyqtSignal(dict)
+
+    def __init__(self, input_ops_json):
+        super().__init__()
+
+        self.input_ops_json = input_ops_json
+        self.item_dict = {}
+        self.items_cumulative_created_dict = {}
+
+    @pyqtSlot()
+    def run(self):
+        # children: [] node of an account
+        # check if records is a list
+        if isinstance(self.input_ops_json['_embedded']['records'], list):
+            # iterate through list of operations records
+            for item in self.input_ops_json['_embedded']['records']:
+                # check if type element exists
+                if 'type' in item:
+                    if item['type'] == 'create_account':
+                        # store json item into a cumulative dictionary
+                        self.item_dict = item
+
+                        # add name element
+                        item['name'] = str(item['source_account'])[:4] + '...' + str(item['source_account'])[-4:]
+
+                        # add node_type element
+                        item['node_type'] = "CREATED"
+
+                        # append item_dict into items_cumulative_created_dict
+                        self.items_cumulative_created_dict.update(self.item_dict)
+
+        self.cumulative_operations.emit(self.items_cumulative_created_dict)
 
         # exit thread
         return
