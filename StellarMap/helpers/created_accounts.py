@@ -273,7 +273,14 @@ class CreatedByAccounts(DataOutput):
 
         if horizon_json:
             # join issuer stellar_expert and horizon issuers jsons
-            self.collection_issuers_dict['ISSUER_' + str(self.recursive_count)].update(issuer_dict)
+            if 'ISSUER_' + str(self.recursive_count) in self.collection_issuers_dict:
+                self.collection_issuers_dict['ISSUER_' + str(self.recursive_count)].update(issuer_dict)
+            else:
+                self.collection_issuers_dict['ISSUER_' + str(self.recursive_count)] = issuer_dict
+        else:
+            self.output_terminal('HORIZON_JSON')
+            self.output_terminal(horizon_json)
+
 
 
     def call_step_3_1_print_output_json(self, q_thread_output_json):
@@ -466,7 +473,7 @@ class CreatedByAccounts(DataOutput):
         self.output_terminal(json.dumps(self.collection_issuers_dict))
 
         self.output_terminal("Gracefully Exiting! \n " + "#"*49)
-        self.output_terminal(json.dumps(self.self.collection_issuers_dict))
+        self.output_terminal(json.dumps(self.collection_issuers_dict))
 
         # exiting any running threads
         # self.stop_requests_thread()
@@ -510,7 +517,8 @@ class CreatedByAccounts(DataOutput):
         self.q_thread_parse_ops.cumulative_operations.connect(self.set_operations_records)
 
     def set_operations_records(self, ops_dict):
-        self.collection_issuers_dict = ops_dict.copy()
+        # self.collection_issuers_dict = ops_dict.copy()
+        self.output_terminal('collecting issuers dict')
 
 
 
