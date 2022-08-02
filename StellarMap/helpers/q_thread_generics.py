@@ -463,17 +463,21 @@ class GenericParseOperationsWorkerThread(QThread):
                 # check if type element exists
                 if 'type' in item:
                     if item['type'] == 'create_account':
-                        # store json item into a cumulative dictionary
-                        self.item_dict = item
-
-                        # add name element
-                        item['name'] = str(item['source_account'])[:4] + '...' + str(item['source_account'])[-4:]
-
                         # add node_type element
                         item['node_type'] = "CREATED"
 
-                        # append item_dict into items_cumulative_created_dict
-                        self.items_cumulative_created_dict.update(self.item_dict)
+                    elif item['type'] == 'account_merge':
+                        # add node_type element
+                        item['node_type'] = "MERGED"
+
+                    # store json item into a cumulative dictionary
+                    self.item_dict = item
+
+                    # add name element
+                    item['name'] = str(item['source_account'])[:4] + '...' + str(item['source_account'])[-4:]
+
+                    # append item_dict into items_cumulative_created_dict
+                    self.items_cumulative_created_dict.update(self.item_dict)
 
         self.cumulative_operations.emit(self.items_cumulative_created_dict)
 
