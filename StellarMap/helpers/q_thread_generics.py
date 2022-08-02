@@ -462,27 +462,31 @@ class GenericParseOperationsWorkerThread(QThread):
             for item in self.input_ops_json['_embedded']['records']:
                 # check if type element exists
                 if 'type' in item:
-                    if item['type'] == 'create_account':
-                        # add node_type element
-                        item['node_type'] = "CREATED"
+                    if item['type'] == 'create_account' or item['type'] == 'account_merge':
+                        
+                        if item['type'] == 'create_account':
+                            # add node_type element
+                            item['node_type'] = "CREATED"
+                        elif item['type'] == 'account_merge':
+                            # add node_type element
+                            item['node_type'] = "MERGED"
 
-                    elif item['type'] == 'account_merge':
-                        # add node_type element
-                        item['node_type'] = "MERGED"
+                        # store json item into a cumulative dictionary
+                        self.item_dict = item
 
-                    # store json item into a cumulative dictionary
-                    self.item_dict = item
+                        # add name element
+                        item['name'] = str(item['source_account'])[:4] + '...' + str(item['source_account'])[-4:]
 
-                    # add name element
-                    item['name'] = str(item['source_account'])[:4] + '...' + str(item['source_account'])[-4:]
-
-                    # append item_dict into items_cumulative_created_dict
-                    self.items_cumulative_created_dict.update(self.item_dict)
+                        # append item_dict into items_cumulative_created_dict
+                        self.items_cumulative_created_dict.update(self.item_dict)
 
         self.cumulative_operations.emit(self.items_cumulative_created_dict)
 
         # exit thread
         return
+
+
+
 
 
 class GenericRenderD3ChartWorkerThread(QThread):
