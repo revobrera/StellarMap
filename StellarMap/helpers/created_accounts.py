@@ -517,8 +517,21 @@ class CreatedByAccounts(DataOutput):
         self.q_thread_parse_ops.cumulative_operations.connect(self.set_operations_records)
 
     def set_operations_records(self, ops_dict):
-        # self.collection_issuers_dict = ops_dict.copy()
-        self.output_terminal('collecting issuers dict')
+        # generates the children node for each ISSUER
+        child_node = {}
+        child_list = []
+        child_list.append(ops_dict)
+        child_node = {
+            "children": child_list
+        }
+        if ops_dict:
+            if 'ISSUER_' + str(self.recursive_count) in self.collection_issuers_dict:
+                self.collection_issuers_dict['ISSUER_' + str(self.recursive_count)].update(child_node)
+            else:
+                self.collection_issuers_dict['ISSUER_' + str(self.recursive_count)] = child_node
+        else:
+            self.output_terminal('OPERATIONS_DICT')
+            self.output_terminal(ops_dict)
 
 
 
