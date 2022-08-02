@@ -282,7 +282,6 @@ class CreatedByAccounts(DataOutput):
             self.output_terminal(horizon_json)
 
 
-
     def call_step_3_1_print_output_json(self, q_thread_output_json):
         d_str = "QThread is on step 3.1: printing out json"
         self.output_terminal(d_str)
@@ -474,7 +473,7 @@ class CreatedByAccounts(DataOutput):
 
         self.output_terminal("Gracefully Exiting! \n " + "#"*49)
         self.output_terminal(json.dumps(self.collection_issuers_dict))
-
+        
         # exiting any running threads
         # self.stop_requests_thread()
         # self.stop_df_thread()
