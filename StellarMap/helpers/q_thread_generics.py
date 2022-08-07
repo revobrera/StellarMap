@@ -486,7 +486,47 @@ class GenericParseOperationsWorkerThread(QThread):
         return
 
 
+class GenericReconstructCollectionIssuersWorkerThread(QThread):
+    """
+    Generic Worker QThread To Reconstruct the collection of issuers nest under each children node
+    """
+    q_thread_radial_tree_data = pyqtSignal(dict)
 
+    def __init__(self, param_dict):
+        super().__init__()
+
+        self.collection_issuers = param_dict['collection_issuers']
+        self.collection_issuers_radial_tree_data = param_dict['collection_issuers']
+        self.recursive_count = param_dict['recursive_count']
+
+
+    @pyqtSlot()
+    def run(self):
+
+        # reversed for loop
+        for issuer_num in reversed(range(self.recursive_count)):
+            print(issuer_num)
+
+            # create child node  
+            child_node = {
+                "children": [
+                    self.collection_issuers['ISSUER_' + str(issuer_num)]
+                ]
+            }
+
+            # remove current item from dictionary
+            del self.collection_issuers_radial_tree_data['ISSUER_' + str(issuer_num)]
+
+            prev_issuer = issuer_num - 1
+
+            # update created child node to previous issuer
+            self.collection_issuers_radial_tree_data['ISSUER_' + str(prev_issuer)].update(child_node)
+
+        # emit radial tree data
+        self.q_thread_radial_tree_data.emit(self.collection_issuers_radial_tree_data)
+
+        # exit thread
+        return 
 
 
 class GenericRenderD3ChartWorkerThread(QThread):

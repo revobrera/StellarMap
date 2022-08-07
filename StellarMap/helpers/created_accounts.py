@@ -11,7 +11,9 @@ try:
         GenericCheckInternetConnectivityWorkerThread,
         GenericCollectIssuersWorkerThread, GenericGetCreatorWorkerThread,
         GenericGetHomeDomainWorkerThread, GenericGetXLMBalanceWorkerThread,
-        GenericParseOperationsWorkerThread, GenericRequestsWorkerThread)
+        GenericParseOperationsWorkerThread,
+        GenericReconstructCollectionIssuersWorkerThread,
+        GenericRequestsWorkerThread)
 
 except:
     from helpers.data_output import DataOutput
@@ -20,7 +22,9 @@ except:
         GenericCheckInternetConnectivityWorkerThread,
         GenericCollectIssuersWorkerThread, GenericGetCreatorWorkerThread,
         GenericGetHomeDomainWorkerThread, GenericGetXLMBalanceWorkerThread,
-        GenericParseOperationsWorkerThread, GenericRequestsWorkerThread)
+        GenericParseOperationsWorkerThread,
+        GenericReconstructCollectionIssuersWorkerThread,
+        GenericRequestsWorkerThread)
 
 
 class CreatedByAccounts(DataOutput):
@@ -237,9 +241,6 @@ class CreatedByAccounts(DataOutput):
 
         # check if valid stellar address
         if self.is_valid_stellar_address(self.q_thread_account):
-            # get operation records
-            self.collect_operations_records()
-
             self.set_account_from_api(self.q_thread_account, self.call_step_4_check_home_domain_element_exists, 'horizon')
         else:
             # captures nan value
@@ -473,6 +474,8 @@ class CreatedByAccounts(DataOutput):
 
         self.output_terminal("Gracefully Exiting! \n " + "#"*49)
         self.output_terminal(json.dumps(self.collection_issuers_dict))
+
+        self.collect_all_issuers()
         
         # exiting any running threads
         # self.stop_requests_thread()
@@ -481,14 +484,22 @@ class CreatedByAccounts(DataOutput):
         # self.stop_terminal_thread()
         # self.stop_append_df_thread()
 
-    def collect_operations_records(self):
+    def collect_all_issuers(self):
+        # loop through all issuer accounts
+        # TODO refactor into a WorkerThread()
+
+        for idx, row in self.creator_df.iterrows():
+            # self.output_terminal(row['Account'])
+            self.collect_operations_records(row['Account'])
+
+    def collect_operations_records(self, issuer_account):
         # horizon operations url
         # limit optional
         
         # The maximum number of records returned. The limit can range from 1 to 200 - an upper limit
         # that is hardcoded in Horizon for performance reasons. If this argument isn’t designated,
         # it defaults to 10.
-        horizon_operations_url = os.getenv('BASE_HORIZON_ACCOUNT') + str(self.q_thread_account) + '/operations?cursor=&limit=200&order=asc'
+        horizon_operations_url = os.getenv('BASE_HORIZON_ACCOUNT') + str(issuer_account) + '/operations?cursor=&limit=200&order=asc'
 
         self.q_thread = GenericRequestsWorkerThread(horizon_operations_url)
         self.q_thread.start()
@@ -529,8 +540,32 @@ class CreatedByAccounts(DataOutput):
             else:
                 self.collection_issuers_dict['ISSUER_' + str(self.recursive_count)] = child_node
         else:
-            self.output_terminal('OPERATIONS_DICT')
-            self.output_terminal(ops_dict)
+            self.output_terminal('child_node was not created')
+
+        self.format_issuers_to_radial_tree()
+
+    def format_issuers_to_radial_tree(self):
+
+         # dictionary appended to dataframe
+        param_dict = {}
+        param_dict = {
+            "collection_issuers": self.collection_issuers_dict,
+            "recursive_count": self.recursive_count
+        }
+
+        # formatting collection_issuers_dict into radial tree data structure
+        self.q_thread_rt_format = GenericReconstructCollectionIssuersWorkerThread(param_dict)
+        self.q_thread_rt_format.start()
+        self.q_thread_rt_format.q_thread_radial_tree_data.connect(self.set_format_issuers_to_radial_tree)
+
+    def set_format_issuers_to_radial_tree(self, radial_tree_data_dict):
+        # convert dictionary to json str
+        json_str = json.dumps(radial_tree_data_dict)
+
+        self.output_json(json_str)
+
+
+    #TODO recursively call collect_operations_records() from response _links.next.href
 
 
 
