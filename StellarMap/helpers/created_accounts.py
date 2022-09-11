@@ -459,8 +459,9 @@ class CreatedByAccounts(DataOutput):
         self.output_df(self.creator_df)
 
         # select columns to print
-        print_df = self.creator_df[self.creator_df.columns[0:3]]
-        self.output_terminal(print_df.to_csv())
+        print_df = self.creator_df[self.creator_df.columns[0:6]]
+        #self.output_terminal(print_df.to_csv())
+        self.output_json(print_df.to_json())
 
         self.output_terminal("done! \n " + "#"*49)
 
@@ -475,7 +476,7 @@ class CreatedByAccounts(DataOutput):
         self.output_terminal("Gracefully Exiting! \n " + "#"*49)
         self.output_terminal(json.dumps(self.collection_issuers_dict))
 
-        self.collect_all_issuers()
+        # self.collect_all_issuers()
         
         # exiting any running threads
         # self.stop_requests_thread()
