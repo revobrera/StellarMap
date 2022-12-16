@@ -491,21 +491,26 @@ class CreatedByAccounts(DataOutput):
 
         for idx, row in self.creator_df.iterrows():
             # self.output_terminal(row['Account'])
-            self.collect_operations_records(row['Account'])
+            self.recursive_collect_operations_records(row['Account'])
 
-    def collect_operations_records(self, issuer_account):
-        # horizon operations url
-        # limit optional
-        
-        # The maximum number of records returned. The limit can range from 1 to 200 - an upper limit
-        # that is hardcoded in Horizon for performance reasons. If this argument isn’t designated,
-        # it defaults to 10.
-        horizon_operations_url = os.getenv('BASE_HORIZON_ACCOUNT') + str(issuer_account) + '/operations?cursor=&limit=200&order=asc'
-
+    def recursive_collect_operations_records(self, issuer_account, cursor):
+        horizon_operations_url = os.getenv('BASE_HORIZON_ACCOUNT') + str(issuer_account) + '/operations?cursor=' + cursor + '&limit=200&order=asc'
         self.q_thread = GenericRequestsWorkerThread(horizon_operations_url)
         self.q_thread.start()
-        self.q_thread.requests_response.connect(self.call_operations_records)
+        self.q_thread.requests_response.connect(self.collect_operations_records)
+        self.q_thread.requests_response.connect(self.recursive_collect_operations_records)
 
+    def collect_operations_records(self, requests_response):
+        """Method to extract data from Horizon API and output to UI"""
+        if requests_response is None:
+            return None
+        else:
+            # check if more records
+            if requests_response['_links']['next']:
+                cursor = requests_response['_links']['next']['href'].split('cursor=')[1]
+                self.recursive_collect_operations_records(issuer_account=self.ui.lineEdit.text(), cursor=cursor)
+
+    
     def call_operations_records(self, requests_ops):
         # print info into terminal tab
         # self.q_thread_headers = requests_ops.headers
