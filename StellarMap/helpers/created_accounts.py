@@ -494,6 +494,12 @@ class CreatedByAccounts(DataOutput):
             self.recursive_collect_operations_records(row['Account'])
 
     def recursive_collect_operations_records(self, issuer_account, cursor):
+        """
+        This function sends a request to the Stellar Horizon API to collect records of 
+        operations performed by a specified issuer account. The function sends the 
+        request with a specified cursor and limit to the API. If there are more records 
+        available, the function will recursively call itself to continue collecting the records.
+        """
         horizon_operations_url = os.getenv('BASE_HORIZON_ACCOUNT') + str(issuer_account) + '/operations?cursor=' + cursor + '&limit=200&order=asc'
         self.q_thread = GenericRequestsWorkerThread(horizon_operations_url)
         self.q_thread.start()
