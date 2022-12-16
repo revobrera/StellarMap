@@ -1,35 +1,14 @@
-# coding: utf-8
-
 import sys
 import os
-# import site
-# site.addsitedir('/usr/local/lib/python2.7/site-packages')
-from PyQt5 import QtCore, QtWidgets, QtWebEngineWidgets
+from PyQt5.QtCore import QUrl
+from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtWidgets import QApplication
 
-app = QtWidgets.QApplication(sys.argv)
-view = QtWebEngineWidgets.QWebEngineView()
+app = QApplication(sys.argv)
+view = QWebEngineView()
 
-# view.settings().setAttribute(QtWebEng.QWebSettings.LocalContentCanAccessRemoteUrls, True)
-
-# f = open('html/test.html', 'r')
-#
-# html = f.read()
-# f.close()
-
-# print(os.path.abspath(__file__))
-# path = os.path.abspath(__file__)
-# print()
-
-# view.setHtml(html)
-# view.setHtml(html, baseUrl=QtCore.QUrl().fromLocalFile(os.path.split(os.path.abspath(__file__))))
-
-# view.setUrl()
-# view.set
-# view.load(QtCore.QUrl('http://'))
-
-view.load(QtCore.QUrl().fromLocalFile(
-    os.path.split(os.path.abspath(__file__))[0]+r'\collapsible_radial_tree\index.html'
-))
+html_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'collapsible_radial_tree', 'index.html')
+view.load(QUrl.fromLocalFile(html_file))
 
 view.show()
 sys.exit(app.exec_())
