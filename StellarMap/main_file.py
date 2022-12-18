@@ -198,18 +198,18 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
         check_directory = re.compile(r'^(\/+\w{0,}){0,}$')
         return check_file.match(path) is not None or check_directory.match(path) is not None
 
-    def is_valid_stellar_address(self, stellar_address):
+    def is_valid_stellar_address(self, stellar_address: str) -> bool:
         """
-        This function checks if steller address is valid
+        Check if a given string is a valid Stellar address.
+
+        Parameters:
+        - stellar_address (str): The string to check.
+
+        Returns:
+        - bool: True if the string is a valid Stellar address, False otherwise.
         """
-
-        check_stellar_address = re.compile("[A-Z,0-9]{56}")         #Make an address containing A to Z and 0 to 9
-        
-        if check_stellar_address.match(stellar_address):            #Match that address with input
-            return True                                             #If matched return true
-        else:
-            return False                                            #Otherwise return false
-
+        check_stellar_address = re.compile(r'[A-Z,0-9]{56}')
+        return check_stellar_address.match(stellar_address) is not None
     
     def customize_text(self, item):
         """
