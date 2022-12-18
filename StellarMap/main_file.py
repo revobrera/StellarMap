@@ -5,7 +5,7 @@ import json  # Handling json format files
 import platform  # Getting system information
 import re  # Regular expressions (For putting checks on emails, names etc)
 import sys  # To perform system level operations
-from threading import Thread  # To handle multiple threads (processes) at once
+import threading # To handle multiple threads (processes) at once
 
 import pandas as pd  # For managing and handling text data
 from PIL.ImageQt import rgb  # For managing and handling image data
@@ -248,35 +248,24 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
                 self.customize_text(str(item))
 
 
-    def loading_dataset_to_ui_old(self, stellar_account_url_link):
+    def loading_dataset_to_ui_old(self, stellar_account_url_link: str):
         """
-        This function take stellar account url and get data from it
-        """
+        Load data from a Stellar account URL and display it in the UI.
 
-        #---------------------------------Verify if link is valid-------------------------------------------
+        Parameters:
+        - stellar_account_url_link (str): The URL of the Stellar account to load data from.
+        """
         self.customize_text('Initiated data loading from ')
         self.customize_text(stellar_account_url_link)
-        #---------------------------------------------------------------------------------------------------
 
-
-        #-------------------------------Get data of given stellar account-----------------------------------
         df = pd.read_json(stellar_account_url_link)
-        #---------------------------------------------------------------------------------------------------
-
-
-        # Put fethed data in a model
         model = PandasModel(df)
         self.ui.tableView.setModel(model)
 
-
-        # dataframe output
-        thread1=Thread(target=self.print_response,args=(df.to_dict(),))
+        thread1 = threading.Thread(target=self.print_response, args=(df.to_dict(),))
         thread1.start()
-
-
-        # json output
         self.loading_json_old(stellar_account_url_link, df.to_json())
-
+        
     def loading_dataset_to_ui(self, stellar_account_url_link):
         """
         This function take stellar account url and get data from it
