@@ -147,7 +147,7 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
 
 
     def nested_dict_pairs_iterator(self, dict_obj: dict) -> tuple:
-    """
+        """
         Iterate over all key-value pairs in a nested dictionary.
 
         Parameters:
@@ -155,13 +155,13 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
 
         Yields:
         - tuple: A tuple of the form (key, value), where key is a string and value is any type.
-    """
-    for key, value in dict_obj.items():
-        if isinstance(value, dict):
-            for pair in self.nested_dict_pairs_iterator(value):
-                yield (key, *pair)
-        else:
-            yield (key, value)
+        """
+        for key, value in dict_obj.items():
+            if isinstance(value, dict):
+                for pair in self.nested_dict_pairs_iterator(value):
+                    yield (key, *pair)
+            else:
+                yield (key, value)
 
 
     def is_valid_url(self,url):
