@@ -235,11 +235,13 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
         self.ui.textEdit.append(item)
 
 
-    def print_Response(self,data):
+    def print_response(self, data: dict):
         """
-        This function shows the response after validating what was entered
-        """
+        Print the response after validating the input.
 
+        Parameters:
+        - data (dict): The data to print.
+        """
         for pair in self.nested_dict_pairs_iterator(data):
             self.ui.textEdit.insertPlainText('\n')
             for item in pair:
@@ -268,7 +270,7 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
 
 
         # dataframe output
-        thread1=Thread(target=self.print_Response,args=(df.to_dict(),))
+        thread1=Thread(target=self.print_response,args=(df.to_dict(),))
         thread1.start()
 
 
