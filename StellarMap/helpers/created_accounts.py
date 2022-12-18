@@ -11,7 +11,9 @@ try:
         GenericCheckInternetConnectivityWorkerThread,
         GenericCollectIssuersWorkerThread, GenericGetCreatorWorkerThread,
         GenericGetHomeDomainWorkerThread, GenericGetXLMBalanceWorkerThread,
-        GenericParseOperationsWorkerThread, GenericRequestsWorkerThread)
+        GenericParseOperationsWorkerThread,
+        GenericReconstructCollectionIssuersWorkerThread,
+        GenericRequestsWorkerThread)
 
 except:
     from helpers.data_output import DataOutput
@@ -20,12 +22,14 @@ except:
         GenericCheckInternetConnectivityWorkerThread,
         GenericCollectIssuersWorkerThread, GenericGetCreatorWorkerThread,
         GenericGetHomeDomainWorkerThread, GenericGetXLMBalanceWorkerThread,
-        GenericParseOperationsWorkerThread, GenericRequestsWorkerThread)
+        GenericParseOperationsWorkerThread,
+        GenericReconstructCollectionIssuersWorkerThread,
+        GenericRequestsWorkerThread)
 
 
 class CreatedByAccounts(DataOutput):
     # swimming upstream crawl for creator accounts
-    def initCall(self, stellar_account):
+    def init_variables(self, stellar_account):
 
         #--------------------------- init variables for CreatedByAccounts()
         self.recursive_count = 0
@@ -237,9 +241,6 @@ class CreatedByAccounts(DataOutput):
 
         # check if valid stellar address
         if self.is_valid_stellar_address(self.q_thread_account):
-            # get operation records
-            self.collect_operations_records()
-
             self.set_account_from_api(self.q_thread_account, self.call_step_4_check_home_domain_element_exists, 'horizon')
         else:
             # captures nan value
@@ -458,8 +459,9 @@ class CreatedByAccounts(DataOutput):
         self.output_df(self.creator_df)
 
         # select columns to print
-        print_df = self.creator_df[self.creator_df.columns[0:3]]
-        self.output_terminal(print_df.to_csv())
+        print_df = self.creator_df[self.creator_df.columns[0:6]]
+        #self.output_terminal(print_df.to_csv())
+        self.output_json(print_df.to_json())
 
         self.output_terminal("done! \n " + "#"*49)
 
@@ -473,6 +475,8 @@ class CreatedByAccounts(DataOutput):
 
         self.output_terminal("Gracefully Exiting! \n " + "#"*49)
         self.output_terminal(json.dumps(self.collection_issuers_dict))
+
+        # self.collect_all_issuers()
         
         # exiting any running threads
         # self.stop_requests_thread()
@@ -481,19 +485,38 @@ class CreatedByAccounts(DataOutput):
         # self.stop_terminal_thread()
         # self.stop_append_df_thread()
 
-    def collect_operations_records(self):
-        # horizon operations url
-        # limit optional
-        
-        # The maximum number of records returned. The limit can range from 1 to 200 - an upper limit
-        # that is hardcoded in Horizon for performance reasons. If this argument isn’t designated,
-        # it defaults to 10.
-        horizon_operations_url = os.getenv('BASE_HORIZON_ACCOUNT') + str(self.q_thread_account) + '/operations?cursor=&limit=200&order=asc'
+    def collect_all_issuers(self):
+        # loop through all issuer accounts
+        # TODO refactor into a WorkerThread()
 
+        for idx, row in self.creator_df.iterrows():
+            # self.output_terminal(row['Account'])
+            self.recursive_collect_operations_records(row['Account'])
+
+    def recursive_collect_operations_records(self, issuer_account, cursor):
+        """
+        This function sends a request to the Stellar Horizon API to collect records of 
+        operations performed by a specified issuer account. The function sends the 
+        request with a specified cursor and limit to the API. If there are more records 
+        available, the function will recursively call itself to continue collecting the records.
+        """
+        horizon_operations_url = os.getenv('BASE_HORIZON_ACCOUNT') + str(issuer_account) + '/operations?cursor=' + cursor + '&limit=200&order=asc'
         self.q_thread = GenericRequestsWorkerThread(horizon_operations_url)
         self.q_thread.start()
-        self.q_thread.requests_response.connect(self.call_operations_records)
+        self.q_thread.requests_response.connect(self.collect_operations_records)
+        self.q_thread.requests_response.connect(self.recursive_collect_operations_records)
 
+    def collect_operations_records(self, requests_response):
+        """Method to extract data from Horizon API and output to UI"""
+        if requests_response is None:
+            return None
+        else:
+            # check if more records
+            if requests_response['_links']['next']:
+                cursor = requests_response['_links']['next']['href'].split('cursor=')[1]
+                self.recursive_collect_operations_records(issuer_account=self.ui.lineEdit.text(), cursor=cursor)
+
+    
     def call_operations_records(self, requests_ops):
         # print info into terminal tab
         # self.q_thread_headers = requests_ops.headers
@@ -516,8 +539,45 @@ class CreatedByAccounts(DataOutput):
         self.q_thread_parse_ops.cumulative_operations.connect(self.set_operations_records)
 
     def set_operations_records(self, ops_dict):
-        # self.collection_issuers_dict = ops_dict.copy()
-        self.output_terminal('collecting issuers dict')
+        # generates the children node for each ISSUER
+        child_node = {}
+        child_list = []
+        child_list.append(ops_dict)
+        child_node = {
+            "children": child_list
+        }
+        if ops_dict:
+            if 'ISSUER_' + str(self.recursive_count) in self.collection_issuers_dict:
+                self.collection_issuers_dict['ISSUER_' + str(self.recursive_count)].update(child_node)
+            else:
+                self.collection_issuers_dict['ISSUER_' + str(self.recursive_count)] = child_node
+        else:
+            self.output_terminal('child_node was not created')
+
+        self.format_issuers_to_radial_tree()
+
+    def format_issuers_to_radial_tree(self):
+
+         # dictionary appended to dataframe
+        param_dict = {}
+        param_dict = {
+            "collection_issuers": self.collection_issuers_dict,
+            "recursive_count": self.recursive_count
+        }
+
+        # formatting collection_issuers_dict into radial tree data structure
+        self.q_thread_rt_format = GenericReconstructCollectionIssuersWorkerThread(param_dict)
+        self.q_thread_rt_format.start()
+        self.q_thread_rt_format.q_thread_radial_tree_data.connect(self.set_format_issuers_to_radial_tree)
+
+    def set_format_issuers_to_radial_tree(self, radial_tree_data_dict):
+        # convert dictionary to json str
+        json_str = json.dumps(radial_tree_data_dict)
+
+        self.output_json(json_str)
+
+
+    #TODO recursively call collect_operations_records() from response _links.next.href
 
 
 

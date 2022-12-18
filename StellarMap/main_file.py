@@ -5,7 +5,7 @@ import json  # Handling json format files
 import platform  # Getting system information
 import re  # Regular expressions (For putting checks on emails, names etc)
 import sys  # To perform system level operations
-from threading import Thread  # To handle multiple threads (processes) at once
+import threading # To handle multiple threads (processes) at once
 
 import pandas as pd  # For managing and handling text data
 from PIL.ImageQt import rgb  # For managing and handling image data
@@ -146,231 +146,242 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
         self.show()
 
 
-    def nested_dict_pairs_iterator(self,dict_obj):
+    def nested_dict_pairs_iterator(self, dict_obj: dict) -> tuple:
         """
-        This function accepts a nested dictionary as argument
-        and goes over all values of nested dictionaries
-        """
+        Iterate over all key-value pairs in a nested dictionary.
 
-        # Iterate over each value pairs of dict argument
+        Parameters:
+        - dict_obj (dict): The nested dictionary to iterate over.
+
+        Yields:
+        - tuple: A tuple of the form (key, value), where key is a string and value is any type.
+        """
         for key, value in dict_obj.items():
-            
-            # Check if type of value is dictionary
             if isinstance(value, dict):
-
-                # If value is dictioinary type then iterate over all its sub-values
                 for pair in self.nested_dict_pairs_iterator(value):
                     yield (key, *pair)
-            
-
             else:
-                # If value is not dict type then yield the value
                 yield (key, value)
 
 
-    def is_valid_url(self,url):
+    def is_valid_url(self, url: str) -> bool:
         """
-        This function takes a url as input and checks if it is valid or not
-        """
+        Check if a given string is a valid URL.
 
-        #Use regular expression to valide if url is in right format
+        Parameters:
+        - url (str): The string to check.
+
+        Returns:
+        - bool: True if the string is a valid URL, False otherwise.
+        """
         regex = re.compile(
-            
-            r'^https?://'                                                       #   http:// or https:// at staer
+            r'^https?://'                                                       #   http:// or https:// at start
             r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'     #   Domain name
             r'localhost|'                                                       #   localhost
             r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'                              #   ip
             r'(?::\d+)?'                                                        #   optional port
             r'(?:/?|[/?]\S+)$', re.IGNORECASE)
-        
 
-        #At the end return the url
-        return url is not None and regex.search(url)
+        return url is not None and regex.search(url) is not None
 
-
-    def is_valid_path(self,path):
+    def is_valid_path(self, path: str) -> bool:
         """
-        This functions checks if given path is valid or not
+        Check if a given string is a valid file or directory path.
+
+        Parameters:
+        - path (str): The string to check.
+
+        Returns:
+        - bool: True if the string is a valid file or directory path, False otherwise.
         """
+        check_file = re.compile(r'^(\/+\w{0,}){0,}\.\w{1,}$')
+        check_directory = re.compile(r'^(\/+\w{0,}){0,}$')
+        return check_file.match(path) is not None or check_directory.match(path) is not None
 
-        check_file = re.compile("^(\/+\w{0,}){0,}\.\w{1,}$")        #Check if file in path is valid
-        check_directory = re.compile("^(\/+\w{0,}){0,}$")           #Check if directory is valid
-        if check_file.match(path) or check_directory.match(path):   #If both are valid return true
-            return True
-        else:
-            return False                                            #Otherwise return false
-
-
-    def is_valid_stellar_address(self, stellar_address):
+    def is_valid_stellar_address(self, stellar_address: str) -> bool:
         """
-        This function checks if steller address is valid
+        Check if a given string is a valid Stellar address.
+
+        Parameters:
+        - stellar_address (str): The string to check.
+
+        Returns:
+        - bool: True if the string is a valid Stellar address, False otherwise.
         """
-
-        check_stellar_address = re.compile("[A-Z,0-9]{56}")         #Make an address containing A to Z and 0 to 9
-        
-        if check_stellar_address.match(stellar_address):            #Match that address with input
-            return True                                             #If matched return true
-        else:
-            return False                                            #Otherwise return false
-
+        check_stellar_address = re.compile(r'[A-Z,0-9]{56}')
+        return check_stellar_address.match(stellar_address) is not None
     
-    def customize_text(self, item):
+    def customize_text(self, item: str):
         """
-        This function sets style properties of search bar
-        """
+        Set the style properties of the search bar based on the input.
 
-        # get current date time
+        Parameters:
+        - item (str): The string to check and customize.
+        """
         datetime_object = datetime.datetime.now()
         self.ui.textEdit.insertPlainText('\n[' + str(datetime_object) + '] ')
-        
-        #Check if url that got typed in search bar is valid
+
         if self.is_valid_url(item):
-            color = rgb(78, 201, 176)
-
-        #If it is not a url check if it is a path
+            color = (78, 201, 176)
         elif self.is_valid_path(item):
-            color = rgb(234, 84, 159)
-        
-        #If it is neither make the color of text red
+            color = (234, 84, 159)
         else:
-            color = rgb(255, 255, 255)
+            color = (255, 255, 255)
 
-        
-        #--------------Set styling properties of search bar depending on what was entered-----------------
-        color = QtGui.QColor(color)
+        color = QtGui.QColor(*color)
         color_format = self.ui.textEdit.currentCharFormat()
         color_format.setForeground(color)
         self.ui.textEdit.setCurrentCharFormat(color_format)
         self.ui.textEdit.append(item)
-        #-------------------------------------------------------------------------------------------------
-        pass
 
 
-    def print_Response(self,data):
+    def print_response(self, data: dict):
         """
-        This function shows the response after validating what was entered
-        """
+        Print the response after validating the input.
 
+        Parameters:
+        - data (dict): The data to print.
+        """
         for pair in self.nested_dict_pairs_iterator(data):
             self.ui.textEdit.insertPlainText('\n')
             for item in pair:
                 self.customize_text(str(item))
 
 
-    def loading_dataset_to_ui_old(self, stellar_account_url_link):
+    def loading_dataset_to_ui_old(self, stellar_account_url_link: str):
         """
-        This function take stellar account url and get data from it
-        """
+        Load data from a Stellar account URL and display it in the UI.
 
-        #---------------------------------Verify if link is valid-------------------------------------------
+        Parameters:
+        - stellar_account_url_link (str): The URL of the Stellar account to load data from.
+        """
         self.customize_text('Initiated data loading from ')
         self.customize_text(stellar_account_url_link)
-        #---------------------------------------------------------------------------------------------------
 
-
-        #-------------------------------Get data of given stellar account-----------------------------------
         df = pd.read_json(stellar_account_url_link)
-        #---------------------------------------------------------------------------------------------------
-
-
-        # Put fethed data in a model
         model = PandasModel(df)
         self.ui.tableView.setModel(model)
 
-
-        # dataframe output
-        thread1=Thread(target=self.print_Response,args=(df.to_dict(),))
+        thread1 = threading.Thread(target=self.print_response, args=(df.to_dict(),))
         thread1.start()
-
-
-        # json output
         self.loading_json_old(stellar_account_url_link, df.to_json())
-
-    def loading_dataset_to_ui(self, stellar_account_url_link):
-        """
-        This function take stellar account url and get data from it
-        """
-        # self.cba = CreatedByAccounts(stellar_account_url_link)
         
-        thread1=Thread(target=self.initCall,args=(stellar_account_url_link,))
+    def loading_dataset_to_ui(self, stellar_account_url_link: str):
+        """
+        Load data from a Stellar account URL and display it in the UI.
+
+        Parameters:
+        - stellar_account_url_link (str): The URL of the Stellar account to load data from.
+        """
+        thread1 = threading.Thread(target=self.init_variables, args=(stellar_account_url_link,))
         thread1.start()
 
     def Button(self):
         """
         This function links all buttons with their respective functions
         """
-
-
-        #--------------------Check if button gets clicked and perform function--------------------------
-        btnWidget = self.sender()
-
-
+        # Get the button widget that was clicked
+        btn_widget = self.sender()
+        button_name = btn_widget.objectName()
+        
         # Home button
-        if btnWidget.objectName() == "btn_home":
+        if button_name == "btn_home":
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_home)
             UIFunctions.resetStyle(self, "btn_home")
             UIFunctions.labelPage(self, "Home")
-            btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
-
+            btn_widget.setStyleSheet(UIFunctions.selectMenu(btn_widget.styleSheet()))
 
         # New user button
-        if btnWidget.objectName() == "btn_new_user":
+        elif button_name == "btn_new_user":
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_user)
             UIFunctions.resetStyle(self, "btn_new_user")
             UIFunctions.labelPage(self, "New User")
-            btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
+            btn_widget.setStyleSheet(UIFunctions.selectMenu(btn_widget.styleSheet()))
 
         # Widgets buttons
-        if btnWidget.objectName() == "btn_widgets":
+        elif button_name == "btn_widgets":
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_widgets)
             UIFunctions.resetStyle(self, "btn_widgets")
             UIFunctions.labelPage(self, "Settings")
-            btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
-
+            btn_widget.setStyleSheet(UIFunctions.selectMenu(btn_widget.styleSheet()))
+    
 
     #----------------------------------------Events---------------------------------------------------
 
     def eventFilter(self, watched, event):
         """
-        This function runs when double click of mouse left click is pressed
+        This function runs when double click of mouse left click is pressed.
         """
+        # Check if the double click event was on the watched object (self.le)
         if watched == self.le and event.type() == QtCore.QEvent.MouseButtonDblClick:
             print("pos: ", event.pos())
     
     def mousePressEvent(self, event):
         """
-        This function runs whenever mouse click occurs
-        """
+        This function runs whenever a mouse click event occurs. It determines
+        which button was clicked (left, right, or middle) and prints a message
+        indicating which button was clicked.
 
+        Parameters:
+        event (QMouseEvent): The mouse event that triggered this function.
+
+        Returns:
+        None
+        """
         self.dragPos = event.globalPos()
-        if event.buttons() == Qt.LeftButton:
+        button = event.button()
+
+        if button == Qt.LeftButton:
             print('Mouse click: LEFT CLICK')
-        if event.buttons() == Qt.RightButton:
+        elif button == Qt.RightButton:
             print('Mouse click: RIGHT CLICK')
-        if event.buttons() == Qt.MidButton:
+        elif button == Qt.MidButton:
             print('Mouse click: MIDDLE BUTTON')
 
     def keyPressEvent(self, event):
         """
-        This function runs whenever any key is pressed
+        This function is called whenever any key is pressed.
+
+        Parameters:
+        event (QKeyEvent): The key press event.
+
+        Returns:
+        None
         """
 
-        print('Key: ' + str(event.key()) + ' | Text Press: ' + str(event.text()))
+        key = event.key()
+        text = event.text()
+        print(f'Key: {key} | Text Press: {text}')
         
     def resizeEvent(self, event):
         """
-        This function runs when we try to resize the window
+        This function is called when the window is resized. It calls the `resizeFunction()` method and then
+        passes the event to the parent class's `resizeEvent()` method.
+
+        Parameters:
+        event (QResizeEvent): The resize event.
+
+        Returns:
+        None
         """
 
         self.resizeFunction()
-        return super(ApplicationWindow, self).resizeEvent(event)
+        return super().resizeEvent(event)
 
     def resizeFunction(self):
         """
-        This function displays new height and width whenever window is resized
+        This function is called when the window is resized. It displays the new height and width of the window.
+
+        Parameters:
+        None
+
+        Returns:
+        None
         """
 
-        print('Height: ' + str(self.height()) + ' | Width: ' + str(self.width()))
+        height = self.height()
+        width = self.width()
+        print(f'Height: {height} | Width: {width}')
 
     #--------------------------------------------------------------------------------------------------
 
