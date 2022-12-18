@@ -29,7 +29,7 @@ except:
 
 class CreatedByAccounts(DataOutput):
     # swimming upstream crawl for creator accounts
-    def initCall(self, stellar_account):
+    def init_variables(self, stellar_account):
 
         #--------------------------- init variables for CreatedByAccounts()
         self.recursive_count = 0

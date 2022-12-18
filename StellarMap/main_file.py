@@ -266,13 +266,14 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
         thread1.start()
         self.loading_json_old(stellar_account_url_link, df.to_json())
         
-    def loading_dataset_to_ui(self, stellar_account_url_link):
+    def loading_dataset_to_ui(self, stellar_account_url_link: str):
         """
-        This function take stellar account url and get data from it
+        Load data from a Stellar account URL and display it in the UI.
+
+        Parameters:
+        - stellar_account_url_link (str): The URL of the Stellar account to load data from.
         """
-        # self.cba = CreatedByAccounts(stellar_account_url_link)
-        
-        thread1=Thread(target=self.initCall,args=(stellar_account_url_link,))
+        thread1 = threading.Thread(target=self.init_variables, args=(stellar_account_url_link,))
         thread1.start()
 
     def Button(self):
