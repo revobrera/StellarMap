@@ -164,25 +164,25 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
                 yield (key, value)
 
 
-    def is_valid_url(self,url):
+    def is_valid_url(self, url: str) -> bool:
         """
-        This function takes a url as input and checks if it is valid or not
-        """
+        Check if a given string is a valid URL.
 
-        #Use regular expression to valide if url is in right format
+        Parameters:
+        - url (str): The string to check.
+
+        Returns:
+        - bool: True if the string is a valid URL, False otherwise.
+        """
         regex = re.compile(
-            
-            r'^https?://'                                                       #   http:// or https:// at staer
+            r'^https?://'                                                       #   http:// or https:// at start
             r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'     #   Domain name
             r'localhost|'                                                       #   localhost
             r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'                              #   ip
             r'(?::\d+)?'                                                        #   optional port
             r'(?:/?|[/?]\S+)$', re.IGNORECASE)
-        
 
-        #At the end return the url
-        return url is not None and regex.search(url)
-
+        return url is not None and regex.search(url) is not None
 
     def is_valid_path(self,path):
         """
