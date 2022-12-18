@@ -146,26 +146,22 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
         self.show()
 
 
-    def nested_dict_pairs_iterator(self,dict_obj):
-        """
-        This function accepts a nested dictionary as argument
-        and goes over all values of nested dictionaries
-        """
+    def nested_dict_pairs_iterator(self, dict_obj: dict) -> tuple:
+    """
+        Iterate over all key-value pairs in a nested dictionary.
 
-        # Iterate over each value pairs of dict argument
-        for key, value in dict_obj.items():
-            
-            # Check if type of value is dictionary
-            if isinstance(value, dict):
+        Parameters:
+        - dict_obj (dict): The nested dictionary to iterate over.
 
-                # If value is dictioinary type then iterate over all its sub-values
-                for pair in self.nested_dict_pairs_iterator(value):
-                    yield (key, *pair)
-            
-
-            else:
-                # If value is not dict type then yield the value
-                yield (key, value)
+        Yields:
+        - tuple: A tuple of the form (key, value), where key is a string and value is any type.
+    """
+    for key, value in dict_obj.items():
+        if isinstance(value, dict):
+            for pair in self.nested_dict_pairs_iterator(value):
+                yield (key, *pair)
+        else:
+            yield (key, value)
 
 
     def is_valid_url(self,url):
