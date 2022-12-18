@@ -340,10 +340,18 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
 
     def keyPressEvent(self, event):
         """
-        This function runs whenever any key is pressed
+        This function is called whenever any key is pressed.
+
+        Parameters:
+        event (QKeyEvent): The key press event.
+
+        Returns:
+        None
         """
 
-        print('Key: ' + str(event.key()) + ' | Text Press: ' + str(event.text()))
+        key = event.key()
+        text = event.text()
+        print(f'Key: {key} | Text Press: {text}')
         
     def resizeEvent(self, event):
         """
