@@ -184,18 +184,19 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
 
         return url is not None and regex.search(url) is not None
 
-    def is_valid_path(self,path):
+    def is_valid_path(self, path: str) -> bool:
         """
-        This functions checks if given path is valid or not
+        Check if a given string is a valid file or directory path.
+
+        Parameters:
+        - path (str): The string to check.
+
+        Returns:
+        - bool: True if the string is a valid file or directory path, False otherwise.
         """
-
-        check_file = re.compile("^(\/+\w{0,}){0,}\.\w{1,}$")        #Check if file in path is valid
-        check_directory = re.compile("^(\/+\w{0,}){0,}$")           #Check if directory is valid
-        if check_file.match(path) or check_directory.match(path):   #If both are valid return true
-            return True
-        else:
-            return False                                            #Otherwise return false
-
+        check_file = re.compile(r'^(\/+\w{0,}){0,}\.\w{1,}$')
+        check_directory = re.compile(r'^(\/+\w{0,}){0,}$')
+        return check_file.match(path) is not None or check_directory.match(path) is not None
 
     def is_valid_stellar_address(self, stellar_address):
         """
