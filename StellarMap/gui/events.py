@@ -63,7 +63,6 @@ class UIFunctions(QMainWindow):
             self.ui.frame_top_btns.setStyleSheet("background-color: rgba(27, 29, 35, 200)")
             self.ui.frame_size_grip.show()
 
-
     
     def returnStatus(self):
         """
@@ -242,24 +241,25 @@ class UIFunctions(QMainWindow):
 
     def set_stellar_network(self):
         """
-        This function takes network name from combobox and sets it
+        This function sets the Stellar network based on the selected option in the combobox.
         """
-
-        # get current selected text from combo box
+        # Get the current selected text from the combobox
         network_name = self.ui.networkComboBox.currentText()
 
-        # set the label description to display network
-        UIFunctions.labelDescription(self, 'Network: ' + network_name.upper())
+        # Set the label description to display the network name
+        UIFunctions.labelDescription(self, f'Network: {network_name.upper()}')
 
-        # import settings file
+        # Import the settings file
         app_env = EnvHelpers()
+
+        # Set the public or testnet network based on the selected option in the combobox
         if network_name.upper() == 'PUBLIC':
             app_env.set_public_network()
-            
         else:
             app_env.set_testnet_network()
 
-        self.customize_text('The network name was switched to: ' + os.getenv('NETWORK'))
+        # Customize the text to display the new network name
+        self.customize_text(f'The network name was switched to: {os.getenv("NETWORK")}')
 
     def search_creator_by_accounts(self):
         """
