@@ -280,35 +280,30 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
         """
         This function links all buttons with their respective functions
         """
-
-
-        #--------------------Check if button gets clicked and perform function--------------------------
-        btnWidget = self.sender()
-
-
+        # Get the button widget that was clicked
+        btn_widget = self.sender()
+        button_name = btn_widget.objectName()
+        
         # Home button
-        if btnWidget.objectName() == "btn_home":
+        if button_name == "btn_home":
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_home)
             UIFunctions.resetStyle(self, "btn_home")
             UIFunctions.labelPage(self, "Home")
-            btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
-
+            btn_widget.setStyleSheet(UIFunctions.selectMenu(btn_widget.styleSheet()))
 
         # New user button
-        if btnWidget.objectName() == "btn_new_user":
+        elif button_name == "btn_new_user":
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_user)
             UIFunctions.resetStyle(self, "btn_new_user")
             UIFunctions.labelPage(self, "New User")
-            btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
+            btn_widget.setStyleSheet(UIFunctions.selectMenu(btn_widget.styleSheet()))
 
         # Widgets buttons
-        if btnWidget.objectName() == "btn_widgets":
+        elif button_name == "btn_widgets":
             self.ui.stackedWidget.setCurrentWidget(self.ui.page_widgets)
             UIFunctions.resetStyle(self, "btn_widgets")
             UIFunctions.labelPage(self, "Settings")
-            btnWidget.setStyleSheet(UIFunctions.selectMenu(btnWidget.styleSheet()))
-
-
+            btn_widget.setStyleSheet(UIFunctions.selectMenu(btn_widget.styleSheet()))
     #----------------------------------------Events---------------------------------------------------
 
     def eventFilter(self, watched, event):
