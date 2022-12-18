@@ -318,15 +318,24 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
     
     def mousePressEvent(self, event):
         """
-        This function runs whenever mouse click occurs
-        """
+        This function runs whenever a mouse click event occurs. It determines
+        which button was clicked (left, right, or middle) and prints a message
+        indicating which button was clicked.
 
+        Parameters:
+        event (QMouseEvent): The mouse event that triggered this function.
+
+        Returns:
+        None
+        """
         self.dragPos = event.globalPos()
-        if event.buttons() == Qt.LeftButton:
+        button = event.button()
+
+        if button == Qt.LeftButton:
             print('Mouse click: LEFT CLICK')
-        if event.buttons() == Qt.RightButton:
+        elif button == Qt.RightButton:
             print('Mouse click: RIGHT CLICK')
-        if event.buttons() == Qt.MidButton:
+        elif button == Qt.MidButton:
             print('Mouse click: MIDDLE BUTTON')
 
     def keyPressEvent(self, event):
