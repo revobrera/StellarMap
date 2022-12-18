@@ -355,18 +355,33 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
         
     def resizeEvent(self, event):
         """
-        This function runs when we try to resize the window
+        This function is called when the window is resized. It calls the `resizeFunction()` method and then
+        passes the event to the parent class's `resizeEvent()` method.
+
+        Parameters:
+        event (QResizeEvent): The resize event.
+
+        Returns:
+        None
         """
 
         self.resizeFunction()
-        return super(ApplicationWindow, self).resizeEvent(event)
+        return super().resizeEvent(event)
 
-    def resizeFunction(self):
-        """
-        This function displays new height and width whenever window is resized
-        """
+def resizeFunction(self):
+    """
+    This function is called when the window is resized. It displays the new height and width of the window.
 
-        print('Height: ' + str(self.height()) + ' | Width: ' + str(self.width()))
+    Parameters:
+    None
+
+    Returns:
+    None
+    """
+
+    height = self.height()
+    width = self.width()
+    print(f'Height: {height} | Width: {width}')
 
     #--------------------------------------------------------------------------------------------------
 
