@@ -263,31 +263,35 @@ class UIFunctions(QMainWindow):
 
     def search_creator_by_accounts(self):
         """
-        Take address from search bar and search it on internet
+        Search for the creator of a Stellar address using the base SE network account.
+        
+        Parameters:
+            self: instance of the current class
+        
+        Returns:
+            None
         """
-
-        # get input text from search bar
+        # Get input text from search bar
         search_input = self.ui.line_edit_search_input.text()
 
-        # check if stellar address is valid
+        # Check if the input is a valid Stellar address
         if self.is_valid_stellar_address(search_input):
-            search_str = 'Searched input is valid: ' + str(search_input)
+            search_str = f'Searched input is valid: {search_input}'
             UIFunctions.labelDescription(self, search_str)
             self.customize_text(search_str)
 
-            # call the function to walk up creator accounts
-            self.customize_text('Searching on network: ' + os.getenv('BASE_SE_NETWORK_ACCOUNT'))
-            stellar_account_url_link = os.getenv('BASE_SE_NETWORK_ACCOUNT') + search_input
+            # Call the function to walk up creator accounts
+            self.customize_text(f'Searching on network: {os.getenv("BASE_SE_NETWORK_ACCOUNT")}')
+            stellar_account_url_link = f'{os.getenv("BASE_SE_NETWORK_ACCOUNT")}{search_input}'
 
-            # call upstream algorithm
+            # Call upstream algorithm
             self.loading_dataset_to_ui(search_input)
-
         else:
-            # print on ui and terminal then clear the search bar
-            search_str = 'Searched input is NOT valid: ' + str(search_input)
+            # Print on the UI and terminal, then clear the search bar
+            search_str = f'Searched input is NOT valid: {search_input}'
             UIFunctions.labelDescription(self, search_str)
             self.customize_text(search_str)
-            self.ui.line_edit_search_input.clear
+            self.ui.line_edit_search_input.clear()
 
 
     # ------------------------------ output functions ---------------------------------------
