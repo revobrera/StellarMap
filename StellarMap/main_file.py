@@ -304,12 +304,15 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
             UIFunctions.resetStyle(self, "btn_widgets")
             UIFunctions.labelPage(self, "Settings")
             btn_widget.setStyleSheet(UIFunctions.selectMenu(btn_widget.styleSheet()))
+    
+
     #----------------------------------------Events---------------------------------------------------
 
     def eventFilter(self, watched, event):
         """
-        This function runs when double click of mouse left click is pressed
+        This function runs when double click of mouse left click is pressed.
         """
+        # Check if the double click event was on the watched object (self.le)
         if watched == self.le and event.type() == QtCore.QEvent.MouseButtonDblClick:
             print("pos: ", event.pos())
     
