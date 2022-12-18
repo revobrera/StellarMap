@@ -368,20 +368,20 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
         self.resizeFunction()
         return super().resizeEvent(event)
 
-def resizeFunction(self):
-    """
-    This function is called when the window is resized. It displays the new height and width of the window.
+    def resizeFunction(self):
+        """
+        This function is called when the window is resized. It displays the new height and width of the window.
 
-    Parameters:
-    None
+        Parameters:
+        None
 
-    Returns:
-    None
-    """
+        Returns:
+        None
+        """
 
-    height = self.height()
-    width = self.width()
-    print(f'Height: {height} | Width: {width}')
+        height = self.height()
+        width = self.width()
+        print(f'Height: {height} | Width: {width}')
 
     #--------------------------------------------------------------------------------------------------
 
