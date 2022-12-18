@@ -211,36 +211,28 @@ class ApplicationWindow(QMainWindow, CreatedByAccounts):
         check_stellar_address = re.compile(r'[A-Z,0-9]{56}')
         return check_stellar_address.match(stellar_address) is not None
     
-    def customize_text(self, item):
+    def customize_text(self, item: str):
         """
-        This function sets style properties of search bar
-        """
+        Set the style properties of the search bar based on the input.
 
-        # get current date time
+        Parameters:
+        - item (str): The string to check and customize.
+        """
         datetime_object = datetime.datetime.now()
         self.ui.textEdit.insertPlainText('\n[' + str(datetime_object) + '] ')
-        
-        #Check if url that got typed in search bar is valid
+
         if self.is_valid_url(item):
-            color = rgb(78, 201, 176)
-
-        #If it is not a url check if it is a path
+            color = (78, 201, 176)
         elif self.is_valid_path(item):
-            color = rgb(234, 84, 159)
-        
-        #If it is neither make the color of text red
+            color = (234, 84, 159)
         else:
-            color = rgb(255, 255, 255)
+            color = (255, 255, 255)
 
-        
-        #--------------Set styling properties of search bar depending on what was entered-----------------
-        color = QtGui.QColor(color)
+        color = QtGui.QColor(*color)
         color_format = self.ui.textEdit.currentCharFormat()
         color_format.setForeground(color)
         self.ui.textEdit.setCurrentCharFormat(color_format)
         self.ui.textEdit.append(item)
-        #-------------------------------------------------------------------------------------------------
-        pass
 
 
     def print_Response(self,data):
