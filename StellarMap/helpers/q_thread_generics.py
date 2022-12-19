@@ -54,26 +54,26 @@ class GenericRequestsWorkerThread(QThread):
 
 class GenericDescriptionOutputWorkerThread(QThread):
     """
-    Generic Output Worker QThread To Display Output Description
+    A QThread class that emits a signal containing a description string.
+    
+    Parameters:
+        input_description (str): The description string to emit.
+    
+    Attributes:
+        q_thread_output_description (pyqtSignal): A signal that is emitted when the thread is started,
+            containing the description string.
+        label_description (str): The description string to emit.
     """
-
     q_thread_output_description = pyqtSignal(str)
 
     def __init__(self, input_description):
         super().__init__()
-
-        # labelDescription
         self.label_description = input_description
 
     @pyqtSlot()
     def run(self):
-        # emit the description from the thread
         self.q_thread_output_description.emit(self.label_description)
-
         time.sleep(0.71)
-
-        # exit thread
-        return
 
 
 class GenericDataframeOutputWorkerThread(QThread):
