@@ -10,10 +10,17 @@ from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot
 
 class GenericRequestsWorkerThread(QThread):
     """
-    Generic HTTPS Requests Worker QThread
+    A QThread class that makes an HTTPS request and emits the response.
+    
+    Parameters:
+        initial_https_url_link (str): The URL to make the HTTPS request to.
+        slotOnFinished (function): An optional function to be called when the thread finishes.
+    
+    Attributes:
+        requests_response (pyqtSignal): A signal that is emitted when the HTTPS request is completed,
+            containing the response object.
+        url_link (str): The URL to make the HTTPS request to.
     """
-    # the requests_response variable is the variable used to
-    # emit the requests response to send out a signal out of the thread
     requests_response = pyqtSignal(requests.Response)
 
     def __init__(self, initial_https_url_link, slotOnFinished=None):
@@ -26,27 +33,20 @@ class GenericRequestsWorkerThread(QThread):
     @pyqtSlot()
     def run(self):
         try:
-            # use requests
             res = requests.get(self.url_link, timeout=3)
-
-            print(res.text)
-
-            # emit the response of the requests from the thread
-            self.requests_response.emit(res)
             res.raise_for_status()
         except requests.exceptions.HTTPError as errh:
-            print ("HTTP(S) Error:",errh)
+            print("HTTP(S) Error:", errh)
         except requests.exceptions.ConnectionError as errc:
-            print ("Error Connecting:",errc)
+            print("Error Connecting:", errc)
         except requests.exceptions.Timeout as errt:
-            print ("Timeout Error:",errt)
+            print("Timeout Error:", errt)
         except requests.exceptions.RequestException as err:
-            print ("Uh Oh: Something broke... ",err)
-
-        time.sleep(1.3)
-
-        # exit thread
-        return
+            print("Uh Oh: Something broke...", err)
+        else:
+            self.requests_response.emit(res)
+        finally:
+            time.sleep(1.3)
 
     def send_url_link(self, https_url_link):
         self.url_link = https_url_link
