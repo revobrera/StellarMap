@@ -1,14 +1,29 @@
-import sys
 import os
 from PyQt5.QtCore import QUrl
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import QApplication
 
-app = QApplication(sys.argv)
-view = QWebEngineView()
+def main():
+    """
+    Main function that displays a web page in a PyQt5 window.
+    """
+    # Create a QApplication instance
+    app = QApplication()
 
-html_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'collapsible_radial_tree', 'index.html')
-view.load(QUrl.fromLocalFile(html_file))
+    # Create a QWebEngineView instance
+    view = QWebEngineView()
 
-view.show()
-sys.exit(app.exec_())
+    # Get the path to the html file
+    html_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'collapsible_radial_tree', 'index.html')
+
+    # Load the html file into the QWebEngineView
+    view.load(QUrl.fromLocalFile(html_file))
+
+    # Show the QWebEngineView
+    view.show()
+
+    # Run the QApplication event loop
+    app.exec_()
+
+if __name__ == '__main__':
+    main()
